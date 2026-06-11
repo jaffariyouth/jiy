@@ -47,6 +47,62 @@ export type Database = {
         }
         Relationships: []
       }
+      events: {
+        Row: {
+          capacity: number | null
+          cover_image_url: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          ends_at: string | null
+          id: string
+          is_member_only: boolean
+          location: string | null
+          starts_at: string
+          status: Database["public"]["Enums"]["event_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          capacity?: number | null
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          is_member_only?: boolean
+          location?: string | null
+          starts_at: string
+          status?: Database["public"]["Enums"]["event_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          capacity?: number | null
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          is_member_only?: boolean
+          location?: string | null
+          starts_at?: string
+          status?: Database["public"]["Enums"]["event_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feature_flags: {
         Row: {
           created_at: string
@@ -164,6 +220,63 @@ export type Database = {
         }
         Relationships: []
       }
+      scholar_questions: {
+        Row: {
+          answer_text: string | null
+          answered_at: string | null
+          assigned_scholar_id: string | null
+          category: string | null
+          created_at: string
+          id: string
+          is_anonymous: boolean
+          question_text: string
+          status: Database["public"]["Enums"]["question_status"]
+          submitter_id: string
+          updated_at: string
+        }
+        Insert: {
+          answer_text?: string | null
+          answered_at?: string | null
+          assigned_scholar_id?: string | null
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_anonymous?: boolean
+          question_text: string
+          status?: Database["public"]["Enums"]["question_status"]
+          submitter_id: string
+          updated_at?: string
+        }
+        Update: {
+          answer_text?: string | null
+          answered_at?: string | null
+          assigned_scholar_id?: string | null
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_anonymous?: boolean
+          question_text?: string
+          status?: Database["public"]["Enums"]["question_status"]
+          submitter_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scholar_questions_assigned_scholar_id_fkey"
+            columns: ["assigned_scholar_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scholar_questions_submitter_id_fkey"
+            columns: ["submitter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           amount_cents: number
@@ -252,6 +365,66 @@ export type Database = {
           },
         ]
       }
+      youth_press_articles: {
+        Row: {
+          author_id: string
+          body_md: string
+          cover_image_url: string | null
+          created_at: string
+          editor_id: string | null
+          excerpt: string | null
+          id: string
+          published_at: string | null
+          slug: string
+          status: Database["public"]["Enums"]["article_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          body_md: string
+          cover_image_url?: string | null
+          created_at?: string
+          editor_id?: string | null
+          excerpt?: string | null
+          id?: string
+          published_at?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["article_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          body_md?: string
+          cover_image_url?: string | null
+          created_at?: string
+          editor_id?: string | null
+          excerpt?: string | null
+          id?: string
+          published_at?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["article_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "youth_press_articles_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "youth_press_articles_editor_id_fkey"
+            columns: ["editor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -277,6 +450,9 @@ export type Database = {
     }
     Enums: {
       app_role: "member_isij" | "member_standalone" | "scholar" | "admin"
+      article_status: "draft" | "in_review" | "published"
+      event_status: "draft" | "published" | "completed" | "cancelled"
+      question_status: "pending_triage" | "assigned" | "answered" | "rejected"
       subscription_plan: "monthly_10" | "yearly_100"
       subscription_status:
         | "active"
@@ -413,6 +589,9 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["member_isij", "member_standalone", "scholar", "admin"],
+      article_status: ["draft", "in_review", "published"],
+      event_status: ["draft", "published", "completed", "cancelled"],
+      question_status: ["pending_triage", "assigned", "answered", "rejected"],
       subscription_plan: ["monthly_10", "yearly_100"],
       subscription_status: [
         "active",
