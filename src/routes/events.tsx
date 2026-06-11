@@ -56,7 +56,7 @@ function EventsPage() {
         <p className="text-sm text-muted-foreground">No events scheduled yet — check back soon.</p>
       ) : (
         <ul className="space-y-4">
-          {events.map((e) => (
+          {events.map((e: (typeof events)[number]) => (
             <li key={e.id} className="rounded-lg border bg-card p-5">
               <div className="flex items-baseline justify-between gap-4">
                 <h2 className="text-lg font-medium">{e.title}</h2>
