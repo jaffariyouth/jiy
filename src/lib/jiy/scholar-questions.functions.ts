@@ -115,6 +115,12 @@ export const submitQuestion = createServerFn({ method: "POST" })
       entityId: row.id,
       metadata: { is_anonymous: data.is_anonymous },
     });
+    const { enqueueAdminBroadcast } = await import("./notifications.server");
+    await enqueueAdminBroadcast({
+      channel: "in_app",
+      templateKey: "scholar_question.pending_triage",
+      payload: { question_id: row.id },
+    });
     await idem.complete({ id: row.id });
     return { id: row.id };
   });
@@ -153,6 +159,13 @@ export const assignQuestion = createServerFn({ method: "POST" })
       entityId: data.id,
       metadata: { scholar_id: data.scholarId },
     });
+    const { enqueueNotification } = await import("./notifications.server");
+    await enqueueNotification({
+      recipientId: data.scholarId,
+      channel: "in_app",
+      templateKey: "scholar_question.assigned",
+      payload: { question_id: data.id },
+    });
     await idem.complete({ ok: true });
     return { ok: true as const };
   });
@@ -172,14 +185,16 @@ export const answerQuestion = createServerFn({ method: "POST" })
     if (idem.cached) return idem.cached;
 
     // RLS lets either the assigned scholar OR an admin perform this update.
-    const { error } = await context.supabase
+    const { data: updated, error } = await context.supabase
       .from("scholar_questions")
       .update({
         answer_text: data.answer_text,
         answered_at: new Date().toISOString(),
         status: "answered",
       })
-      .eq("id", data.id);
+      .eq("id", data.id)
+      .select("submitter_id")
+      .maybeSingle();
     if (error) throw new Error(error.message);
 
     await writeAudit(context.supabase, {
@@ -188,6 +203,15 @@ export const answerQuestion = createServerFn({ method: "POST" })
       entity: "scholar_questions",
       entityId: data.id,
     });
+    if (updated?.submitter_id) {
+      const { enqueueNotification } = await import("./notifications.server");
+      await enqueueNotification({
+        recipientId: updated.submitter_id,
+        channel: "in_app",
+        templateKey: "scholar_question.answered",
+        payload: { question_id: data.id },
+      });
+    }
     await idem.complete({ ok: true });
     return { ok: true as const };
   });
