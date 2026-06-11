@@ -104,6 +104,39 @@ export type Database = {
         }
         Relationships: []
       }
+      isij_registry_cache: {
+        Row: {
+          created_at: string
+          email_hash: string | null
+          full_name: string | null
+          id: string
+          isij_number: string
+          status: string
+          synced_at: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email_hash?: string | null
+          full_name?: string | null
+          id?: string
+          isij_number: string
+          status?: string
+          synced_at?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email_hash?: string | null
+          full_name?: string | null
+          id?: string
+          isij_number?: string
+          status?: string
+          synced_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age_demographic: string | null
@@ -130,6 +163,68 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          amount_cents: number
+          cancel_at: string | null
+          canceled_at: string | null
+          created_at: string
+          currency: string
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          metadata: Json
+          plan: Database["public"]["Enums"]["subscription_plan"] | null
+          status: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents?: number
+          cancel_at?: string | null
+          canceled_at?: string | null
+          created_at?: string
+          currency?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          metadata?: Json
+          plan?: Database["public"]["Enums"]["subscription_plan"] | null
+          status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          cancel_at?: string | null
+          canceled_at?: string | null
+          created_at?: string
+          currency?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          metadata?: Json
+          plan?: Database["public"]["Enums"]["subscription_plan"] | null
+          status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -182,6 +277,14 @@ export type Database = {
     }
     Enums: {
       app_role: "member_isij" | "member_standalone" | "scholar" | "admin"
+      subscription_plan: "monthly_10" | "yearly_100"
+      subscription_status:
+        | "active"
+        | "past_due"
+        | "canceled"
+        | "incomplete"
+        | "trialing"
+        | "unpaid"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -310,6 +413,15 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["member_isij", "member_standalone", "scholar", "admin"],
+      subscription_plan: ["monthly_10", "yearly_100"],
+      subscription_status: [
+        "active",
+        "past_due",
+        "canceled",
+        "incomplete",
+        "trialing",
+        "unpaid",
+      ],
     },
   },
 } as const
