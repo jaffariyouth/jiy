@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>JIY Central Member Dashboard Hub</title>
+    
+    <!-- Tailwind CSS with Forms and Container Queries -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Premium Google Fonts (Playfair Display for Editorial Elegance, Hanken Grotesk for Sleek Clean Modernism) -->
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-dim": "#d3dae8",
+                        "primary-container": "#162238",
+                        "on-tertiary": "#ffffff",
+                        "warm-silk-grey": "#f3eee7",
+                        "tertiary-container": "#2f1f00",
+                        "secondary-fixed": "#e4e2df",
+                        "outline-variant": "#c5c6cd",
+                        "damascus-gold": "#caa460", // Original classic Damascus Gold restored
+                        "ash-slate": "#616975",
+                        "tertiary": "#120a00",
+                        "secondary-fixed-dim": "#c8c6c4",
+                        "surface-container-high": "#e1e9f7",
+                        "surface-bright": "#f8f9ff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#271900",
+                        "surface-variant": "#dbe3f1",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#1b1c1a",
+                        "primary-fixed": "#d7e2ff",
+                        "on-secondary-container": "#636361",
+                        "on-primary-fixed": "#0f1b31",
+                        "deep-garnet": "#7a2230",
+                        "tertiary-fixed": "#ffdea8",
+                        "inverse-surface": "#29313c",
+                        "on-error-container": "#93000a",
+                        "outline": "#75777e",
+                        "surface-container": "#e7eefd",
+                        "horizon-mist": "#dcd9d2",
+                        "on-primary-container": "#7e89a4",
+                        "secondary": "#5e5e5c",
+                        "inverse-primary": "#bbc6e3",
+                        "primary": "#010b21",
+                        "midnight-sapphire": "#162238",
+                        "surface": "#f8f9ff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#e9c17a",
+                        "surface-tint": "#535e77",
+                        "on-surface-variant": "#45474d",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-container-highest": "#dbe3f1",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "muted-dusk": "#8993a4",
+                        "error-container": "#ffdad6",
+                        "on-background": "#141c26",
+                        "primary-fixed-dim": "#bbc6e3",
+                        "on-secondary-fixed-variant": "#474745",
+                        "secondary-container": "#e1dfdc",
+                        "on-tertiary-fixed-variant": "#5d4205",
+                        "background": "#f8f9ff",
+                        "alabaster-parchment": "#faf8f5",
+                        "on-surface": "#141c26",
+                        "on-tertiary-container": "#a78443",
+                        "persian-indigo": "#21304a",
+                        "surface-container-low": "#eef4ff",
+                        "on-primary-fixed-variant": "#3b475f"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "6px",
+                        "lg": "12px",
+                        "xl": "16px",
+                        "2xl": "24px",
+                        "3xl": "32px",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "gap-section": "64px",
+                        "max-width": "1536px",
+                        "gap-element": "16px",
+                        "margin-safe": "48px",
+                        "base": "8px"
+                    },
+                    fontFamily: {
+                        "headline": ["Playfair Display", "serif"],
+                        "display": ["Playfair Display", "serif"],
+                        "body": ["Hanken Grotesk", "sans-serif"],
+                        "subheading": ["Hanken Grotesk", "sans-serif"],
+                        "label-eyebrow": ["Hanken Grotesk", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Ambient studio glow background with luxurious sand and ivory accents */
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            background-color: #faf8f5;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(243, 238, 231, 0.6) 0%, transparent 60%),
+                radial-gradient(circle at 95% 15%, rgba(202, 164, 96, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.9) 0%, transparent 100%);
+            background-attachment: fixed;
+        }
+
+        /* 
+           Tactile Luxury Shadow Strategy:
+           Using complex multi-layered box-shadows to separate card surfaces elegantly.
+           This achieves high-fidelity visual relief and realistic soft ambient-occlusion look.
+        */
+        .studio-card {
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(24px) saturate(100%);
+            -webkit-backdrop-filter: blur(24px) saturate(100%);
+            border: 1px solid rgba(220, 217, 210, 0.45);
+            box-shadow: 
+                0 4px 6px -1px rgba(22, 34, 56, 0.02),
+                0 12px 24px -4px rgba(22, 34, 56, 0.03),
+                0 24px 48px -12px rgba(22, 34, 56, 0.04),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .studio-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(202, 164, 96, 0.35); /* Classic gold border accent */
+            box-shadow: 
+                0 10px 15px -3px rgba(202, 164, 96, 0.04),
+                0 25px 50px -12px rgba(22, 34, 56, 0.07),
+                0 50px 100px -20px rgba(22, 34, 56, 0.05),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.85);
+        }
+
+        /* Ambient glowing highlights for primary gold assets */
+        .gold-glow-element {
+            box-shadow: 
+                0 4px 15px 0 rgba(202, 164, 96, 0.15),
+                0 1px 3px 0 rgba(202, 164, 96, 0.08);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .gold-glow-element:hover {
+            box-shadow: 
+                0 12px 30px 0 rgba(202, 164, 96, 0.3),
+                0 3px 8px 0 rgba(202, 164, 96, 0.15);
+        }
+
+        /* Tactile pressed look for inputs or stationery sections */
+        .stationery-inset {
+            background: rgba(243, 238, 231, 0.45);
+            box-shadow: 
+                inset 0 2px 8px rgba(22, 34, 56, 0.05),
+                inset 0 0 1px rgba(22, 34, 56, 0.08);
+            border: 1px solid rgba(220, 217, 210, 0.55);
+        }
+
+        /* Interactive premium links */
+        .premium-link {
+            position: relative;
+        }
+        .premium-link::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1px;
+            bottom: -3px;
+            left: 0;
+            background-color: #caa460;
+            transform-origin: bottom right;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .premium-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        /* Material icons weight adjustments */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* Custom premium scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #faf8f5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #dcd9d2;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #caa460;
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased min-h-screen flex flex-col selection:bg-damascus-gold/20 selection:text-midnight-sapphire relative">
+
+    <!-- Translucent Floating Top Navigation Bar -->
+    <nav class="sticky top-0 z-50 bg-[#faf8f5]/65 backdrop-blur-xl border-b border-horizon-mist/40 transition-all duration-300">
+        <div class="max-w-[1536px] mx-auto h-20 flex justify-between items-center px-6 md:px-12">
+            <!-- Left Identifiers -->
+            <div class="flex items-center gap-5">
+                <span class="font-headline text-[32px] font-semibold text-midnight-sapphire tracking-tighter">JIY</span>
+                <div class="h-4 w-px bg-horizon-mist"></div>
+                <span class="font-label-eyebrow text-[10px] text-damascus-gold tracking-[0.25em] font-bold">MEMBER HUB</span>
+            </div>
+            
+            <!-- Navigation Links -->
+            <div class="hidden lg:flex gap-10 font-subheading text-[13px] tracking-[0.12em] uppercase font-medium items-center text-secondary">
+                <a class="premium-link hover:text-midnight-sapphire transition-colors duration-300" href="#">Events</a>
+                <a class="premium-link hover:text-midnight-sapphire transition-colors duration-300" href="#">Scholar Q&A</a>
+                <a class="premium-link hover:text-midnight-sapphire transition-colors duration-300" href="#">The Press</a>
+                <a class="premium-link hover:text-midnight-sapphire transition-colors duration-300" href="#">Opportunity Board</a>
+                <a class="premium-link hover:text-midnight-sapphire transition-colors duration-300" href="#">Merch Shop</a>
+            </div>
+            
+            <!-- Utilities & Profile Actions -->
+            <div class="flex items-center gap-6 text-midnight-sapphire">
+                <button class="relative p-1.5 hover:text-damascus-gold transition-colors duration-300 group" aria-label="Cart">
+                    <span class="material-symbols-outlined text-[24px]">shopping_bag</span>
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-deep-garnet rounded-full shadow-[0_0_6px_rgba(122,34,48,0.4)]"></span>
+                </button>
+                <div class="h-4 w-px bg-horizon-mist"></div>
+                <button class="flex items-center gap-3 group" aria-label="Profile">
+                    <span class="material-symbols-outlined text-[26px] group-hover:text-damascus-gold transition-colors duration-300">account_circle</span>
+                    <span class="font-label-eyebrow text-[10px] tracking-[0.2em] text-midnight-sapphire group-hover:text-damascus-gold transition-colors duration-300 hidden sm:inline uppercase font-bold">MY HUB</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Beautiful Volumetrically Lit Spotlight Hero (Condensed & Compact Version) -->
+    <section class="relative overflow-hidden w-full py-8 md:py-10 bg-midnight-sapphire text-alabaster-parchment border-b border-damascus-gold/20 shadow-[0_15px_35px_-5px_rgba(22,34,56,0.15)]">
+        <!-- Depth Filters & Light Orbs -->
+        <div class="absolute top-1/2 left-1/4 -translate-y-1/2 w-[650px] h-[250px] bg-gradient-to-r from-damascus-gold/12 to-transparent blur-[110px] pointer-events-none rounded-full"></div>
+        <div class="absolute right-12 top-4 w-[200px] h-[200px] bg-indigo-500/5 blur-[80px] pointer-events-none rounded-full"></div>
+        <div class="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-damascus-gold/40 to-transparent"></div>
+
+        <div class="max-w-[1536px] mx-auto px-6 md:px-12 relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex flex-col gap-1.5 text-center md:text-left max-w-2xl">
+                <h2 class="font-headline text-[24px] md:text-[28px] text-alabaster-parchment leading-tight font-light">
+                    Sponsor Tabarruk for your <span class="italic font-normal text-damascus-gold">Marhumeen</span>
+                </h2>
+                <p class="font-body text-[13px] text-horizon-mist/85 max-w-lg leading-relaxed font-light">
+                    Honor the enduring legacy of loved ones. Provide wholesome spiritual refreshments and banquets for upcoming weekly youth assemblies.
+                </p>
+            </div>
+            
+            <button class="bg-transparent border border-damascus-gold/70 text-damascus-gold hover:text-midnight-sapphire hover:bg-damascus-gold font-label-eyebrow text-[10px] py-3.5 px-8 rounded-full tracking-[0.2em] transition-all duration-500 uppercase font-bold hover:shadow-[0_10px_25px_rgba(202,164,96,0.25)] shrink-0">
+                Sponsor an Event
+            </button>
+        </div>
+    </section>
+
+    <!-- Main Interactive Dashboard Grid -->
+    <main class="max-w-[1536px] mx-auto w-full px-6 md:px-12 py-16 flex-grow flex flex-col gap-14">
+        
+        <!-- Welcome Frame + Ambient Stationery Drawer -->
+        <section class="flex flex-col gap-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-2">
+                <div>
+                    <div class="flex items-center gap-2 text-damascus-gold mb-1">
+                        <span class="font-label-eyebrow text-[9.5px] tracking-[0.25em] uppercase font-extrabold">JIY COMPASS</span>
+                        <span class="w-1 h-1 bg-horizon-mist rounded-full"></span>
+                        <span class="font-label-eyebrow text-[9.5px] text-secondary tracking-widest uppercase font-medium">DHU AL-HIJJAH 1447 AH</span>
+                    </div>
+                    <h1 class="font-headline text-[38px] md:text-[46px] text-midnight-sapphire leading-none font-light">
+                        Salaam, <span class="font-normal italic">Ali</span>.
+                    </h1>
+                </div>
+                <div class="max-w-xs text-right hidden md:block">
+                    <p class="font-headline text-[14.5px] italic text-secondary leading-relaxed font-light">
+                        "The best of wealth is that which genuinely benefits others."
+                    </p>
+                </div>
+            </div>
+
+            <!-- Q&A Notebook Drawer Component (Immersive stationery pressed look) -->
+            <div class="studio-card rounded-2xl p-6 md:p-8">
+                <div class="flex justify-between items-center cursor-pointer group" onclick="toggleDrawer()">
+                    <div class="flex items-center gap-5">
+                        <div class="w-11 h-11 rounded-full bg-damascus-gold/10 flex items-center justify-center text-damascus-gold shadow-[0_2px_8px_rgba(202,164,96,0.1)]">
+                            <span class="material-symbols-outlined text-[21px]">chat_bubble_outline</span>
+                        </div>
+                        <div>
+                            <p class="font-headline text-[18.5px] text-midnight-sapphire font-normal group-hover:text-damascus-gold transition-colors duration-300">
+                                Inquire of Our Resident Scholars
+                            </p>
+                            <p class="font-body text-secondary text-[13.5px] mt-0.5 font-light">
+                                Submit private, secure, and fully anonymous theological queries directly to our board.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 text-damascus-gold group-hover:text-midnight-sapphire transition-colors duration-300">
+                        <span class="font-label-eyebrow text-[11px] uppercase tracking-[0.2em] hidden sm:inline font-extrabold">[ Expand Portal ]</span>
+                        <span id="drawer-chevron" class="material-symbols-outlined transition-transform duration-500">expand_more</span>
+                    </div>
+                </div>
+                
+                <!-- Q&A Form Element -->
+                <div class="hidden overflow-hidden transition-all duration-700" id="qa-drawer">
+                    <div class="mt-8 pt-8 border-t border-horizon-mist/50 flex flex-col gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block font-label-eyebrow text-secondary mb-2 uppercase text-[10px] tracking-[0.18em] font-extrabold">Topic Category</label>
+                                <select class="w-full bg-alabaster-parchment border border-horizon-mist rounded-xl p-4 text-[13.5px] text-midnight-sapphire focus:outline-none focus:border-damascus-gold focus:ring-0 transition-colors duration-300 shadow-sm">
+                                    <option>Contemporary Philosophy & Ethics</option>
+                                    <option>Youth Spiritual Navigation</option>
+                                    <option>Community Relations & Development</option>
+                                    <option>General Jurisprudence (Fiqh)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block font-label-eyebrow text-secondary mb-2 uppercase text-[10px] tracking-[0.18em] font-extrabold">Privacy Level</label>
+                                <div class="flex items-center h-[54px] bg-alabaster-parchment border border-horizon-mist rounded-xl px-4 shadow-sm">
+                                    <input type="checkbox" checked id="anonymous" class="rounded border-horizon-mist text-damascus-gold focus:ring-0 w-4 h-4 mr-3">
+                                    <label for="anonymous" class="text-[13.5px] text-midnight-sapphire cursor-pointer select-none font-light">Transmit completely anonymously to scholar circle</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-label-eyebrow text-secondary mb-2 uppercase text-[10px] tracking-[0.18em] font-extrabold">Your Thoughtful Inquiry</label>
+                            <textarea class="w-full bg-alabaster-parchment border border-horizon-mist rounded-xl p-5 font-body text-sm text-midnight-sapphire placeholder:text-muted-dusk/60 focus:outline-none focus:border-damascus-gold focus:ring-0 resize-none h-36 transition-colors duration-300 shadow-sm" placeholder="Articulate your question elegantly here..."></textarea>
+                        </div>
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-2">
+                            <span class="font-body text-secondary/80 text-[12.5px] flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[16px] text-emerald-600">verified_user</span> 
+                                Submissions are securely encrypted and parsed.
+                            </span>
+                            <button onclick="submitScholarForm()" class="bg-midnight-sapphire hover:bg-damascus-gold text-white hover:text-midnight-sapphire font-label-eyebrow text-[11px] py-4 px-10 rounded-full transition-all duration-300 uppercase tracking-[0.2em] font-extrabold hover:shadow-[0_8px_20px_rgba(202,164,96,0.2)]">
+                                Submit Inquiry
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Column Assembly -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+            
+            <!-- Left Column: Primary Dashboard Action Areas (70%) -->
+            <div class="lg:col-span-8 flex flex-col gap-14">
+                
+                <!-- Upcoming Assembly Gatherings -->
+                <section>
+                    <div class="flex justify-between items-end mb-8 pb-4 border-b border-horizon-mist/65">
+                        <div class="flex flex-col gap-1">
+                            <p class="font-label-eyebrow text-[10px] text-damascus-gold tracking-[0.2em] font-extrabold uppercase">COMMUNITY CIRCLES</p>
+                            <h2 class="font-headline text-[30px] text-midnight-sapphire font-normal leading-none">Upcoming Gatherings</h2>
+                        </div>
+                        <a href="#" class="font-label-eyebrow text-damascus-gold hover:text-midnight-sapphire transition-colors duration-300 text-[11px] uppercase tracking-[0.15em] font-bold">Calendar Archive &rarr;</a>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Elegant Card 1 -->
+                        <div class="studio-card rounded-2xl p-5 flex flex-col gap-5 group">
+                            <!-- Image Frame featuring internal delicate drop shadows -->
+                            <div class="w-full aspect-[16/10] rounded-xl overflow-hidden relative bg-warm-silk-grey shadow-[inset_0_4px_10px_rgba(0,0,0,0.15)] border border-horizon-mist/30">
+                                <div class="absolute inset-0 bg-cover bg-center transition-transform duration-[1.5s] ease-out group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAjzN3McUG0ksrlVCZTjqBsjd7MkKmB5hRy7yfXwj2DGv6p8YAu0XK8ur57gbpELQya3h_IsZaxd3jygmls2UIHFHXXTSgGlhMIyyWRbAoz7_bLlnXu0nO_VjP2kEc4EmKpxQ7nk4FXJ4NUkD2g-llFa7gYXWlbifF4XqzDDAkmUhuUtRVdydWhQx-vSA0Pn_m6vcgPfiy2oQ24Fm2PbIeiYedlOKQFXyAMOP9ejN-MIQE5NOS7e8as6068uTVMUfZmd_f9HYocIjJK');" onerror="this.src='https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1470&auto=format&fit=crop'"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-midnight-sapphire/50 via-transparent to-transparent opacity-80"></div>
+                                <span class="absolute top-4 left-4 bg-midnight-sapphire/80 text-damascus-gold border border-damascus-gold/25 font-label-eyebrow text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-full uppercase">THEOLOGY</span>
+                            </div>
+                            <div class="flex flex-col flex-grow justify-between gap-4">
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex items-center gap-2 text-secondary text-[12.5px] font-medium tracking-wide">
+                                        <span class="material-symbols-outlined text-[15px] text-damascus-gold">calendar_today</span>
+                                        <span>Wednesday, July 15 • 6:00 PM</span>
+                                    </div>
+                                    <h3 class="font-headline text-[21px] text-midnight-sapphire group-hover:text-damascus-gold transition-colors duration-300 leading-snug">Theology in the Digital Age</h3>
+                                    <p class="font-body text-secondary/80 text-[13.5px] leading-relaxed line-clamp-2 font-light">How do deep sacred paradigms thrive beautifully within networks of immediate virtual distraction?</p>
+                                </div>
+                                <button class="font-label-eyebrow text-deep-garnet hover:text-midnight-sapphire transition-colors duration-300 text-[10px] font-extrabold uppercase tracking-[0.2em] mt-3 pt-3 border-t border-horizon-mist/40 flex items-center gap-1.5 justify-start">
+                                    RESERVE PASS 
+                                    <span class="material-symbols-outlined text-[14px] transition-transform duration-300 group-hover:translate-x-1.5">arrow_right_alt</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Elegant Card 2 -->
+                        <div class="studio-card rounded-2xl p-5 flex flex-col gap-5 group">
+                            <!-- Image Frame -->
+                            <div class="w-full aspect-[16/10] rounded-xl overflow-hidden relative bg-warm-silk-grey shadow-[inset_0_4px_10px_rgba(0,0,0,0.15)] border border-horizon-mist/30">
+                                <div class="absolute inset-0 bg-cover bg-center transition-transform duration-[1.5s] ease-out group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAnbULWecTgr1RwUQx5nPgtd-ExW1xDFIQGOMO7V3GUJn1qwkxPa6hRyN8AcKEIwUYhCrLWLwQcflXLueu_IcUEVzPKUgEkSW6GAS41tLqinrt9qP1hDdk6_h4cO6G2X_fEcUtr-6iqIjPphWXrT4f0_ptAVOWyUaoxlKcFsn50mNezVMV6fqdtNmS_VtP78cJdAzjH36cBPQ71D5Hv44mjFIEFtyxFGYwMHXHqWwhnUSmRG_hTKXjJk_T2eL4uLX0IghnOBRIcKLlu');" onerror="this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1470&auto=format&fit=crop'"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-midnight-sapphire/50 via-transparent to-transparent opacity-80"></div>
+                                <span class="absolute top-4 left-4 bg-midnight-sapphire/80 text-damascus-gold border border-damascus-gold/25 font-label-eyebrow text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-full uppercase">WORKSHOP</span>
+                            </div>
+                            <div class="flex flex-col flex-grow justify-between gap-4">
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex items-center gap-2 text-secondary text-[12.5px] font-medium tracking-wide">
+                                        <span class="material-symbols-outlined text-[15px] text-damascus-gold">calendar_today</span>
+                                        <span>Sunday, August 2 • 10:00 AM</span>
+                                    </div>
+                                    <h3 class="font-headline text-[21px] text-midnight-sapphire group-hover:text-damascus-gold transition-colors duration-300 leading-snug">Community Leadership Workshop</h3>
+                                    <p class="font-body text-secondary/80 text-[13.5px] leading-relaxed line-clamp-2 font-light">Equipping our next generation of community architects, builders, and thinkers with strategic execution toolkits.</p>
+                                </div>
+                                <button class="font-label-eyebrow text-deep-garnet hover:text-midnight-sapphire transition-colors duration-300 text-[10px] font-extrabold uppercase tracking-[0.2em] mt-3 pt-3 border-t border-horizon-mist/40 flex items-center gap-1.5 justify-start">
+                                    RESERVE PASS 
+                                    <span class="material-symbols-outlined text-[14px] transition-transform duration-300 group-hover:translate-x-1.5">arrow_right_alt</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Elegant Journaling Press Section -->
+                <section>
+                    <div class="flex justify-between items-end mb-8 pb-4 border-b border-horizon-mist/65">
+                        <div class="flex flex-col gap-1">
+                            <p class="font-label-eyebrow text-[10px] text-damascus-gold tracking-[0.2em] font-extrabold uppercase">EDITORIAL REVIEW</p>
+                            <h2 class="font-headline text-[30px] text-midnight-sapphire font-normal leading-none">The Youth Press</h2>
+                        </div>
+                        <span class="font-label-eyebrow text-[10px] text-secondary tracking-[0.2em] uppercase font-bold italic">VOLUME IV</span>
+                    </div>
+                    
+                    <div class="flex flex-col gap-10">
+                        <!-- Journal Article 1 -->
+                        <article class="group cursor-pointer flex flex-col md:flex-row gap-8 items-start pb-10 border-b border-horizon-mist/40">
+                            <div class="md:w-1/3 w-full aspect-square bg-warm-silk-grey rounded-2xl overflow-hidden shrink-0 shadow-md border border-horizon-mist/30">
+                                <img src="https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?q=80&w=1374&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-[1s] group-hover:scale-105" alt="Philosophy book on table">
+                            </div>
+                            <div class="flex flex-col justify-between h-full gap-4">
+                                <div class="flex flex-col gap-3">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-label-eyebrow text-[9.5px] text-deep-garnet tracking-[0.2em] font-extrabold uppercase">MONTHLY FEATURES</span>
+                                        <span class="w-1 h-1 bg-horizon-mist rounded-full"></span>
+                                        <span class="font-body text-secondary text-[12.5px]">June 2026</span>
+                                    </div>
+                                    <h3 class="font-headline text-[23px] leading-snug text-midnight-sapphire group-hover:text-damascus-gold transition-colors duration-300">
+                                        Navigating Contemporary Philosophy: Dialogue on Tradition & Modernity
+                                    </h3>
+                                    <p class="font-body text-secondary/80 text-[14px] leading-relaxed font-light">
+                                        An analytical dialogue looking at structural modernity alongside classical philosophy frameworks. Investigating the reconcilement of ancient spiritual tenets with high-velocity technological ethics.
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-2 text-damascus-gold group-hover:text-midnight-sapphire transition-colors duration-300 font-label-eyebrow text-[10px] tracking-[0.18em] uppercase font-bold mt-2">
+                                    <span>READ FULL ESSAY</span>
+                                    <span class="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:translate-x-1.5">arrow_right_alt</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- Journal Article 2 -->
+                        <article class="group cursor-pointer flex flex-col md:flex-row gap-8 items-start">
+                            <div class="md:w-1/3 w-full aspect-square bg-warm-silk-grey rounded-2xl overflow-hidden shrink-0 shadow-md border border-horizon-mist/30">
+                                <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1472&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-[1s] group-hover:scale-105" alt="Light patterns on surface">
+                            </div>
+                            <div class="flex flex-col justify-between h-full gap-4">
+                                <div class="flex flex-col gap-3">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-label-eyebrow text-[9.5px] text-deep-garnet tracking-[0.2em] font-extrabold uppercase">YOUTH POETRY</span>
+                                        <span class="w-1 h-1 bg-horizon-mist rounded-full"></span>
+                                        <span class="font-body text-secondary text-[12.5px]">May 2026</span>
+                                    </div>
+                                    <h3 class="font-headline text-[23px] leading-snug text-midnight-sapphire group-hover:text-damascus-gold transition-colors duration-300">
+                                        Echoes of Devotion: Poetry from the Urban Diaspora
+                                    </h3>
+                                    <p class="font-body text-secondary/80 text-[14px] leading-relaxed font-light">
+                                        A gorgeous, curated compilation of contemporary poetic verses reflecting diaspora life rhythms, spiritual longing, and finding moments of sacred pause amidst urban sensory noise.
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-2 text-damascus-gold group-hover:text-midnight-sapphire transition-colors duration-300 font-label-eyebrow text-[10px] tracking-[0.18em] uppercase font-bold mt-2">
+                                    <span>READ POETRY CORNER</span>
+                                    <span class="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:translate-x-1.5">arrow_right_alt</span>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Micro-Widgets & Announcements (30%) -->
+            <div class="lg:col-span-4 flex flex-col gap-10">
+                
+                <!-- Registered Schedule Translucent Widget with gold glows -->
+                <div class="studio-card rounded-2xl p-6 border-b-2 border-r-2 border-horizon-mist/20">
+                    <div class="flex gap-6 border-b border-horizon-mist/50 pb-4 mb-6">
+                        <button id="tab-registered" onclick="switchWidgetTab('registered')" class="font-label-eyebrow text-[10.5px] text-midnight-sapphire border-b-2 border-damascus-gold pb-2 uppercase tracking-[0.2em] font-bold transition-all duration-300 focus:outline-none">Signed Up</button>
+                        <button id="tab-history" onclick="switchWidgetTab('history')" class="font-label-eyebrow text-[10.5px] text-muted-dusk hover:text-midnight-sapphire pb-2 uppercase tracking-[0.2em] font-bold transition-all duration-300 focus:outline-none">History</button>
+                    </div>
+                    
+                    <div id="content-registered" class="transition-all duration-500">
+                        <div class="flex justify-between items-start gap-4">
+                            <div class="flex flex-col gap-2">
+                                <span class="font-label-eyebrow text-[8px] bg-damascus-gold/15 text-damascus-gold border border-damascus-gold/20 px-2.5 py-1 rounded-full uppercase tracking-widest font-bold self-start">CONFIRMED ACCESS PASS</span>
+                                <h4 class="font-headline text-[18px] text-midnight-sapphire leading-tight font-normal">Youth Summit Summer 2026</h4>
+                                <div class="flex flex-col gap-1 text-[12.5px] text-secondary/95 mt-1 font-light">
+                                    <p class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[15px] text-damascus-gold">calendar_month</span>Aug 20 - Aug 22, 2026</p>
+                                    <p class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[15px] text-damascus-gold">location_on</span>Central Assembly Hall</p>
+                                </div>
+                            </div>
+                            <button class="text-damascus-gold hover:text-midnight-sapphire transition-all duration-300 p-3 bg-damascus-gold/10 hover:bg-damascus-gold/20 rounded-xl flex items-center justify-center border border-damascus-gold/20 shadow-sm" aria-label="View Pass QR ID" onclick="openPassModal()">
+                                <span class="material-symbols-outlined text-[28px]">qr_code_2</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="content-history" class="hidden transition-all duration-500">
+                        <div class="flex flex-col gap-4">
+                            <div class="border-b border-horizon-mist/30 pb-3">
+                                <h5 class="font-headline text-[15.5px] text-midnight-sapphire font-normal">Fajr Spiritual Walk</h5>
+                                <p class="font-body text-secondary text-[11.5px] mt-0.5">Completed June 1, 2026</p>
+                            </div>
+                            <div>
+                                <h5 class="font-headline text-[15.5px] text-midnight-sapphire font-normal">Ramadan Quran Circle</h5>
+                                <p class="font-body text-secondary text-[11.5px] mt-0.5">Completed April 12, 2026</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Announcements Bulletin Frame -->
+                <div class="studio-card rounded-2xl p-6">
+                    <div class="flex flex-col gap-1 border-b border-horizon-mist/50 pb-4 mb-6">
+                        <p class="font-label-eyebrow text-deep-garnet text-[9px] tracking-[0.2em] font-extrabold uppercase">COMMUNITY BULLETIN</p>
+                        <h4 class="font-headline text-[22px] text-midnight-sapphire font-normal">Announcements</h4>
+                    </div>
+                    
+                    <div class="flex flex-col gap-6">
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-damascus-gold shadow-[0_0_6px_#caa460]"></span>
+                                <p class="font-headline text-[15.5px] text-midnight-sapphire leading-snug font-normal">New Resident Scholar</p>
+                            </div>
+                            <p class="font-body text-secondary/80 text-[13px] pl-3.5 leading-relaxed font-light">
+                                We are honored to welcome our new resident guest scholar next month for an intensive weekly series on contemporary ethics.
+                            </p>
+                            <p class="font-body text-muted-dusk pl-3.5 text-[11px] italic">Posted 2 days ago</p>
+                        </div>
+                        
+                        <div class="h-px bg-horizon-mist/40"></div>
+                        
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-horizon-mist"></span>
+                                <p class="font-headline text-[15.5px] text-midnight-sapphire leading-snug font-normal">Library Hours Extended</p>
+                            </div>
+                            <p class="font-body text-secondary/80 text-[13px] pl-3.5 leading-relaxed font-light">
+                                JIY main library and studying wings will remain open until midnight during upcoming local university exams week.
+                            </p>
+                            <p class="font-body text-muted-dusk pl-3.5 text-[11px] italic">Posted 5 days ago</p>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="font-label-eyebrow text-damascus-gold hover:text-midnight-sapphire transition-colors duration-300 mt-6 pt-4 border-t border-horizon-mist/40 flex items-center justify-between text-[11px] uppercase tracking-[0.18em] font-bold">
+                        Bulletin Archive
+                        <span class="material-symbols-outlined text-[16px]">arrow_right_alt</span>
+                    </a>
+                </div>
+
+                <!-- Volunteer Guild Card (Immersive Obsidian with original gold border) -->
+                <div class="bg-gradient-to-br from-[#162238] to-[#0d1524] rounded-2xl p-6 text-white border border-damascus-gold/25 shadow-[0_15px_30px_rgba(13,21,36,0.3)] relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-cover bg-center opacity-5 transition-transform duration-[2s] group-hover:scale-105" style="background-image: url('https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=1470&auto=format&fit=crop');"></div>
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-damascus-gold/15 to-transparent blur-3xl pointer-events-none"></div>
+                    
+                    <div class="relative z-10 flex flex-col gap-4">
+                        <p class="font-label-eyebrow text-damascus-gold text-[9px] tracking-[0.25em] font-extrabold uppercase">VOLUNTEER CORPS</p>
+                        <h4 class="font-headline text-[22px] text-alabaster-parchment leading-tight font-light">Shape the Future of JIY</h4>
+                        <p class="font-body text-horizon-mist/80 text-[13px] leading-relaxed font-light">
+                            Join our active operations guild coordinating regional conventions, press publication releases, and spiritual community services.
+                        </p>
+                        <button class="w-full bg-[#FAF8F5] hover:bg-damascus-gold text-midnight-sapphire hover:text-midnight-sapphire font-label-eyebrow text-[11px] py-4 px-6 rounded-full tracking-[0.18em] uppercase transition-all duration-300 mt-2 font-bold shadow-md hover:shadow-lg">
+                            Apply to Coordinate
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Fast Portal Connections -->
+                <div class="pt-6 border-t border-horizon-mist/60 flex flex-col gap-3">
+                    <span class="font-label-eyebrow text-[9.5px] text-secondary tracking-[0.2em] font-extrabold uppercase mb-2">QUICK PORTALS</span>
+                    <a class="font-subheading text-[13.5px] text-midnight-sapphire hover:text-damascus-gold transition-colors duration-300 flex items-center justify-between group py-1.5 border-b border-horizon-mist/20 font-medium" href="#">
+                        Fajr Football Assembly
+                        <span class="material-symbols-outlined text-[18px] opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1.5">arrow_right_alt</span>
+                    </a>
+                    <a class="font-subheading text-[13.5px] text-midnight-sapphire hover:text-damascus-gold transition-colors duration-300 flex items-center justify-between group py-1.5 border-b border-horizon-mist/20 font-medium" href="#">
+                        Monday Mubahatha
+                        <span class="material-symbols-outlined text-[18px] opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1.5">arrow_right_alt</span>
+                    </a>
+                    <a class="font-subheading text-[13.5px] text-midnight-sapphire hover:text-damascus-gold transition-colors duration-300 flex items-center justify-between group py-1.5 border-b border-horizon-mist/20 font-medium" href="#">
+                        Job Referral Board
+                        <span class="material-symbols-outlined text-[18px] opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1.5">arrow_right_alt</span>
+                    </a>
+                    <a class="font-subheading text-[13.5px] text-midnight-sapphire hover:text-damascus-gold transition-colors duration-300 flex items-center justify-between group py-1.5 border-b border-horizon-mist/20 font-medium" href="#">
+                        ISIJ Member Portal
+                        <span class="material-symbols-outlined text-[18px] opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1.5">arrow_right_alt</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Elegant Minimal Separation Line -->
+        <div class="relative flex items-center justify-center my-6">
+            <div class="absolute w-full h-[1px] bg-gradient-to-r from-transparent via-horizon-mist/60 to-transparent"></div>
+            <div class="bg-transparent px-6 relative z-10 flex items-center gap-2 text-damascus-gold text-lg">
+                <span class="w-1.5 h-1.5 bg-damascus-gold/40 rounded-full"></span>
+                <span class="material-symbols-outlined text-[18px] text-damascus-gold" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="w-1.5 h-1.5 bg-damascus-gold/40 rounded-full"></span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Minimal Editorial Footer -->
+    <footer class="bg-transparent border-t border-horizon-mist/40 py-16 px-6 md:px-12 w-full mt-auto relative">
+        <div class="max-w-[1536px] mx-auto grid grid-cols-1 md:grid-cols-3 items-center gap-8 w-full">
+            <!-- Left Identifiers -->
+            <div class="flex flex-col items-center md:items-start gap-1">
+                <span class="font-headline text-[22px] tracking-tight text-midnight-sapphire uppercase">JIY</span>
+            </div>
+            
+            <!-- Centered Navigation & Social Core -->
+            <div class="flex flex-col items-center text-center gap-4">
+                <div class="flex gap-8 font-body text-[12px] text-secondary tracking-wide justify-center">
+                    <a class="hover:text-damascus-gold transition-colors duration-300" href="#">Indices</a>
+                    <a class="hover:text-damascus-gold transition-colors duration-300" href="#">About JIY</a>
+                    <a class="hover:text-damascus-gold transition-colors duration-300" href="#">Privacy Guidelines</a>
+                </div>
+                <!-- Premium Minimalist Social Actions -->
+                <div class="flex items-center gap-5 mt-2 justify-center">
+                    <a class="text-ash-slate hover:text-damascus-gold transition-all duration-300 hover:-translate-y-0.5" href="#" aria-label="Instagram">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>
+                    </a>
+                    <a class="text-ash-slate hover:text-damascus-gold transition-all duration-300 hover:-translate-y-0.5" href="#" aria-label="YouTube">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path></svg>
+                    </a>
+                    <a class="text-ash-slate hover:text-damascus-gold transition-all duration-300 hover:-translate-y-0.5" href="#" aria-label="LinkedIn">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg>
+                    </a>
+                    <a class="text-ash-slate hover:text-damascus-gold transition-all duration-300 hover:-translate-y-0.5" href="#" aria-label="Other Link">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M13.511 5.833c-.445 0-.806.361-.806.806v5.105c0 .445.361.806.806.806h1.105c.445 0 .806-.361.806-.806v-5.105c0-.445-.361-.806-.806-.806h-1.105zm-4.122 0c-.445 0-.806.361-.806.806v5.105c0 .445.361.806.806.806h1.105c.445 0 .806-.361.806-.806v-5.105c0-.445-.361-.806-.806-.806h-1.105zm-4.122 0c-.445 0-.806.361-.806.806v5.105c0 .445.361.806.806.806h1.105c.445 0 .806-.361.806-.806v-5.105c0-.445-.361-.806-.806-.806h-1.105zm13.122-5.833h-12.778c-3.533 0-6.389 2.856-6.389 6.389v11.222c0 3.533 2.856 6.389 6.389 6.389h12.778c3.533 0 6.389-2.856 6.389-6.389v-11.222c0-3.533-2.856-6.389-6.389-6.389zm-1.105 19.111h-10.568c-.445 0-.806-.361-.806-.806v-1.105c0-.445.361-.806.806-.806h10.568c.445 0 .806 3.61.806.806v1.105c0 .445-.361.806-.806.806z"></path></svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Right-aligned copyright text -->
+            <p class="font-body text-secondary/50 text-[11px] text-center md:text-right">&copy; 2026 JIY. Designed for elite communities of faith and wisdom.</p>
+        </div>
+    </footer>
+
+    <!-- Custom Elegant Apple-Style Modal Notification Dialogs -->
+    <div id="pass-modal" class="fixed inset-0 z-50 bg-[#0c1322]/45 backdrop-blur-md hidden flex items-center justify-center p-4 transition-all duration-300">
+        <div class="bg-[#faf8f5] max-w-sm w-full rounded-2xl border border-damascus-gold/30 p-8 shadow-[0_30px_70px_-15px_rgba(22,34,56,0.25)] flex flex-col items-center text-center gap-5 transform scale-95 transition-transform duration-300" id="pass-modal-card">
+            <span class="font-label-eyebrow text-[9px] text-damascus-gold tracking-[0.25em] font-bold uppercase">DIGITAL PASS SECURITY</span>
+            <div class="w-40 h-40 bg-white border border-horizon-mist/60 rounded-xl flex items-center justify-center p-3 shadow-inner">
+                <!-- Premium High-Fidelity Mock QR Code representation using beautiful vector design -->
+                <svg class="w-full h-full text-midnight-sapphire" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="5" y="5" width="25" height="25" rx="2" />
+                    <rect x="11" y="11" width="13" height="13" rx="1" />
+                    <rect x="70" y="5" width="25" height="25" rx="2" />
+                    <rect x="76" y="11" width="13" height="13" rx="1" />
+                    <rect x="5" y="70" width="25" height="25" rx="2" />
+                    <rect x="11" y="76" width="13" height="13" rx="1" />
+                    <path d="M45 10 h15 M45 20 h5 M55 35 h15 M35 45 h30 M15 45 h10 M10 55 h25 M45 55 h10 M80 45 h10 M70 55 h20 M55 70 h20 M45 80 h35 M45 90 h15" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="flex flex-col gap-1">
+                <h4 class="font-headline text-[22px] text-midnight-sapphire">Member Identity Key</h4>
+                <p class="font-body text-secondary text-[13px] font-light">Scan this pass at physical terminals to entry confirm registration.</p>
+                <code class="bg-warm-silk-grey text-midnight-sapphire px-3 py-1.5 rounded-md text-[12px] font-mono tracking-wider mt-2 border border-horizon-mist/50">JIY-7762-SUMMER26</code>
+            </div>
+            <button onclick="closePassModal()" class="w-full bg-midnight-sapphire hover:bg-damascus-gold hover:text-midnight-sapphire text-white font-label-eyebrow text-[10px] py-4 rounded-full uppercase tracking-[0.18em] font-bold transition-all duration-300 mt-2">
+                Dismiss Access Pass
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Notification for Scholar submission success -->
+    <div id="toast-notif" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-500 max-w-sm w-full bg-midnight-sapphire text-white border border-damascus-gold/30 rounded-xl p-5 shadow-[0_20px_50px_rgba(22,34,56,0.3)] flex items-start gap-4">
+        <div class="w-8 h-8 rounded-full bg-damascus-gold/15 text-damascus-gold flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[18px]">verified</span>
+        </div>
+        <div class="flex flex-col gap-1">
+            <span class="font-label-eyebrow text-[9px] text-damascus-gold tracking-widest font-bold uppercase">SUBMISSION SUCCESSFUL</span>
+            <p class="font-body text-[13px] text-horizon-mist font-light">Your theological inquiry has been safely transmitted to the Board of Resident Scholars.</p>
+        </div>
+    </div>
+
+    <!-- Interaction Scripts -->
+    <script>
+        // Smoothly toggles the luxury scholar form notebook drawer open/closed
+        function toggleDrawer() {
+            const drawer = document.getElementById('qa-drawer');
+            const chevron = document.getElementById('drawer-chevron');
+            const isHidden = drawer.classList.contains('hidden');
+            
+            if (isHidden) {
+                drawer.classList.remove('hidden');
+                // Allow a tiny layout tick before transitioning
+                setTimeout(() => {
+                    drawer.style.maxHeight = '600px';
+                    drawer.style.opacity = '1';
+                }, 20);
+                chevron.classList.add('rotate-180');
+            } else {
+                drawer.style.maxHeight = '0px';
+                drawer.style.opacity = '0';
+                setTimeout(() => {
+                    drawer.classList.add('hidden');
+                }, 500);
+                chevron.classList.remove('rotate-180');
+            }
+        }
+
+        // Simulates high-fidelity custom submission interaction (no standard alert UI)
+        function submitScholarForm() {
+            const toast = document.getElementById('toast-notif');
+            // Animate toast entry
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            // Auto-hide toast after 5 seconds
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                toggleDrawer();
+            }, 5000);
+        }
+
+        // Modal triggers for access key
+        function openPassModal() {
+            const modal = document.getElementById('pass-modal');
+            const card = document.getElementById('pass-modal-card');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closePassModal() {
+            const modal = document.getElementById('pass-modal');
+            const card = document.getElementById('pass-modal-card');
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Sleek Tab System Switching
+        function switchWidgetTab(tabName) {
+            const tabRegistered = document.getElementById('tab-registered');
+            const tabHistory = document.getElementById('tab-history');
+            const contentRegistered = document.getElementById('content-registered');
+            const contentHistory = document.getElementById('content-history');
+
+            if (tabName === 'registered') {
+                tabRegistered.className = "font-label-eyebrow text-[10.5px] text-midnight-sapphire border-b-2 border-damascus-gold pb-2 uppercase tracking-[0.2em] font-bold transition-all duration-300 focus:outline-none";
+                tabHistory.className = "font-label-eyebrow text-[10.5px] text-muted-dusk hover:text-midnight-sapphire pb-2 uppercase tracking-[0.2em] font-bold transition-all duration-300 focus:outline-none";
+                contentRegistered.classList.remove('hidden');
+                contentHistory.classList.add('hidden');
+            } else {
+                tabHistory.className = "font-label-eyebrow text-[10.5px] text-midnight-sapphire border-b-2 border-damascus-gold pb-2 uppercase tracking-[0.2em] font-bold transition-all duration-300 focus:outline-none";
+                tabRegistered.className = "font-label-eyebrow text-[10.5px] text-muted-dusk hover:text-midnight-sapphire pb-2 uppercase tracking-[0.2em] font-bold transition-all duration-300 focus:outline-none";
+                contentHistory.classList.remove('hidden');
+                contentRegistered.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
