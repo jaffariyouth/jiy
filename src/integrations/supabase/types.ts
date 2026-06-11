@@ -47,6 +47,63 @@ export type Database = {
         }
         Relationships: []
       }
+      event_registrations: {
+        Row: {
+          cancelled_at: string | null
+          check_in_status: Database["public"]["Enums"]["check_in_status"]
+          checked_in_at: string | null
+          created_at: string
+          event_id: string
+          id: string
+          notes: string | null
+          registered_at: string
+          updated_at: string
+          user_id: string
+          volunteer_shift_id: string | null
+        }
+        Insert: {
+          cancelled_at?: string | null
+          check_in_status?: Database["public"]["Enums"]["check_in_status"]
+          checked_in_at?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          notes?: string | null
+          registered_at?: string
+          updated_at?: string
+          user_id: string
+          volunteer_shift_id?: string | null
+        }
+        Update: {
+          cancelled_at?: string | null
+          check_in_status?: Database["public"]["Enums"]["check_in_status"]
+          checked_in_at?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          notes?: string | null
+          registered_at?: string
+          updated_at?: string
+          user_id?: string
+          volunteer_shift_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_registrations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           capacity: number | null
@@ -192,6 +249,106 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      notification_deliveries: {
+        Row: {
+          attempted_at: string
+          channel: Database["public"]["Enums"]["notification_channel"]
+          created_at: string
+          error: string | null
+          id: string
+          notification_id: string
+          provider: string | null
+          provider_message_id: string | null
+          status: Database["public"]["Enums"]["notification_status"]
+          updated_at: string
+        }
+        Insert: {
+          attempted_at?: string
+          channel: Database["public"]["Enums"]["notification_channel"]
+          created_at?: string
+          error?: string | null
+          id?: string
+          notification_id: string
+          provider?: string | null
+          provider_message_id?: string | null
+          status: Database["public"]["Enums"]["notification_status"]
+          updated_at?: string
+        }
+        Update: {
+          attempted_at?: string
+          channel?: Database["public"]["Enums"]["notification_channel"]
+          created_at?: string
+          error?: string | null
+          id?: string
+          notification_id?: string
+          provider?: string | null
+          provider_message_id?: string | null
+          status?: Database["public"]["Enums"]["notification_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_deliveries_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          channel: Database["public"]["Enums"]["notification_channel"]
+          created_at: string
+          error_message: string | null
+          id: string
+          payload: Json
+          recipient_id: string
+          retry_count: number
+          scheduled_for: string
+          sent_at: string | null
+          status: Database["public"]["Enums"]["notification_status"]
+          template_key: string
+          updated_at: string
+        }
+        Insert: {
+          channel: Database["public"]["Enums"]["notification_channel"]
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          payload?: Json
+          recipient_id: string
+          retry_count?: number
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["notification_status"]
+          template_key: string
+          updated_at?: string
+        }
+        Update: {
+          channel?: Database["public"]["Enums"]["notification_channel"]
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          payload?: Json
+          recipient_id?: string
+          retry_count?: number
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["notification_status"]
+          template_key?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -440,6 +597,16 @@ export type Database = {
         }
         Returns: string
       }
+      enqueue_notification: {
+        Args: {
+          _channel: Database["public"]["Enums"]["notification_channel"]
+          _payload?: Json
+          _recipient_id: string
+          _scheduled_for?: string
+          _template_key: string
+        }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -451,7 +618,10 @@ export type Database = {
     Enums: {
       app_role: "member_isij" | "member_standalone" | "scholar" | "admin"
       article_status: "draft" | "in_review" | "published"
+      check_in_status: "registered" | "checked_in" | "no_show" | "cancelled"
       event_status: "draft" | "published" | "completed" | "cancelled"
+      notification_channel: "email" | "push" | "sms" | "in_app"
+      notification_status: "pending" | "sent" | "failed" | "cancelled"
       question_status: "pending_triage" | "assigned" | "answered" | "rejected"
       subscription_plan: "monthly_10" | "yearly_100"
       subscription_status:
@@ -590,7 +760,10 @@ export const Constants = {
     Enums: {
       app_role: ["member_isij", "member_standalone", "scholar", "admin"],
       article_status: ["draft", "in_review", "published"],
+      check_in_status: ["registered", "checked_in", "no_show", "cancelled"],
       event_status: ["draft", "published", "completed", "cancelled"],
+      notification_channel: ["email", "push", "sms", "in_app"],
+      notification_status: ["pending", "sent", "failed", "cancelled"],
       question_status: ["pending_triage", "assigned", "answered", "rejected"],
       subscription_plan: ["monthly_10", "yearly_100"],
       subscription_status: [
