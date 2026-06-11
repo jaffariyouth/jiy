@@ -1,0 +1,176 @@
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
+// ---------- Public reads ----------
+
+export const listPublicEvents = createServerFn({ method: "GET" }).handler(async () => {
+  // Public read — use admin client with explicit safe-column projection +
+  // strict WHERE filter (matches knowledge guidance for public reads).
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin
+    .from("events")
+    .select("id, title, description, location, starts_at, ends_at, capacity, cover_image_url")
+    .eq("status", "published")
+    .eq("is_member_only", false)
+    .order("starts_at", { ascending: true })
+    .limit(100);
+  if (error) throw new Error(error.message);
+  return { events: data ?? [] };
+});
+
+// ---------- Member-only reads ----------
+
+export const listMemberEvents = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("events")
+      .select("id, title, description, location, starts_at, ends_at, capacity, is_member_only, status, cover_image_url")
+      .eq("status", "published")
+      .order("starts_at", { ascending: true })
+      .limit(200);
+    if (error) throw new Error(error.message);
+    return { events: data ?? [] };
+  });
+
+// ---------- Admin mutations ----------
+
+const createEventSchema = z.object({
+  idempotencyKey: z.string().min(8),
+  title: z.string().min(1).max(200),
+  description: z.string().max(5000).optional(),
+  location: z.string().max(500).optional(),
+  starts_at: z.string().datetime(),
+  ends_at: z.string().datetime().optional(),
+  capacity: z.number().int().min(0).optional(),
+  is_member_only: z.boolean().default(false),
+  cover_image_url: z.string().url().optional(),
+});
+
+export const createEvent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => createEventSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin, checkIdempotency, writeAudit } = await import("./idempotency.server");
+    await assertAdmin(context.supabase, context.userId);
+
+    const idem = await checkIdempotency<{ id: string }>(
+      context.supabase,
+      data.idempotencyKey,
+      context.userId,
+    );
+    if (idem.cached) return idem.cached;
+
+    const { data: row, error } = await context.supabase
+      .from("events")
+      .insert({
+        title: data.title,
+        description: data.description ?? null,
+        location: data.location ?? null,
+        starts_at: data.starts_at,
+        ends_at: data.ends_at ?? null,
+        capacity: data.capacity ?? null,
+        is_member_only: data.is_member_only,
+        cover_image_url: data.cover_image_url ?? null,
+        created_by: context.userId,
+        status: "draft",
+      })
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+
+    await writeAudit(context.supabase, {
+      actorId: context.userId,
+      action: "event.created",
+      entity: "events",
+      entityId: row.id,
+    });
+    await idem.complete({ id: row.id });
+    return { id: row.id };
+  });
+
+const updateEventSchema = createEventSchema.partial().extend({
+  id: z.string().uuid(),
+  idempotencyKey: z.string().min(8),
+});
+
+export const updateEvent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => updateEventSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin, checkIdempotency, writeAudit } = await import("./idempotency.server");
+    await assertAdmin(context.supabase, context.userId);
+
+    const idem = await checkIdempotency<{ ok: true }>(
+      context.supabase,
+      data.idempotencyKey,
+      context.userId,
+    );
+    if (idem.cached) return idem.cached;
+
+    const { id, idempotencyKey: _ik, ...patch } = data;
+    const { error } = await context.supabase.from("events").update(patch).eq("id", id);
+    if (error) throw new Error(error.message);
+
+    await writeAudit(context.supabase, {
+      actorId: context.userId,
+      action: "event.updated",
+      entity: "events",
+      entityId: id,
+      metadata: { fields: Object.keys(patch) },
+    });
+    await idem.complete({ ok: true });
+    return { ok: true as const };
+  });
+
+const transitionSchema = z.object({
+  id: z.string().uuid(),
+  idempotencyKey: z.string().min(8),
+});
+
+export const publishEvent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => transitionSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin, checkIdempotency, writeAudit } = await import("./idempotency.server");
+    await assertAdmin(context.supabase, context.userId);
+    const idem = await checkIdempotency<{ ok: true }>(context.supabase, data.idempotencyKey, context.userId);
+    if (idem.cached) return idem.cached;
+    const { error } = await context.supabase
+      .from("events")
+      .update({ status: "published" })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    await writeAudit(context.supabase, {
+      actorId: context.userId,
+      action: "event.published",
+      entity: "events",
+      entityId: data.id,
+    });
+    await idem.complete({ ok: true });
+    return { ok: true as const };
+  });
+
+export const cancelEvent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => transitionSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin, checkIdempotency, writeAudit } = await import("./idempotency.server");
+    await assertAdmin(context.supabase, context.userId);
+    const idem = await checkIdempotency<{ ok: true }>(context.supabase, data.idempotencyKey, context.userId);
+    if (idem.cached) return idem.cached;
+    const { error } = await context.supabase
+      .from("events")
+      .update({ status: "cancelled" })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    await writeAudit(context.supabase, {
+      actorId: context.userId,
+      action: "event.cancelled",
+      entity: "events",
+      entityId: data.id,
+    });
+    await idem.complete({ ok: true });
+    return { ok: true as const };
+  });
