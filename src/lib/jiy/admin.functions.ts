@@ -8,7 +8,6 @@ type AppRole = Database["public"]["Enums"]["app_role"];
 const APP_ROLES: AppRole[] = [
   "admin",
   "scholar",
-  "editor",
   "member_isij",
   "member_standalone",
 ];
@@ -19,7 +18,7 @@ export type AdminUserDTO = {
   country: string | null;
   onboardingCompletedAt: string | null;
   roles: AppRole[];
-  isijExpiresAt: string | null;
+  isijNumber: string | null;
 };
 
 export const getMyRoles = createServerFn({ method: "GET" })
@@ -61,13 +60,10 @@ export const listUsers = createServerFn({ method: "POST" })
     if (!profiles || profiles.length === 0) return [];
 
     const ids = profiles.map((p) => p.id);
-    const [{ data: roleRows }, { data: isijRows }] = await Promise.all([
-      supabaseAdmin.from("user_roles").select("user_id, role").in("user_id", ids),
-      supabaseAdmin
-        .from("isij_registry_cache")
-        .select("user_id, expires_at")
-        .in("user_id", ids),
-    ]);
+    const { data: roleRows } = await supabaseAdmin
+      .from("user_roles")
+      .select("user_id, role")
+      .in("user_id", ids);
 
     const rolesByUser = new Map<string, AppRole[]>();
     for (const r of roleRows ?? []) {
@@ -75,8 +71,6 @@ export const listUsers = createServerFn({ method: "POST" })
       list.push(r.role);
       rolesByUser.set(r.user_id, list);
     }
-    const isijByUser = new Map<string, string | null>();
-    for (const i of isijRows ?? []) isijByUser.set(i.user_id, i.expires_at);
 
     return profiles.map((p) => ({
       id: p.id,
@@ -84,7 +78,7 @@ export const listUsers = createServerFn({ method: "POST" })
       country: p.country,
       onboardingCompletedAt: p.onboarding_completed_at,
       roles: rolesByUser.get(p.id) ?? [],
-      isijExpiresAt: isijByUser.get(p.id) ?? null,
+      isijNumber: null,
     }));
   });
 
@@ -196,19 +190,18 @@ export const markUserAsISIJMember = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { error: cacheErr } = await supabaseAdmin
+    // Stub: real ISIJ registry sync lands in a later phase. For now we just
+    // record the asserted isij_number in the audit log and grant the role.
+    await supabaseAdmin
       .from("isij_registry_cache")
       .upsert(
         {
-          user_id: data.userId,
-          isij_id: data.isijId,
-          expires_at: data.expiresAt ?? null,
-          verified_at: new Date().toISOString(),
-          source: "admin_manual",
+          isij_number: data.isijId,
+          status: "manual",
+          synced_at: new Date().toISOString(),
         },
-        { onConflict: "user_id" },
+        { onConflict: "isij_number" },
       );
-    if (cacheErr) throw new Error(cacheErr.message);
 
     const { error: roleErr } = await supabaseAdmin
       .from("user_roles")
