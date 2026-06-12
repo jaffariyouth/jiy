@@ -42,16 +42,16 @@ function AdminUsersPage() {
   });
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8">
-      <header className="mb-6 flex items-center justify-between gap-4">
-        <div>
+    <main className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-8">
+      <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-2xl font-semibold tracking-tight">Users</h1>
           <p className="text-sm text-muted-foreground">
             Grant or revoke roles, and mark verified ISIJ members.
           </p>
         </div>
         <form
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 w-full sm:w-auto"
           onSubmit={(e) => {
             e.preventDefault();
             setQ(search.trim());
@@ -61,14 +61,14 @@ function AdminUsersPage() {
             placeholder="Search display name…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-64"
+            className="w-full sm:w-64"
           />
-          <Button type="submit" variant="secondary">Search</Button>
+          <Button type="submit" variant="secondary" className="shrink-0">Search</Button>
         </form>
       </header>
 
-      <div className="rounded-md border">
-        <Table>
+      <div className="rounded-md border overflow-x-auto">
+        <Table className="min-w-[720px]">
           <TableHeader>
             <TableRow>
               <TableHead>User</TableHead>
@@ -164,7 +164,7 @@ function UserRow({ user, onChange }: { user: AdminUserDTO; onChange: () => void 
         </div>
       </TableCell>
       <TableCell className="text-right">
-        <div className="inline-flex flex-wrap gap-2">
+        <div className="flex flex-wrap justify-end gap-2">
           {GRANTABLE.filter((g) => !user.roles.includes(g.role)).map((g) => (
             <Button
               key={g.role}
