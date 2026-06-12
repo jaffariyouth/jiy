@@ -1,18 +1,22 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import {
+  AuthLayout,
+  AuthCard,
+  FormInput,
+  PrimaryButton,
+  ArchitecturalDivider,
+  MaterialIcon,
+} from "@/components/auth";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Sign in — JIY" },
-      { name: "description", content: "Sign in or create your JIY account." },
+      { title: "JIY — Member Gateway" },
+      { name: "description", content: "Sign in to your Jaffari Islamic Youth account." },
     ],
   }),
   component: AuthPage,
@@ -27,38 +31,9 @@ function AuthPage() {
     });
   }, [navigate]);
 
-  return (
-    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-12">
-      <div className="w-full max-w-md">
-        <h1 className="mb-6 text-center text-2xl font-semibold tracking-tight">
-          Welcome to JIY
-        </h1>
-        <Tabs defaultValue="signin">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="signin">Sign in</TabsTrigger>
-            <TabsTrigger value="signup">Create account</TabsTrigger>
-          </TabsList>
-          <TabsContent value="signin">
-            <SignInForm />
-          </TabsContent>
-          <TabsContent value="signup">
-            <SignUpForm />
-          </TabsContent>
-        </Tabs>
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          <Link to="/" className="underline-offset-4 hover:underline">
-            Back to home
-          </Link>
-        </p>
-      </div>
-    </main>
-  );
-}
-
-function SignInForm() {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [keepSignedIn, setKeepSignedIn] = useState(false);
   const [busy, setBusy] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
@@ -73,69 +48,110 @@ function SignInForm() {
     navigate({ to: "/dashboard" });
   }
 
-  return (
-    <form onSubmit={onSubmit} className="mt-4 space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="signin-email">Email</Label>
-        <Input id="signin-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="signin-password">Password</Label>
-        <Input id="signin-password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-      </div>
-      <Button type="submit" className="w-full" disabled={busy}>
-        {busy ? "Signing in…" : "Sign in"}
-      </Button>
-    </form>
-  );
-}
-
-function SignUpForm() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (password.length < 8) {
-      toast.error("Password must be at least 8 characters.");
-      return;
-    }
-    setBusy(true);
-    const emailRedirectTo =
-      typeof window !== "undefined" ? `${window.location.origin}/onboarding` : undefined;
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo },
-    });
-    setBusy(false);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    if (data.session) {
-      navigate({ to: "/onboarding" });
-    } else {
-      toast.success("Check your email to confirm your account.");
-    }
+  function onISIJ() {
+    toast.info("ISIJ Portal SSO is coming soon.");
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-4 space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="signup-email">Email</Label>
-        <Input id="signup-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="signup-password">Password</Label>
-        <Input id="signup-password" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} />
-        <p className="text-xs text-muted-foreground">Minimum 8 characters.</p>
-      </div>
-      <Button type="submit" className="w-full" disabled={busy}>
-        {busy ? "Creating account…" : "Create account"}
-      </Button>
-    </form>
+    <AuthLayout
+      headerVariant={{ kind: "home" }}
+      headerPosition="fixed"
+      footerVariant="full"
+    >
+      <AuthCard
+        footerSlice={
+          <p className="font-body-sm text-body-sm text-midnight-sapphire text-center">
+            Not an ISIJ or JIY member yet?
+            <Link to="/register" className="text-deep-garnet font-medium hover:underline ml-1">
+              Create a JIY Account
+            </Link>
+          </p>
+        }
+        contentClassName="items-center"
+      >
+        {/* Header */}
+        <div className="text-center mb-[40px] flex flex-col items-center gap-4 w-full">
+          <span className="font-label-eyebrow text-label-eyebrow text-deep-garnet uppercase">
+            MEMBER Login
+          </span>
+          <h1 className="font-headline-sm text-headline-sm text-midnight-sapphire max-w-sm leading-tight">
+            Sign in to your JIY Account
+          </h1>
+        </div>
+
+        {/* SSO */}
+        <div className="w-full flex flex-col items-center gap-3 mb-[40px]">
+          <PrimaryButton
+            type="button"
+            onClick={onISIJ}
+            trailingIcon={<MaterialIcon name="login" className="text-[20px]" />}
+          >
+            Authenticate via ISIJ Portal
+          </PrimaryButton>
+          <p className="font-caption text-caption text-ash-slate text-center max-w-xs">
+            Use your existing ISIJ credentials for seamless access and automatic membership verification.
+          </p>
+        </div>
+
+        {/* Separator */}
+        <div className="w-full mb-[40px]">
+          <ArchitecturalDivider chipBgClassName="bg-surface-container-lowest">
+            <span className="font-caption text-[11px] text-muted-dusk uppercase tracking-widest">
+              or use JIY credentials
+            </span>
+          </ArchitecturalDivider>
+        </div>
+
+        {/* Form */}
+        <form className="w-full flex flex-col gap-6" onSubmit={onSubmit}>
+          <div className="flex flex-col gap-4">
+            <FormInput
+              id="email"
+              name="email"
+              type="email"
+              required
+              label="Email Address"
+              placeholder="scholar@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <FormInput
+              id="password"
+              name="password"
+              type="password"
+              required
+              label="Password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <div className="flex items-center justify-between mt-2">
+            <label className="flex items-center gap-2 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={keepSignedIn}
+                onChange={(e) => setKeepSignedIn(e.target.checked)}
+                className="w-4 h-4 rounded border-horizon-mist text-midnight-sapphire focus:ring-midnight-sapphire bg-surface-container-lowest cursor-pointer"
+              />
+              <span className="font-body-sm text-body-sm text-ash-slate group-hover:text-midnight-sapphire transition-colors">
+                Keep me signed in
+              </span>
+            </label>
+            <a
+              href="#"
+              className="font-body-sm text-body-sm text-ash-slate hover:text-midnight-sapphire hover:underline transition-all"
+            >
+              Forgot password?
+            </a>
+          </div>
+
+          <PrimaryButton type="submit" variant="outline" className="mt-4" disabled={busy}>
+            {busy ? "Signing in…" : "Sign In with JIY Account"}
+          </PrimaryButton>
+        </form>
+      </AuthCard>
+    </AuthLayout>
   );
 }

@@ -9,15 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedOnboardingStep3RouteImport } from './routes/_authenticated/onboarding.step-3'
+import { Route as AuthenticatedOnboardingStep2RouteImport } from './routes/_authenticated/onboarding.step-2'
+import { Route as AuthenticatedOnboardingStep1RouteImport } from './routes/_authenticated/onboarding.step-1'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as ApiPublicCronDispatchNotificationsRouteImport } from './routes/api/public/cron/dispatch-notifications'
 
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
@@ -47,6 +56,24 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedOnboardingStep3Route =
+  AuthenticatedOnboardingStep3RouteImport.update({
+    id: '/step-3',
+    path: '/step-3',
+    getParentRoute: () => AuthenticatedOnboardingRoute,
+  } as any)
+const AuthenticatedOnboardingStep2Route =
+  AuthenticatedOnboardingStep2RouteImport.update({
+    id: '/step-2',
+    path: '/step-2',
+    getParentRoute: () => AuthenticatedOnboardingRoute,
+  } as any)
+const AuthenticatedOnboardingStep1Route =
+  AuthenticatedOnboardingStep1RouteImport.update({
+    id: '/step-1',
+    path: '/step-1',
+    getParentRoute: () => AuthenticatedOnboardingRoute,
+  } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: '/admin/users',
   path: '/admin/users',
@@ -63,18 +90,26 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/events': typeof EventsRoute
+  '/register': typeof RegisterRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
+  '/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
+  '/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/events': typeof EventsRoute
+  '/register': typeof RegisterRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
+  '/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
+  '/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
 }
 export interface FileRoutesById {
@@ -83,9 +118,13 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/events': typeof EventsRoute
+  '/register': typeof RegisterRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
+  '/_authenticated/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
+  '/_authenticated/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
 }
 export interface FileRouteTypes {
@@ -94,18 +133,26 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/events'
+    | '/register'
     | '/dashboard'
     | '/onboarding'
     | '/admin/users'
+    | '/onboarding/step-1'
+    | '/onboarding/step-2'
+    | '/onboarding/step-3'
     | '/api/public/cron/dispatch-notifications'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/events'
+    | '/register'
     | '/dashboard'
     | '/onboarding'
     | '/admin/users'
+    | '/onboarding/step-1'
+    | '/onboarding/step-2'
+    | '/onboarding/step-3'
     | '/api/public/cron/dispatch-notifications'
   id:
     | '__root__'
@@ -113,9 +160,13 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/events'
+    | '/register'
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
     | '/_authenticated/admin/users'
+    | '/_authenticated/onboarding/step-1'
+    | '/_authenticated/onboarding/step-2'
+    | '/_authenticated/onboarding/step-3'
     | '/api/public/cron/dispatch-notifications'
   fileRoutesById: FileRoutesById
 }
@@ -124,11 +175,19 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   EventsRoute: typeof EventsRoute
+  RegisterRoute: typeof RegisterRoute
   ApiPublicCronDispatchNotificationsRoute: typeof ApiPublicCronDispatchNotificationsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/events': {
       id: '/events'
       path: '/events'
@@ -171,6 +230,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/onboarding/step-3': {
+      id: '/_authenticated/onboarding/step-3'
+      path: '/step-3'
+      fullPath: '/onboarding/step-3'
+      preLoaderRoute: typeof AuthenticatedOnboardingStep3RouteImport
+      parentRoute: typeof AuthenticatedOnboardingRoute
+    }
+    '/_authenticated/onboarding/step-2': {
+      id: '/_authenticated/onboarding/step-2'
+      path: '/step-2'
+      fullPath: '/onboarding/step-2'
+      preLoaderRoute: typeof AuthenticatedOnboardingStep2RouteImport
+      parentRoute: typeof AuthenticatedOnboardingRoute
+    }
+    '/_authenticated/onboarding/step-1': {
+      id: '/_authenticated/onboarding/step-1'
+      path: '/step-1'
+      fullPath: '/onboarding/step-1'
+      preLoaderRoute: typeof AuthenticatedOnboardingStep1RouteImport
+      parentRoute: typeof AuthenticatedOnboardingRoute
+    }
     '/_authenticated/admin/users': {
       id: '/_authenticated/admin/users'
       path: '/admin/users'
@@ -188,15 +268,33 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedOnboardingRouteChildren {
+  AuthenticatedOnboardingStep1Route: typeof AuthenticatedOnboardingStep1Route
+  AuthenticatedOnboardingStep2Route: typeof AuthenticatedOnboardingStep2Route
+  AuthenticatedOnboardingStep3Route: typeof AuthenticatedOnboardingStep3Route
+}
+
+const AuthenticatedOnboardingRouteChildren: AuthenticatedOnboardingRouteChildren =
+  {
+    AuthenticatedOnboardingStep1Route: AuthenticatedOnboardingStep1Route,
+    AuthenticatedOnboardingStep2Route: AuthenticatedOnboardingStep2Route,
+    AuthenticatedOnboardingStep3Route: AuthenticatedOnboardingStep3Route,
+  }
+
+const AuthenticatedOnboardingRouteWithChildren =
+  AuthenticatedOnboardingRoute._addFileChildren(
+    AuthenticatedOnboardingRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRouteWithChildren
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedOnboardingRoute: AuthenticatedOnboardingRouteWithChildren,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
 }
 
@@ -208,19 +306,10 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   EventsRoute: EventsRoute,
+  RegisterRoute: RegisterRoute,
   ApiPublicCronDispatchNotificationsRoute:
     ApiPublicCronDispatchNotificationsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
