@@ -4,20 +4,157 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/*
- * Design system definition.
- *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
- */
+@theme {
+  /* ============================================
+   * JIY Editorial System — design tokens
+   * ========================================== */
 
+  /* Brand colors */
+  --color-midnight-sapphire: #162238;
+  --color-alabaster-parchment: #faf8f5;
+  --color-persian-indigo: #21304a;
+  --color-deep-garnet: #7a2230;
+  --color-damascus-gold: #caa460;
+  --color-horizon-mist: #dcd9d2;
+  --color-warm-silk-grey: #f3eee7;
+  --color-ash-slate: #616975;
+  --color-muted-dusk: #8993a4;
+
+  /* Material surface palette */
+  --color-surface: #f8f9ff;
+  --color-surface-dim: #d3dae8;
+  --color-surface-bright: #f8f9ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eef4ff;
+  --color-surface-container: #e7eefd;
+  --color-surface-container-high: #e1e9f7;
+  --color-surface-container-highest: #dbe3f1;
+  --color-surface-variant: #dbe3f1;
+  --color-surface-tint: #535e77;
+  --color-on-surface: #141c26;
+  --color-on-surface-variant: #45474d;
+  --color-inverse-surface: #29313c;
+  --color-inverse-on-surface: #eaf1ff;
+  --color-outline: #75777e;
+  --color-outline-variant: #c5c6cd;
+  --color-background: #f8f9ff;
+  --color-on-background: #141c26;
+
+  --color-primary: #010b21;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #162238;
+  --color-on-primary-container: #7e89a4;
+  --color-inverse-primary: #bbc6e3;
+  --color-primary-fixed: #d7e2ff;
+  --color-primary-fixed-dim: #bbc6e3;
+  --color-on-primary-fixed: #0f1b31;
+  --color-on-primary-fixed-variant: #3b475f;
+
+  --color-secondary: #5e5e5c;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #e1dfdc;
+  --color-on-secondary-container: #636361;
+  --color-secondary-fixed: #e4e2df;
+  --color-secondary-fixed-dim: #c8c6c4;
+  --color-on-secondary-fixed: #1b1c1a;
+  --color-on-secondary-fixed-variant: #474745;
+
+  --color-tertiary: #120a00;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #2f1f00;
+  --color-on-tertiary-container: #a78443;
+  --color-tertiary-fixed: #ffdea8;
+  --color-tertiary-fixed-dim: #e9c17a;
+  --color-on-tertiary-fixed: #271900;
+  --color-on-tertiary-fixed-variant: #5d4205;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  /* Fonts */
+  --font-display: "Playfair Display", serif;
+  --font-headline: "Playfair Display", serif;
+  --font-headline-lg: "Playfair Display", serif;
+  --font-headline-sm: "Playfair Display", serif;
+  --font-body: "Hanken Grotesk", sans-serif;
+  --font-body-sm: "Hanken Grotesk", sans-serif;
+  --font-subheading: "Hanken Grotesk", sans-serif;
+  --font-label-eyebrow: "Hanken Grotesk", sans-serif;
+  --font-caption: "Hanken Grotesk", sans-serif;
+
+  /* Type scale */
+  --text-display: 80px;
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -2.40px;
+  --text-display--font-weight: 400;
+
+  --text-headline-lg: 72px;
+  --text-headline-lg--line-height: 1.10;
+  --text-headline-lg--letter-spacing: -2.16px;
+  --text-headline-lg--font-weight: 400;
+
+  --text-headline: 64px;
+  --text-headline--line-height: 1.10;
+  --text-headline--letter-spacing: -1.98px;
+  --text-headline--font-weight: 400;
+
+  --text-headline-sm: 48px;
+  --text-headline-sm--line-height: 1.10;
+  --text-headline-sm--letter-spacing: -1.44px;
+  --text-headline-sm--font-weight: 400;
+
+  --text-subheading: 20px;
+  --text-subheading--line-height: 1.30;
+  --text-subheading--letter-spacing: -0.20px;
+  --text-subheading--font-weight: 350;
+
+  --text-body: 16px;
+  --text-body--line-height: 1.45;
+  --text-body--font-weight: 400;
+
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 1.40;
+  --text-body-sm--font-weight: 400;
+
+  --text-label-eyebrow: 14px;
+  --text-label-eyebrow--line-height: 1.25;
+  --text-label-eyebrow--letter-spacing: 0.06em;
+  --text-label-eyebrow--font-weight: 700;
+
+  --text-caption: 12px;
+  --text-caption--line-height: 1.20;
+  --text-caption--letter-spacing: 0.02em;
+  --text-caption--font-weight: 400;
+
+  --text-form-title: 32px;
+  --text-form-title--line-height: 1.20;
+  --text-form-title--font-weight: 400;
+
+  --text-form-label: 12px;
+  --text-form-label--line-height: 1.20;
+  --text-form-label--letter-spacing: 0.05em;
+  --text-form-label--font-weight: 700;
+
+  --text-form-disclaimer: 13px;
+  --text-form-disclaimer--line-height: 1.40;
+  --text-form-disclaimer--font-weight: 400;
+
+  /* Radii */
+  --radius-component: 12px;
+  --radius-card: 24px;
+
+  /* Spacing (custom semantic keys from HTML config) */
+  --spacing-base: 8px;
+  --spacing-gap-element: 16px;
+  --spacing-gap-section: 64px;
+  --spacing-margin-safe: 48px;
+  --spacing-max-width: 1536px;
+  --spacing-nav-height: 72px;
+}
+
+/* Keep existing shadcn token mapping (used by shadcn primitives still in the app). */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -26,15 +163,11 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
@@ -63,15 +196,11 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
   --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
   --muted-foreground: oklch(0.554 0.046 257.417);
@@ -97,48 +226,33 @@
   --sidebar-ring: oklch(0.704 0.04 256.788);
 }
 
-.dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+@utility material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
+@utility material-symbols-fill {
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
 }
 
 @layer base {
   * {
     border-color: var(--color-border);
   }
-
   body {
     background-color: var(--color-background);
-    color: var(--color-foreground);
+    color: var(--color-foreground, var(--color-on-surface));
+    font-family: var(--font-body);
   }
 }
