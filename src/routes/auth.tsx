@@ -70,7 +70,7 @@ function AuthPage() {
         contentClassName="items-center"
       >
         {/* Header */}
-        <div className="text-center mb-[40px] flex flex-col items-center gap-4 w-full">
+        <div className="text-center mb-8 md:mb-10 flex flex-col items-center gap-4 w-full">
           <span className="font-label-eyebrow text-label-eyebrow text-deep-garnet uppercase">
             MEMBER Login
           </span>
@@ -80,7 +80,7 @@ function AuthPage() {
         </div>
 
         {/* SSO */}
-        <div className="w-full flex flex-col items-center gap-3 mb-[40px]">
+        <div className="w-full flex flex-col items-center gap-3 mb-8 md:mb-10">
           <PrimaryButton
             type="button"
             onClick={onISIJ}
@@ -94,7 +94,7 @@ function AuthPage() {
         </div>
 
         {/* Separator */}
-        <div className="w-full mb-[40px]">
+        <div className="w-full mb-8 md:mb-10">
           <ArchitecturalDivider chipBgClassName="bg-surface-container-lowest">
             <span className="font-caption text-[11px] text-muted-dusk uppercase tracking-widest">
               or use JIY credentials
@@ -127,7 +127,7 @@ function AuthPage() {
             />
           </div>
 
-          <div className="flex items-center justify-between mt-2">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mt-2">
             <label className="flex items-center gap-2 cursor-pointer group">
               <input
                 type="checkbox"

@@ -25,7 +25,7 @@ export function TransactionalFooter({ variant = "minimal" }: Props) {
         <p className="font-body text-body-sm text-secondary">
           © 2024 JIY Publishing House. All rights reserved.
         </p>
-        <div className="flex gap-6 mt-2">
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-2 text-center">
           <a className="font-body text-body-sm text-secondary hover:text-deep-garnet transition-colors duration-200" href="#">Archives</a>
           <a className="font-body text-body-sm text-secondary hover:text-deep-garnet transition-colors duration-200" href="#">Submission Guidelines</a>
           <a className="font-body text-body-sm text-secondary hover:text-deep-garnet transition-colors duration-200" href="#">Membership</a>

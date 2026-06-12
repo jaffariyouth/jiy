@@ -36,7 +36,7 @@ function Step1Page() {
     >
       <AuthCard contentClassName="">
         <div className="text-center mb-gap-section">
-          <h1 className="font-headline-sm text-[32px] text-midnight-sapphire mb-base">
+          <h1 className="font-headline-sm text-form-title text-midnight-sapphire mb-base">
             Tell us about yourself
           </h1>
         </div>

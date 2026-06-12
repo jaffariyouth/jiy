@@ -85,22 +85,22 @@
   --font-caption: "Hanken Grotesk", sans-serif;
 
   /* Type scale */
-  --text-display: 80px;
+  --text-display: clamp(48px, 9vw, 80px);
   --text-display--line-height: 1.05;
   --text-display--letter-spacing: -2.40px;
   --text-display--font-weight: 400;
 
-  --text-headline-lg: 72px;
+  --text-headline-lg: clamp(44px, 8vw, 72px);
   --text-headline-lg--line-height: 1.10;
   --text-headline-lg--letter-spacing: -2.16px;
   --text-headline-lg--font-weight: 400;
 
-  --text-headline: 64px;
+  --text-headline: clamp(36px, 7vw, 64px);
   --text-headline--line-height: 1.10;
   --text-headline--letter-spacing: -1.98px;
   --text-headline--font-weight: 400;
 
-  --text-headline-sm: 48px;
+  --text-headline-sm: clamp(28px, 6vw, 48px);
   --text-headline-sm--line-height: 1.10;
   --text-headline-sm--letter-spacing: -1.44px;
   --text-headline-sm--font-weight: 400;
@@ -128,7 +128,7 @@
   --text-caption--letter-spacing: 0.02em;
   --text-caption--font-weight: 400;
 
-  --text-form-title: 32px;
+  --text-form-title: clamp(24px, 4.5vw, 32px);
   --text-form-title--line-height: 1.20;
   --text-form-title--font-weight: 400;
 
@@ -147,11 +147,11 @@
 
   /* Spacing (custom semantic keys from HTML config) */
   --spacing-base: 8px;
-  --spacing-gap-element: 16px;
-  --spacing-gap-section: 64px;
-  --spacing-margin-safe: 48px;
+  --spacing-gap-element: clamp(12px, 2.5vw, 16px);
+  --spacing-gap-section: clamp(32px, 6vw, 64px);
+  --spacing-margin-safe: clamp(20px, 5vw, 48px);
   --spacing-max-width: 1536px;
-  --spacing-nav-height: 72px;
+  --spacing-nav-height: clamp(56px, 8vw, 72px);
 }
 
 /* Keep existing shadcn token mapping (used by shadcn primitives still in the app). */
