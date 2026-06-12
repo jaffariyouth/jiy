@@ -354,25 +354,34 @@ export type Database = {
         Row: {
           age_demographic: string | null
           avatar_url: string | null
+          consent_marketing: boolean
+          country: string | null
           created_at: string
           display_name: string | null
           id: string
+          onboarding_completed_at: string | null
           updated_at: string
         }
         Insert: {
           age_demographic?: string | null
           avatar_url?: string | null
+          consent_marketing?: boolean
+          country?: string | null
           created_at?: string
           display_name?: string | null
           id: string
+          onboarding_completed_at?: string | null
           updated_at?: string
         }
         Update: {
           age_demographic?: string | null
           avatar_url?: string | null
+          consent_marketing?: boolean
+          country?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
+          onboarding_completed_at?: string | null
           updated_at?: string
         }
         Relationships: []
