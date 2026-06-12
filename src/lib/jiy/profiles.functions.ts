@@ -2,6 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { checkIdempotency, writeAudit } from "./idempotency.server";
+import type { Database } from "@/integrations/supabase/types";
+
+type ProfileUpdate = Database["public"]["Tables"]["profiles"]["Update"];
 
 const AGE_DEMOGRAPHICS = ["under_18", "18_24", "25_34", "35_44", "45_54", "55_plus"] as const;
 
@@ -59,7 +62,7 @@ export const updateMyProfile = createServerFn({ method: "POST" })
     );
     if (cached) return cached;
 
-    const patch: Record<string, unknown> = {};
+    const patch: ProfileUpdate = {};
     if (data.displayName !== undefined) patch.display_name = data.displayName;
     if (data.ageDemographic !== undefined) patch.age_demographic = data.ageDemographic;
     if (data.country !== undefined) patch.country = data.country;
