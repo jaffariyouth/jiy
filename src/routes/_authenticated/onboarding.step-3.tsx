@@ -52,7 +52,7 @@ function Step3Page() {
       <AuthCard contentClassName="gap-gap-section">
         {/* Header */}
         <div className="text-center flex flex-col gap-base">
-          <h1 className="font-headline text-midnight-sapphire tracking-tighter text-[32px] leading-tight">
+          <h1 className="font-headline text-midnight-sapphire tracking-tighter text-form-title leading-tight">
             Stay close to the community
           </h1>
           <p className="font-body-sm text-body-sm text-ash-slate">

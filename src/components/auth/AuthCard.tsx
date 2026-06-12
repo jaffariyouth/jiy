@@ -25,9 +25,9 @@ export function AuthCard({
         className,
       )}
     >
-      <div className={cn("p-12 md:p-[48px] flex flex-col", contentClassName)}>{children}</div>
+      <div className={cn("p-5 sm:p-8 md:p-12 flex flex-col", contentClassName)}>{children}</div>
       {footerSlice && (
-        <div className="bg-alabaster-parchment p-6 border-t border-horizon-mist flex justify-center items-center">
+        <div className="bg-alabaster-parchment p-4 sm:p-6 border-t border-horizon-mist flex justify-center items-center text-center">
           {footerSlice}
         </div>
       )}

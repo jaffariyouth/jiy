@@ -30,8 +30,10 @@ export function AuthLayout({
       />
       <main
         className={cn(
-          "flex-grow flex items-center justify-center px-margin-safe w-full max-w-max-width mx-auto",
-          headerPosition === "fixed" ? "pt-[120px] pb-gap-section" : "py-gap-section",
+          "flex-grow flex items-center justify-center px-margin-safe w-full max-w-max-width mx-auto min-w-0",
+          headerPosition === "fixed"
+            ? "pt-[calc(var(--spacing-nav-height)+var(--spacing-gap-element))] pb-gap-section"
+            : "py-gap-section",
           mainClassName,
         )}
       >

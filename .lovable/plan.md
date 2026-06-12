@@ -1,60 +1,80 @@
-## Phase 1 — Signup, Profile, Role Assignment (no Turnstile, ISIJ stub)
+## Goal
 
-Goal: a working auth + onboarding flow so a new user can sign up, complete their profile, and (manually, by an admin) be flipped to `member_isij`. Stripe and Turnstile are deferred — everyone gets full access until those land.
+Every current page renders cleanly from 320px → 1536px+ with no horizontal scroll, no clipped text, and tap targets ≥40px. Establish a standing rule so all future frontend work inherits the same constraints.
 
-### Decisions locked in
-- **No CAPTCHA**: skip Turnstile entirely this phase. Signup is open email/password.
-- **ISIJ sync: option C (stub)**. `isij_registry_cache` stays in schema but is not populated. Admins flip a user to `member_isij` manually via an admin action; the row in `isij_registry_cache` is created at the same time as a placeholder. Real external sync = future phase.
-- **No Stripe / subscription gate**: every authenticated user has full member-level access. `member_standalone` role + `subscriptions` table remain in schema, unused.
+## Where the breakage is today
 
-### Turn 1 — Auth routes + profile completion
+Auditing the editorial system (`src/styles.css`, `src/components/auth/*`) and pages (`auth`, `register`, `onboarding.step-1..3`, `_authenticated/admin.users`, `events`, `index`):
 
-**New files:**
-- `src/routes/auth.tsx` — pathless `/auth` page: tabs for Sign In / Sign Up. Uses `supabase.auth.signInWithPassword` and `signUp`. On signup success → redirect to `/onboarding`. On signin → `/dashboard`.
-- `src/routes/_authenticated.tsx` — pathless layout route gating all signed-in pages. Reads session; redirects to `/auth` if missing. Renders `<Outlet />`.
-- `src/routes/_authenticated/onboarding.tsx` — first-time profile completion form: `display_name`, `age_demographic`, `country`, `consent_marketing` (bool). Writes to `profiles` via a server fn.
-- `src/lib/jiy/profiles.functions.ts`:
-  - `getMyProfile()` — auth, returns own profile row.
-  - `updateMyProfile(input)` — auth, Zod-validated, idempotency + audit.
-  - `markOnboardingComplete()` — auth, sets `onboarding_completed_at`.
+- `--spacing-margin-safe: 48px` and `--spacing-gap-section: 64px` are applied as hard values everywhere (`AuthLayout`, headers, footers). On a 360px viewport that leaves the card 264px wide — content gets squeezed.
+- `AuthCard` uses `p-12 md:p-[48px]` → 48px padding even at the smallest breakpoint. Should be ~20px mobile / 32px tablet / 48px desktop.
+- Fixed header (`AuthLayout` with `headerPosition="fixed"`) reserves `pt-[120px]` regardless of viewport; with the smaller header it should be `pt-[88px] md:pt-[120px]`.
+- `TransactionalFooter` (variant `full`) renders 4 links in a `flex gap-6` row that doesn't wrap — overflows below ~480px.
+- `TransactionalHeader` "back-to-login" label is `text-body` (16px) and can crowd the JIY mark on 320px; should compress to icon-only or `text-body-sm` on `<sm`.
+- Type scale: `--text-headline-sm: 48px` and `--text-form-title: 32px` are used in `<h1>`s without responsive shrink. On mobile they should clamp.
+- `admin.users.tsx`: the shadcn `<Table>` has no horizontal-scroll wrapper, the header `flex items-center justify-between` doesn't stack, and the search `Input` is fixed `w-64`. Breaks under ~640px.
+- `events.tsx`: `flex items-baseline justify-between gap-4` on each card title row doesn't wrap — long titles + date push off-screen.
+- `index.tsx` is still the blank-page placeholder (out of scope here; flagged separately).
+- `dashboard.tsx` is an iframe to a static HTML file — not in scope (separate asset, not a React screen).
 
-**Migration:**
-- Add `profiles.display_name text`, `country text`, `consent_marketing bool default false`, `onboarding_completed_at timestamptz` (if missing — verify before writing migration).
-- No new tables.
+## Approach
 
-**Move `/dashboard` and `/events` (member-only views) under `_authenticated/`** by renaming `src/routes/dashboard.tsx` → `src/routes/_authenticated/dashboard.tsx`. Public `/events` stays public (already anon-readable).
+Two parts: (1) fix tokens + shared components so most pages get responsive for free, (2) touch the few pages that still need page-level changes.
 
-### Turn 2 — Role assignment + admin stub
+### 1. Make design tokens fluid (`src/styles.css`)
 
-**Server functions** (`src/lib/jiy/admin.functions.ts`):
-- `listUsers({ search, limit, offset })` — admin only. Joins `profiles` + `user_roles`.
-- `grantRole({ userId, role })` / `revokeRole({ userId, role })` — admin only, audit-logged. Cannot self-revoke admin (guard).
-- `markUserAsISIJMember({ userId, isijId, expiresAt })` — admin only. Inserts/updates `isij_registry_cache` row AND grants `member_isij` role in one transactional intent (two writes, both audited).
+Convert the spacing/typography tokens that drive layout to `clamp()` so every consumer scales without per-page media queries:
 
-**Bootstrap admin**: a tiny migration that, *only if `user_roles` is empty*, no-ops (admins must be granted manually via SQL once). Document this in the plan output — first admin is set by the user running a one-liner in the SQL editor.
+```text
+--spacing-margin-safe : clamp(20px, 5vw, 48px)
+--spacing-gap-section : clamp(32px, 6vw, 64px)
+--spacing-gap-element : clamp(12px, 2.5vw, 16px)
+--spacing-nav-height  : clamp(56px, 8vw, 72px)
+--text-headline-sm    : clamp(28px, 6vw, 48px)
+--text-form-title     : clamp(24px, 4.5vw, 32px)
+--text-headline       : clamp(36px, 7vw, 64px)
+--text-headline-lg    : clamp(44px, 8vw, 72px)
+--text-display        : clamp(48px, 9vw, 80px)
+```
 
-**Default role on signup**: a trigger on `auth.users` insert that runs `handle_new_user` (already exists for `profiles`). Extend it to also INSERT a `user_roles` row with role `member_standalone` so everyone has at least one role and the "everyone gets access" policy works via `has_role(uid, 'member_standalone')` checks elsewhere.
+`--spacing-max-width` stays at 1536px (already a max).
 
-**Admin page** (`src/routes/_authenticated/admin/users.tsx`):
-- Guarded client-side by `has_role` check (server fn `getMyRoles()`); RLS is the real gate.
-- Table of users with role chips, search, and buttons: Grant admin / Grant scholar / Mark as ISIJ member / Revoke.
-- Minimal UI — shadcn `Table`, `Dialog`, `Input`. No fancy filtering this phase.
+### 2. Shared auth shell (`src/components/auth/*`)
 
-### Turn 3 — Wiring + smoke test
+- `AuthLayout`: replace fixed `pt-[120px]` with `pt-[calc(var(--spacing-nav-height)+var(--spacing-gap-element))]`. Add `min-w-0` to `<main>` so child cards can shrink.
+- `AuthCard`: change inner padding to `p-5 sm:p-8 md:p-12` (≈20/32/48px). Keep 640px max width but add `w-full`.
+- `TransactionalHeader`:
+  - Outer row already `flex justify-between items-center`; add `gap-3 min-w-0`.
+  - Wrap each side's content (`JIY` mark + right-side cluster) in `min-w-0` containers.
+  - Hide the "Return to Homepage" / "Back to Login" label text on `<sm` (`hidden sm:inline`) keeping the icon visible.
+  - Wizard variant: show `STEP n/N` as `text-[11px] sm:text-label-eyebrow`, drop the `w-12` spacer on mobile.
+- `TransactionalFooter` (full variant): change link row to `flex flex-wrap justify-center gap-x-6 gap-y-2`. Minimal/wizard variants already collapse fine.
 
-- Update `__root.tsx` nav: show Sign In/Sign Out, link to /dashboard and /admin/users (admin-only).
-- Update `_authenticated` layout: if `onboarding_completed_at` is null and path isn't `/onboarding`, redirect to `/onboarding`.
-- Smoke-test script in plan output: sign up → onboarding → /dashboard renders → admin grants `member_isij` → user's role list updates.
+### 3. Per-page touch-ups
 
-### Out of scope (deferred)
-- Cloudflare Turnstile signup gate (Phase 1.5 when keys arrive)
-- Stripe checkout + `subscriptions` enforcement (later phase)
-- External ISIJ registry API sync (later phase — admin manually flips users for now)
-- Password reset / email verification customization (uses Supabase defaults)
+- `routes/auth.tsx`: change `mb-[40px]` blocks to `mb-8 md:mb-10`. Heading max-width stays. Form-controls row (`Keep me signed in` + `Forgot password?`) wrap with `flex-wrap gap-y-2`.
+- `routes/register.tsx`: nothing beyond shell + token fixes (already a single-column form).
+- `routes/_authenticated/onboarding.step-1..3.tsx`: replace hard `text-[32px]` H1s with the responsive `text-form-title` token; replace `pt-gap-section` button wrappers with `pt-6 md:pt-gap-section`.
+- `routes/_authenticated/admin.users.tsx`:
+  - Header: `flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between`.
+  - Search input: `w-full sm:w-64`.
+  - Wrap table in `<div className="rounded-md border overflow-x-auto"><Table className="min-w-[720px]">…</Table></div>`.
+  - In `UserRow` action cell, drop `inline-flex` for `flex flex-wrap justify-end gap-2`.
+- `routes/events.tsx`: container `max-w-4xl px-4 sm:px-6 py-10 md:py-12`; card title row becomes `flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1`; H2 gets `min-w-0`.
 
-### Risks / call-outs
-1. **First admin bootstrap**: the user will need to run `INSERT INTO user_roles (user_id, role) VALUES ('<their uid>', 'admin');` in the SQL editor after their first signup. I'll surface a SQL editor link in the chat after Turn 2.
-2. **Default `member_standalone` for everyone** is a *temporary* substitute for the Stripe gate. When Stripe lands, this default goes away and the trigger only grants on successful checkout. Flagged in code with a `// TODO(stripe): remove default role grant` comment.
-3. **No email confirmation flow customizing**: Supabase's default confirm email is used. If you want a branded one, that's a separate task.
+### 4. Verification
 
-Reply "go" to execute Turn 1 (auth routes + onboarding + profile migration).
+- `bun run lint` / `tsc --noEmit` (build script runs automatically).
+- `browser--view_preview` at `375x812` (mobile) and `820x1180` (tablet) for `/auth`, `/register`, `/onboarding/step-1`, `/onboarding/step-3`, `/events`. Confirm no horizontal scrollbar and no text clipping. Admin Users is gated; verify at `1280x720` (already its target) and `375x812` for layout structure only.
+
+### 5. Standing rule for future screens (project memory)
+
+Add `mem://design/responsive-rules.md` and reference it from `mem://index.md` Core so every new screen follows the same playbook:
+
+> All pages must render cleanly 320px → 1536px+. Use fluid tokens from `styles.css` (`--spacing-margin-safe`, `--spacing-gap-section`, `--text-headline-*`, `--text-form-title`) instead of fixed `px`. Use the responsive-layout grid pattern (`grid-cols-[minmax(0,1fr)_auto] sm:flex`) for any header row mixing flexible text with fixed widgets; `min-w-0` on text containers, `shrink-0` on icons/avatars, `truncate` on single-line headings. Wide tables go in `overflow-x-auto` wrappers with a `min-w-[…]` inner. No `flex` row of >2 items without `flex-wrap`.
+
+## Out of scope
+
+- Replacing the `index.tsx` placeholder (separate task).
+- The `/dashboard` iframe (static HTML asset, not a React screen).
+- Visual redesign of any screen — this pass is purely responsive plumbing; pixel-perfect desktop appearance is preserved.
