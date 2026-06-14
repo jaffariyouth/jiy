@@ -74,7 +74,7 @@ function AuthPage() {
           <span className="font-label-eyebrow text-label-eyebrow text-deep-garnet uppercase">
             MEMBER Login
           </span>
-          <h1 className="font-form-title text-form-title text-midnight-sapphire max-w-sm leading-tight">
+          <h1 className="font-headline-sm text-headline-sm text-midnight-sapphire max-w-sm leading-tight">
             Sign in to your JIY Account
           </h1>
         </div>
