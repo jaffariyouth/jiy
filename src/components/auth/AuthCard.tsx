@@ -15,7 +15,7 @@ export function AuthCard({
   footerSlice,
   className,
   contentClassName,
-  maxWidth = "max-w-[640px]",
+  maxWidth = "max-w-[480px]",
 }: Props) {
   return (
     <div
@@ -25,7 +25,7 @@ export function AuthCard({
         className,
       )}
     >
-      <div className={cn("p-5 sm:p-8 md:p-12 flex flex-col", contentClassName)}>{children}</div>
+      <div className={cn("p-5 sm:p-7 md:p-9 flex flex-col", contentClassName)}>{children}</div>
       {footerSlice && (
         <div className="bg-alabaster-parchment p-4 sm:p-6 border-t border-horizon-mist flex justify-center items-center text-center">
           {footerSlice}
