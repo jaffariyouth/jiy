@@ -70,17 +70,17 @@ function AuthPage() {
         contentClassName="items-center"
       >
         {/* Header */}
-        <div className="text-center mb-8 md:mb-10 flex flex-col items-center gap-4 w-full">
+        <div className="text-center mb-6 md:mb-8 flex flex-col items-center gap-3 w-full">
           <span className="font-label-eyebrow text-label-eyebrow text-deep-garnet uppercase">
             MEMBER Login
           </span>
-          <h1 className="font-headline-sm text-headline-sm text-midnight-sapphire max-w-sm leading-tight">
+          <h1 className="font-form-title text-form-title text-midnight-sapphire max-w-sm leading-tight">
             Sign in to your JIY Account
           </h1>
         </div>
 
         {/* SSO */}
-        <div className="w-full flex flex-col items-center gap-3 mb-8 md:mb-10">
+        <div className="w-full flex flex-col items-center gap-2 mb-6 md:mb-8">
           <PrimaryButton
             type="button"
             onClick={onISIJ}
@@ -94,7 +94,7 @@ function AuthPage() {
         </div>
 
         {/* Separator */}
-        <div className="w-full mb-8 md:mb-10">
+        <div className="w-full mb-6 md:mb-8">
           <ArchitecturalDivider chipBgClassName="bg-surface-container-lowest">
             <span className="font-caption text-[11px] text-muted-dusk uppercase tracking-widest">
               or use JIY credentials
