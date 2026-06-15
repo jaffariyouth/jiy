@@ -257,3 +257,61 @@
     font-family: var(--font-body);
   }
 }
+
+/* ============================================
+ * JIY Dashboard — scoped styles (1:1 port)
+ * ========================================== */
+.jiy-dashboard {
+  background-color: #FAF8F5;
+  background-image:
+    radial-gradient(#e5dec9 0.75px, transparent 0.75px),
+    radial-gradient(#e5dec9 0.75px, #FAF8F5 0.75px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+  background-attachment: fixed;
+  color: #010b21;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+.jiy-dashboard ::selection {
+  background: rgba(202, 164, 96, 0.2);
+  color: #010b21;
+}
+.jiy-dashboard .editorial-double-border {
+  border-style: double;
+  border-width: 3px;
+}
+.jiy-dashboard .studio-card {
+  background: #FFFFFF;
+  border: 1px solid #dcd9d2;
+  box-shadow:
+    0 1px 3px 0 rgba(22, 34, 56, 0.02),
+    0 4px 12px 0 rgba(22, 34, 56, 0.03),
+    inset 0 1px 0 0 rgba(255, 255, 255, 1);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.jiy-dashboard .studio-card:hover {
+  border-color: #caa460;
+  transform: translateY(-4px);
+  box-shadow:
+    0 10px 25px -5px rgba(202, 164, 96, 0.12),
+    0 8px 16px -6px rgba(22, 34, 56, 0.05),
+    inset 0 1px 0 0 rgba(255, 255, 255, 1);
+}
+.jiy-dashboard .interactive-btn {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.jiy-dashboard .interactive-btn::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border: 1px solid #caa460;
+  opacity: 0;
+  border-radius: inherit;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.jiy-dashboard .interactive-btn:hover::after {
+  opacity: 1;
+}
