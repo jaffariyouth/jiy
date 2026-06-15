@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { DashboardShell } from "@/components/dashboard/DashboardShell";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -8,11 +9,5 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function DashboardPage() {
-  return (
-    <iframe
-      src="/dashboard.html"
-      title="Member Dashboard"
-      style={{ position: "fixed", inset: 0, width: "100vw", height: "100vh", border: 0 }}
-    />
-  );
+  return <DashboardShell />;
 }
