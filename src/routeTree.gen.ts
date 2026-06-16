@@ -16,6 +16,8 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedOnboardingStep3RouteImport } from './routes/_authenticated/onboarding.step-3'
 import { Route as AuthenticatedOnboardingStep2RouteImport } from './routes/_authenticated/onboarding.step-2'
 import { Route as AuthenticatedOnboardingStep1RouteImport } from './routes/_authenticated/onboarding.step-1'
@@ -57,6 +59,16 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedOnboardingStep3Route =
   AuthenticatedOnboardingStep3RouteImport.update({
     id: '/step-3',
@@ -76,9 +88,9 @@ const AuthenticatedOnboardingStep1Route =
     getParentRoute: () => AuthenticatedOnboardingRoute,
   } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
-  id: '/admin/users',
-  path: '/admin/users',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
 const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   id: '/api/public/stripe/webhook',
@@ -97,12 +109,14 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/events': typeof EventsRoute
   '/register': typeof RegisterRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
   '/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
@@ -117,6 +131,7 @@ export interface FileRoutesByTo {
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
   '/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
@@ -127,12 +142,14 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/events': typeof EventsRoute
   '/register': typeof RegisterRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
   '/_authenticated/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/_authenticated/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
@@ -143,12 +160,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/events'
     | '/register'
+    | '/admin'
     | '/dashboard'
     | '/onboarding'
     | '/admin/users'
     | '/onboarding/step-1'
     | '/onboarding/step-2'
     | '/onboarding/step-3'
+    | '/admin/'
     | '/api/public/cron/dispatch-notifications'
     | '/api/public/stripe/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -163,6 +182,7 @@ export interface FileRouteTypes {
     | '/onboarding/step-1'
     | '/onboarding/step-2'
     | '/onboarding/step-3'
+    | '/admin'
     | '/api/public/cron/dispatch-notifications'
     | '/api/public/stripe/webhook'
   id:
@@ -172,12 +192,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/events'
     | '/register'
+    | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
     | '/_authenticated/admin/users'
     | '/_authenticated/onboarding/step-1'
     | '/_authenticated/onboarding/step-2'
     | '/_authenticated/onboarding/step-3'
+    | '/_authenticated/admin/'
     | '/api/public/cron/dispatch-notifications'
     | '/api/public/stripe/webhook'
   fileRoutesById: FileRoutesById
@@ -243,6 +265,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/onboarding/step-3': {
       id: '/_authenticated/onboarding/step-3'
       path: '/step-3'
@@ -266,10 +302,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/admin/users': {
       id: '/_authenticated/admin/users'
-      path: '/admin/users'
+      path: '/users'
       fullPath: '/admin/users'
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/api/public/stripe/webhook': {
       id: '/api/public/stripe/webhook'
@@ -287,6 +323,19 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
 interface AuthenticatedOnboardingRouteChildren {
   AuthenticatedOnboardingStep1Route: typeof AuthenticatedOnboardingStep1Route
@@ -307,15 +356,15 @@ const AuthenticatedOnboardingRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRouteWithChildren
-  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRouteWithChildren,
-  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
