@@ -20,6 +20,7 @@ import { Route as AuthenticatedOnboardingStep3RouteImport } from './routes/_auth
 import { Route as AuthenticatedOnboardingStep2RouteImport } from './routes/_authenticated/onboarding.step-2'
 import { Route as AuthenticatedOnboardingStep1RouteImport } from './routes/_authenticated/onboarding.step-1'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
+import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
 import { Route as ApiPublicCronDispatchNotificationsRouteImport } from './routes/api/public/cron/dispatch-notifications'
 
 const RegisterRoute = RegisterRouteImport.update({
@@ -79,6 +80,11 @@ const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
+  id: '/api/public/stripe/webhook',
+  path: '/api/public/stripe/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCronDispatchNotificationsRoute =
   ApiPublicCronDispatchNotificationsRouteImport.update({
     id: '/api/public/cron/dispatch-notifications',
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/_authenticated/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/_authenticated/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/onboarding/step-2'
     | '/onboarding/step-3'
     | '/api/public/cron/dispatch-notifications'
+    | '/api/public/stripe/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/onboarding/step-2'
     | '/onboarding/step-3'
     | '/api/public/cron/dispatch-notifications'
+    | '/api/public/stripe/webhook'
   id:
     | '__root__'
     | '/'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding/step-2'
     | '/_authenticated/onboarding/step-3'
     | '/api/public/cron/dispatch-notifications'
+    | '/api/public/stripe/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -177,6 +189,7 @@ export interface RootRouteChildren {
   EventsRoute: typeof EventsRoute
   RegisterRoute: typeof RegisterRoute
   ApiPublicCronDispatchNotificationsRoute: typeof ApiPublicCronDispatchNotificationsRoute
+  ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -258,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/stripe/webhook': {
+      id: '/api/public/stripe/webhook'
+      path: '/api/public/stripe/webhook'
+      fullPath: '/api/public/stripe/webhook'
+      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/dispatch-notifications': {
       id: '/api/public/cron/dispatch-notifications'
       path: '/api/public/cron/dispatch-notifications'
@@ -309,6 +329,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   ApiPublicCronDispatchNotificationsRoute:
     ApiPublicCronDispatchNotificationsRoute,
+  ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
