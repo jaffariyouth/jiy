@@ -22,8 +22,18 @@ import { Route as AuthenticatedOnboardingStep3RouteImport } from './routes/_auth
 import { Route as AuthenticatedOnboardingStep2RouteImport } from './routes/_authenticated/onboarding.step-2'
 import { Route as AuthenticatedOnboardingStep1RouteImport } from './routes/_authenticated/onboarding.step-1'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
+import { Route as AuthenticatedAdminRecurringRouteImport } from './routes/_authenticated/admin.recurring'
+import { Route as AuthenticatedAdminPressRouteImport } from './routes/_authenticated/admin.press'
+import { Route as AuthenticatedAdminFormsRouteImport } from './routes/_authenticated/admin.forms'
+import { Route as AuthenticatedAdminFlagsRouteImport } from './routes/_authenticated/admin.flags'
+import { Route as AuthenticatedAdminEventsRouteImport } from './routes/_authenticated/admin.events'
+import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin.audit'
+import { Route as AuthenticatedAdminAnnouncementsRouteImport } from './routes/_authenticated/admin.announcements'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
 import { Route as ApiPublicCronDispatchNotificationsRouteImport } from './routes/api/public/cron/dispatch-notifications'
+import { Route as AuthenticatedAdminFormsIdRouteImport } from './routes/_authenticated/admin.forms.$id'
+import { Route as AuthenticatedAdminEventsNewRouteImport } from './routes/_authenticated/admin.events.new'
+import { Route as AuthenticatedAdminEventsIdRouteImport } from './routes/_authenticated/admin.events.$id'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -92,6 +102,44 @@ const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminRecurringRoute =
+  AuthenticatedAdminRecurringRouteImport.update({
+    id: '/recurring',
+    path: '/recurring',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPressRoute = AuthenticatedAdminPressRouteImport.update({
+  id: '/press',
+  path: '/press',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminFormsRoute = AuthenticatedAdminFormsRouteImport.update({
+  id: '/forms',
+  path: '/forms',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminFlagsRoute = AuthenticatedAdminFlagsRouteImport.update({
+  id: '/flags',
+  path: '/flags',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminEventsRoute =
+  AuthenticatedAdminEventsRouteImport.update({
+    id: '/events',
+    path: '/events',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminAnnouncementsRoute =
+  AuthenticatedAdminAnnouncementsRouteImport.update({
+    id: '/announcements',
+    path: '/announcements',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   id: '/api/public/stripe/webhook',
   path: '/api/public/stripe/webhook',
@@ -103,6 +151,24 @@ const ApiPublicCronDispatchNotificationsRoute =
     path: '/api/public/cron/dispatch-notifications',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedAdminFormsIdRoute =
+  AuthenticatedAdminFormsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminFormsRoute,
+  } as any)
+const AuthenticatedAdminEventsNewRoute =
+  AuthenticatedAdminEventsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedAdminEventsRoute,
+  } as any)
+const AuthenticatedAdminEventsIdRoute =
+  AuthenticatedAdminEventsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminEventsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -112,11 +178,21 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
+  '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
+  '/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/admin/events': typeof AuthenticatedAdminEventsRouteWithChildren
+  '/admin/flags': typeof AuthenticatedAdminFlagsRoute
+  '/admin/forms': typeof AuthenticatedAdminFormsRouteWithChildren
+  '/admin/press': typeof AuthenticatedAdminPressRoute
+  '/admin/recurring': typeof AuthenticatedAdminRecurringRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
   '/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/events/$id': typeof AuthenticatedAdminEventsIdRoute
+  '/admin/events/new': typeof AuthenticatedAdminEventsNewRoute
+  '/admin/forms/$id': typeof AuthenticatedAdminFormsIdRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
@@ -127,11 +203,21 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
+  '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
+  '/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/admin/events': typeof AuthenticatedAdminEventsRouteWithChildren
+  '/admin/flags': typeof AuthenticatedAdminFlagsRoute
+  '/admin/forms': typeof AuthenticatedAdminFormsRouteWithChildren
+  '/admin/press': typeof AuthenticatedAdminPressRoute
+  '/admin/recurring': typeof AuthenticatedAdminRecurringRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
   '/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/events/$id': typeof AuthenticatedAdminEventsIdRoute
+  '/admin/events/new': typeof AuthenticatedAdminEventsNewRoute
+  '/admin/forms/$id': typeof AuthenticatedAdminFormsIdRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
@@ -145,11 +231,21 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
+  '/_authenticated/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
+  '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
+  '/_authenticated/admin/events': typeof AuthenticatedAdminEventsRouteWithChildren
+  '/_authenticated/admin/flags': typeof AuthenticatedAdminFlagsRoute
+  '/_authenticated/admin/forms': typeof AuthenticatedAdminFormsRouteWithChildren
+  '/_authenticated/admin/press': typeof AuthenticatedAdminPressRoute
+  '/_authenticated/admin/recurring': typeof AuthenticatedAdminRecurringRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
   '/_authenticated/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/_authenticated/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/events/$id': typeof AuthenticatedAdminEventsIdRoute
+  '/_authenticated/admin/events/new': typeof AuthenticatedAdminEventsNewRoute
+  '/_authenticated/admin/forms/$id': typeof AuthenticatedAdminFormsIdRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
@@ -163,11 +259,21 @@ export interface FileRouteTypes {
     | '/admin'
     | '/dashboard'
     | '/onboarding'
+    | '/admin/announcements'
+    | '/admin/audit'
+    | '/admin/events'
+    | '/admin/flags'
+    | '/admin/forms'
+    | '/admin/press'
+    | '/admin/recurring'
     | '/admin/users'
     | '/onboarding/step-1'
     | '/onboarding/step-2'
     | '/onboarding/step-3'
     | '/admin/'
+    | '/admin/events/$id'
+    | '/admin/events/new'
+    | '/admin/forms/$id'
     | '/api/public/cron/dispatch-notifications'
     | '/api/public/stripe/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -178,11 +284,21 @@ export interface FileRouteTypes {
     | '/register'
     | '/dashboard'
     | '/onboarding'
+    | '/admin/announcements'
+    | '/admin/audit'
+    | '/admin/events'
+    | '/admin/flags'
+    | '/admin/forms'
+    | '/admin/press'
+    | '/admin/recurring'
     | '/admin/users'
     | '/onboarding/step-1'
     | '/onboarding/step-2'
     | '/onboarding/step-3'
     | '/admin'
+    | '/admin/events/$id'
+    | '/admin/events/new'
+    | '/admin/forms/$id'
     | '/api/public/cron/dispatch-notifications'
     | '/api/public/stripe/webhook'
   id:
@@ -195,11 +311,21 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
+    | '/_authenticated/admin/announcements'
+    | '/_authenticated/admin/audit'
+    | '/_authenticated/admin/events'
+    | '/_authenticated/admin/flags'
+    | '/_authenticated/admin/forms'
+    | '/_authenticated/admin/press'
+    | '/_authenticated/admin/recurring'
     | '/_authenticated/admin/users'
     | '/_authenticated/onboarding/step-1'
     | '/_authenticated/onboarding/step-2'
     | '/_authenticated/onboarding/step-3'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/events/$id'
+    | '/_authenticated/admin/events/new'
+    | '/_authenticated/admin/forms/$id'
     | '/api/public/cron/dispatch-notifications'
     | '/api/public/stripe/webhook'
   fileRoutesById: FileRoutesById
@@ -307,6 +433,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/recurring': {
+      id: '/_authenticated/admin/recurring'
+      path: '/recurring'
+      fullPath: '/admin/recurring'
+      preLoaderRoute: typeof AuthenticatedAdminRecurringRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/press': {
+      id: '/_authenticated/admin/press'
+      path: '/press'
+      fullPath: '/admin/press'
+      preLoaderRoute: typeof AuthenticatedAdminPressRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/forms': {
+      id: '/_authenticated/admin/forms'
+      path: '/forms'
+      fullPath: '/admin/forms'
+      preLoaderRoute: typeof AuthenticatedAdminFormsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/flags': {
+      id: '/_authenticated/admin/flags'
+      path: '/flags'
+      fullPath: '/admin/flags'
+      preLoaderRoute: typeof AuthenticatedAdminFlagsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/events': {
+      id: '/_authenticated/admin/events'
+      path: '/events'
+      fullPath: '/admin/events'
+      preLoaderRoute: typeof AuthenticatedAdminEventsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/audit': {
+      id: '/_authenticated/admin/audit'
+      path: '/audit'
+      fullPath: '/admin/audit'
+      preLoaderRoute: typeof AuthenticatedAdminAuditRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/announcements': {
+      id: '/_authenticated/admin/announcements'
+      path: '/announcements'
+      fullPath: '/admin/announcements'
+      preLoaderRoute: typeof AuthenticatedAdminAnnouncementsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/api/public/stripe/webhook': {
       id: '/api/public/stripe/webhook'
       path: '/api/public/stripe/webhook'
@@ -321,15 +496,80 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronDispatchNotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/forms/$id': {
+      id: '/_authenticated/admin/forms/$id'
+      path: '/$id'
+      fullPath: '/admin/forms/$id'
+      preLoaderRoute: typeof AuthenticatedAdminFormsIdRouteImport
+      parentRoute: typeof AuthenticatedAdminFormsRoute
+    }
+    '/_authenticated/admin/events/new': {
+      id: '/_authenticated/admin/events/new'
+      path: '/new'
+      fullPath: '/admin/events/new'
+      preLoaderRoute: typeof AuthenticatedAdminEventsNewRouteImport
+      parentRoute: typeof AuthenticatedAdminEventsRoute
+    }
+    '/_authenticated/admin/events/$id': {
+      id: '/_authenticated/admin/events/$id'
+      path: '/$id'
+      fullPath: '/admin/events/$id'
+      preLoaderRoute: typeof AuthenticatedAdminEventsIdRouteImport
+      parentRoute: typeof AuthenticatedAdminEventsRoute
+    }
   }
 }
 
+interface AuthenticatedAdminEventsRouteChildren {
+  AuthenticatedAdminEventsIdRoute: typeof AuthenticatedAdminEventsIdRoute
+  AuthenticatedAdminEventsNewRoute: typeof AuthenticatedAdminEventsNewRoute
+}
+
+const AuthenticatedAdminEventsRouteChildren: AuthenticatedAdminEventsRouteChildren =
+  {
+    AuthenticatedAdminEventsIdRoute: AuthenticatedAdminEventsIdRoute,
+    AuthenticatedAdminEventsNewRoute: AuthenticatedAdminEventsNewRoute,
+  }
+
+const AuthenticatedAdminEventsRouteWithChildren =
+  AuthenticatedAdminEventsRoute._addFileChildren(
+    AuthenticatedAdminEventsRouteChildren,
+  )
+
+interface AuthenticatedAdminFormsRouteChildren {
+  AuthenticatedAdminFormsIdRoute: typeof AuthenticatedAdminFormsIdRoute
+}
+
+const AuthenticatedAdminFormsRouteChildren: AuthenticatedAdminFormsRouteChildren =
+  {
+    AuthenticatedAdminFormsIdRoute: AuthenticatedAdminFormsIdRoute,
+  }
+
+const AuthenticatedAdminFormsRouteWithChildren =
+  AuthenticatedAdminFormsRoute._addFileChildren(
+    AuthenticatedAdminFormsRouteChildren,
+  )
+
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAnnouncementsRoute: typeof AuthenticatedAdminAnnouncementsRoute
+  AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
+  AuthenticatedAdminEventsRoute: typeof AuthenticatedAdminEventsRouteWithChildren
+  AuthenticatedAdminFlagsRoute: typeof AuthenticatedAdminFlagsRoute
+  AuthenticatedAdminFormsRoute: typeof AuthenticatedAdminFormsRouteWithChildren
+  AuthenticatedAdminPressRoute: typeof AuthenticatedAdminPressRoute
+  AuthenticatedAdminRecurringRoute: typeof AuthenticatedAdminRecurringRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAnnouncementsRoute: AuthenticatedAdminAnnouncementsRoute,
+  AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
+  AuthenticatedAdminEventsRoute: AuthenticatedAdminEventsRouteWithChildren,
+  AuthenticatedAdminFlagsRoute: AuthenticatedAdminFlagsRoute,
+  AuthenticatedAdminFormsRoute: AuthenticatedAdminFormsRouteWithChildren,
+  AuthenticatedAdminPressRoute: AuthenticatedAdminPressRoute,
+  AuthenticatedAdminRecurringRoute: AuthenticatedAdminRecurringRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
