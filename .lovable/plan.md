@@ -1,75 +1,111 @@
-# Replace Dashboard with JIY Design (1:1 React Port)
 
-## Goal
-Replace the current `/_authenticated/dashboard` route (which iframes `/dashboard.html`) with a pixel-perfect React conversion of the uploaded `timeless_high_contrast_dashboard (1).html`. Every visual element comes from the HTML — no improvised markup, copy, or styling. Save `JIY.md` as the canonical style reference for all future frontend work.
+# Admin Console v1
 
-## Scope
-- 1:1 visual + structural parity with the HTML (markup, classes, copy, SVGs, icons, decorative motifs, toggle states all preserved).
-- Split the single HTML page into React components mirroring its existing section comments.
-- Keep all interactive JS behaviors from the original (toast portal, drawer toggle, ticket switcher, modal dialog) — ported to React state.
-- No backend wiring changes. No new routes. Existing auth gating (`_authenticated`) stays.
+A WordPress-style admin area at `/admin/*` (gated by the `admin` role), built with the existing JIY editorial system. Backend mutations use `createServerFn` with `requireSupabaseAuth` + `assertAdmin`, mirroring the patterns already in `src/lib/jiy/*.functions.ts`.
 
-## Design tokens & fonts
-Add JIY tokens to `src/styles.css` under `@theme` so Tailwind utility classes from the HTML resolve natively:
-- Colors: `alabaster-parchment`, `warm-silk-grey`, `midnight-sapphire`, `primary-dark`, `damascus-gold`, `deep-garnet`, `ash-slate`, `horizon-mist`.
-- Fonts: `--font-headline` Playfair Display, `--font-body` Hanken Grotesk.
-- Spacing utilities used by the HTML: `gap-section`, `max-width`, `gap-element`, `margin-safe` (added as `--spacing-*`).
-- Border-radius default `4px`.
-- Global page styles (dotted parchment background + `studio-card` + `interactive-btn` + `editorial-double-border`) scoped under a `.jiy-dashboard` wrapper so they only apply inside the dashboard page and do not bleed into auth/onboarding.
+## Scope (this plan)
 
-Load Playfair Display, Hanken Grotesk, and Material Symbols Outlined via `<link>` tags in `src/routes/__root.tsx` head (Google Fonts), per Tailwind v4 rules.
+1. Events & registrations
+2. Custom registration form builder (per-event)
+3. Paid-ticket framework (Stripe scaffold, no keys yet)
+4. Press posts & announcements (markdown editor with live preview + images + link embeds + internal route links)
+5. Recurring events catalog (Sunday Soccer, Mubahatha, etc.)
+6. User management (roles, ISIJ marking, search)
+7. Audit log viewer + feature-flags toggles
 
-## Component breakdown (under `src/components/dashboard/`)
-Mirrors the HTML's own section comments — no invented components.
+Shop is **out of scope** for v1 (it's a separate Shopify enablement flow; we'll do it after this lands).
 
-```
-src/components/dashboard/
-  DashboardShell.tsx          // body wrapper + dotted background + ToastPortal mount
-  ToastPortal.tsx             // <!-- Global Toast Alert Portal -->
-  TopNavBar.tsx               // <!-- Elevated Floating Top Navigation Bar -->
-  SponsorNotice.tsx           // <!-- Sleek Low-Profile High-Contrast Sponsor Notice -->
-  WelcomeBlock.tsx            // <!-- Welcome Block --> incl. Scholar Question Drawer
-  ScholarQuestionDrawer.tsx   // <!-- Hidden form drawer -->
-  UpcomingEvents.tsx          // <!-- Upcoming Events Container --> (renders EventCard x2)
-  EventCard.tsx               // <!-- Event 1 / Event 2 -->
-  StructuralDivider.tsx       // <!-- Graphic Structural Divider -->
-  EditorialJournalFeed.tsx    // <!-- Editorial Journal Feed --> (renders ArticleBlock x2)
-  ArticleBlock.tsx            // <!-- Article Block 1 / 2 -->
-  RegistrationTicket.tsx      // <!-- Registration Widget ... Ticket --> w/ toggle states
-  AnnouncementsWidget.tsx     // <!-- Announcements Widget -->
-  VolunteerCorpWidget.tsx     // <!-- Volunteer Corp -->
-  AssociationLinks.tsx        // <!-- Association Quick Links List -->
-  GeometricOrnament.tsx       // <!-- Archival Geometric Break Ornament -->
-  DashboardFooter.tsx         // <!-- Traditional Centered Grid Footer -->
-  SponsorModal.tsx            // <!-- Absolute Functional Portal Modal -->
-  index.ts                    // re-exports
-```
+---
 
-Each component's JSX is a direct port of the corresponding HTML block — same class strings, same inline SVGs, same copy, same `material-symbols-outlined` icon names. No re-styling, no copy edits, no reordering.
+## Admin shell
 
-## Route changes
-- Rewrite `src/routes/_authenticated/dashboard.tsx`: remove the iframe; render `<DashboardShell>` containing `TopNavBar`, `SponsorNotice`, the `<main>` with `WelcomeBlock` + 8/4 grid (`UpcomingEvents`, `StructuralDivider`, `EditorialJournalFeed` | `RegistrationTicket`, `AnnouncementsWidget`, `VolunteerCorpWidget`, `AssociationLinks`), `GeometricOrnament`, `DashboardFooter`, plus mounted `ToastPortal` and `SponsorModal`.
-- Keep `head()` title `"JIY Central Member Dashboard Hub"`.
-- Delete `public/dashboard.html` (no longer referenced).
+- `src/routes/_authenticated/admin/route.tsx` — pathless `/admin` layout. `beforeLoad` calls `getMyRoles`; if `admin` not present, `redirect({ to: '/dashboard' })`.
+- `AdminShell` component: left sidebar nav (Dashboard, Events, Forms, Press, Announcements, Recurring, Users, Flags, Audit), `<Outlet />` on the right. Uses existing JIY tokens (Playfair headings, Hanken body, ivory bg, sapphire/garnet/gold accents).
+- Child routes (all under `_authenticated/admin/`):
+  - `index.tsx` — KPI cards (upcoming events, pending registrations, draft posts, recent audit entries)
+  - `events.tsx` / `events.$id.tsx` / `events.new.tsx`
+  - `events.$id.registrations.tsx` (roster + check-in + CSV export)
+  - `forms.tsx` / `forms.$id.tsx` (form templates that can be attached to events)
+  - `press.tsx` / `press.$id.tsx` / `press.new.tsx`
+  - `announcements.tsx` / `announcements.$id.tsx`
+  - `recurring.tsx` / `recurring.$id.tsx`
+  - `users.tsx` (already exists at `admin.users.tsx` — move under the new shell)
+  - `flags.tsx`
+  - `audit.tsx`
 
-## Interactive behavior port (from the HTML's bottom `<script>`)
-Implement with React state hooks inside the relevant components — same behavior, no UX changes:
-- `triggerSponsorDialog()` → `SponsorModal` open/close state, lifted to `DashboardShell`.
-- Scholar question drawer expand/collapse → local `useState` in `WelcomeBlock`/`ScholarQuestionDrawer`.
-- Registration ticket Active/Past toggle → local `useState` in `RegistrationTicket`.
-- Toast portal → simple context + `addToast()` used by the sponsor form submit, matching original messages.
+## Database changes (one migration)
 
-## Future-build rule
-Save `JIY.md` as the design reference and record a memory:
-- Write `mem://design/jiy-style-reference.md` (type: design) — summary of palette, type system, radius, double-line borders, dotted parchment background, decorative ornaments (✥, ❖), `studio-card` shadow recipe, `interactive-btn` gold-outline hover. Point at the uploaded `JIY.md` as the canonical source.
-- Update `mem://index.md` Core to add: "Use JIY editorial system (Playfair Display + Hanken Grotesk, midnight-sapphire/deep-garnet/damascus-gold palette, 4px radius, double-line borders, dotted parchment bg). See mem://design/jiy-style-reference."
+New tables (all with standard GRANTs + RLS, admin-write via `has_role(auth.uid(),'admin')`, member/anon reads as appropriate):
 
-## Verification
-- Visit `/dashboard` in the preview at 1280, 1024, 768, 375 widths; compare side-by-side with the original HTML opened directly.
-- Confirm: fonts load (no fallback flash), dotted background visible, gold hover borders on cards, sponsor modal opens/closes, scholar drawer toggles, ticket switcher swaps panes, toast appears on sponsor submit.
-- Build passes (`routeTree.gen.ts` unaffected since no new routes).
+- `form_templates` — `id, name, slug, schema jsonb, created_by, created_at, updated_at`
+  - `schema` shape: `{ fields: [{ id, type: 'text'|'email'|'phone'|'textarea'|'select'|'checkbox'|'number'|'date', label, required, options?, helpText? }] }`
+- `form_submissions` — `id, template_id, event_id?, user_id?, data jsonb, created_at`
+- `announcements` — `id, title, body_md, status('draft'|'published'), pinned bool, published_at, created_by, created_at, updated_at`
+- `recurring_events` — `id, title, slug, description_md, cadence_rrule text, location, default_capacity int?, cover_image_url, is_active bool, created_at, updated_at`
+- `event_payments` — `id, event_id, price_cents int, currency text default 'usd', stripe_price_id text?, requires_payment bool, created_at`
+- `event_ticket_orders` — `id, event_id, user_id, registration_id, amount_cents, status('pending'|'paid'|'refunded'|'failed'), stripe_session_id, stripe_payment_intent_id, created_at, paid_at`
 
-## Out of scope
-- Wiring real data (events, articles, registrations) — copy stays exactly as in the HTML.
-- Changing auth, navigation targets, or any other route.
-- Restyling auth/onboarding to the new tokens (tokens are added globally but only the dashboard page applies the parchment background + card recipes via its wrapper class).
+Column additions:
+
+- `events`: `form_template_id uuid null references form_templates(id)`, `recurring_event_id uuid null references recurring_events(id)`, `requires_payment bool default false`
+- `youth_press_articles`: confirm `body_md`, `cover_image_url`, `status` columns (already present per existing functions); add `internal_links jsonb default '[]'` if missing for editor link picker.
+
+Realtime: enable on `event_registrations`, `announcements`, `notifications` for live admin views.
+
+## Server functions (`src/lib/jiy/`)
+
+All follow the existing `assertAdmin` + idempotency + `writeAudit` pattern.
+
+- `form-templates.functions.ts` — `listFormTemplates`, `getFormTemplate`, `createFormTemplate`, `updateFormTemplate`, `deleteFormTemplate`.
+- `form-submissions.functions.ts` — `submitForm` (public when attached to a published event), `listSubmissions` (admin), `exportSubmissionsCsv` (admin).
+- `announcements.functions.ts` — `listPublishedAnnouncements` (member), `listAllAnnouncements` (admin), `createAnnouncement`, `updateAnnouncement`, `publishAnnouncement`, `pinAnnouncement`, `deleteAnnouncement`.
+- `recurring-events.functions.ts` — list/get/create/update/toggle.
+- Extend `events.functions.ts` — accept `form_template_id`, `requires_payment`, `recurring_event_id` on create/update; add `duplicateEvent`.
+- Extend `event-registrations.functions.ts` — `exportRosterCsv`.
+- Extend `admin.functions.ts` — `suspendUser`, `unsuspendUser` (sets a `profiles.suspended_at`), `listAuditLog` (paginated, filter by action/entity).
+- `feature-flags.functions.ts` — `listFlags`, `setFlag`.
+- `payments.functions.ts` (scaffold) — `createCheckoutSession` (throws "Stripe not configured" until `STRIPE_SECRET_KEY` exists), plus a server route `src/routes/api/public/stripe/webhook.ts` that verifies signature with `STRIPE_WEBHOOK_SECRET` and updates `event_ticket_orders`. Both no-op gracefully when env vars are missing.
+
+## Editor (markdown + live preview)
+
+Lightweight, no heavy WYSIWYG:
+
+- `src/components/admin/MarkdownEditor.tsx` — split pane: textarea on left, rendered preview on right (using `react-markdown` + `remark-gfm`, plus `rehype-raw` only inside admin to allow safe whitelisted embeds).
+- Toolbar: bold, italic, H2/H3, list, quote, link, image, internal-link picker.
+- **Image upload**: new Supabase Storage bucket `editorial-media` (public read, admin write). Uploader writes file and inserts `![alt](url)`.
+- **Link embeds**: paste a URL → preview component fetches OG tags via a server fn `fetchOgPreview` (server-side fetch, 5s timeout, cached by URL hash for 24h in a tiny `og_cache` table) → inserts an `[Embed](url)` shortcode that renders as a card in the published view.
+- **Internal links**: dropdown lists known routes (events, press, recurring) so the admin can insert `[Title](/events/<id>)` without typing.
+
+Same editor is used for press posts, announcements, and recurring-event descriptions.
+
+## Form builder (Gravity-Forms-lite)
+
+- `src/components/admin/FormBuilder.tsx` — left column: field list (drag to reorder via `@dnd-kit/sortable`, already in repo if not we add it); right column: live preview of the form as members will see it.
+- Field types: text, email, phone, textarea, select (with options editor), checkbox, number, date. Each field: label, required, help text.
+- Save persists `schema` jsonb to `form_templates`.
+- Attach a template to an event via the event edit page (`form_template_id`).
+- Public member view: `EventRegistrationForm` reads the template, renders fields with Zod validation derived from the schema, submits to `submitForm` which creates both a `form_submissions` row and an `event_registrations` row (and, if `requires_payment`, kicks off Stripe checkout).
+
+## Payments scaffold
+
+- Add `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` slots (not asked from user yet — `payments.functions.ts` checks for them and returns a friendly "Payments not configured — ask an admin to add Stripe keys" error).
+- UI: event edit page has a "Paid event" toggle + price field; saving persists `event_payments`. Public registration flow detects `requires_payment` and shows "Pay & register" CTA wired to `createCheckoutSession`.
+- When the user is ready with Stripe keys, we run `secrets--add_secret` and the flow lights up — no further code changes needed.
+
+## Acceptance checks
+
+- Non-admin hitting `/admin` → redirected to `/dashboard`.
+- Admin can: create event (with capacity, optional form template, optional price), publish/cancel/duplicate, see live roster, check people in, export CSV.
+- Admin can: build a form, attach to event, see submissions list, export CSV.
+- Admin can: write a press post or announcement in markdown, upload an image, embed a link, insert an internal link, publish.
+- Admin can: add a recurring event; it surfaces in the member dashboard's recurring section.
+- Admin can: search users, grant/revoke roles, mark ISIJ, suspend.
+- Admin can: toggle feature flags and browse the audit log.
+- Every admin mutation writes an `audit_log` row.
+- Stripe-related UI renders but explicitly says "Payments not yet configured" until keys are added.
+
+## Not in this plan (call out so we don't forget)
+
+- Shop / Shopify enablement → separate flow after this.
+- Email/SMS broadcast composer → next iteration (notifications table & cron already exist).
+- Rich block editor → revisit only if the markdown editor proves insufficient.
