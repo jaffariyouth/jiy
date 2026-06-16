@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          body_md: string
+          created_at: string
+          created_by: string | null
+          id: string
+          pinned: boolean
+          published_at: string | null
+          status: Database["public"]["Enums"]["announcement_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body_md?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          pinned?: boolean
+          published_at?: string | null
+          status?: Database["public"]["Enums"]["announcement_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body_md?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          pinned?: boolean
+          published_at?: string | null
+          status?: Database["public"]["Enums"]["announcement_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -46,6 +90,47 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      event_payments: {
+        Row: {
+          created_at: string
+          currency: string
+          event_id: string
+          id: string
+          price_cents: number
+          requires_payment: boolean
+          stripe_price_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          event_id: string
+          id?: string
+          price_cents?: number
+          requires_payment?: boolean
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          event_id?: string
+          id?: string
+          price_cents?: number
+          requires_payment?: boolean
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_payments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       event_registrations: {
         Row: {
@@ -104,6 +189,73 @@ export type Database = {
           },
         ]
       }
+      event_ticket_orders: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          currency: string
+          event_id: string
+          id: string
+          paid_at: string | null
+          registration_id: string | null
+          status: Database["public"]["Enums"]["ticket_order_status"]
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          currency?: string
+          event_id: string
+          id?: string
+          paid_at?: string | null
+          registration_id?: string | null
+          status?: Database["public"]["Enums"]["ticket_order_status"]
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          event_id?: string
+          id?: string
+          paid_at?: string | null
+          registration_id?: string | null
+          status?: Database["public"]["Enums"]["ticket_order_status"]
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_ticket_orders_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_ticket_orders_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "event_registrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_ticket_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           capacity: number | null
@@ -112,9 +264,12 @@ export type Database = {
           created_by: string | null
           description: string | null
           ends_at: string | null
+          form_template_id: string | null
           id: string
           is_member_only: boolean
           location: string | null
+          recurring_event_id: string | null
+          requires_payment: boolean
           starts_at: string
           status: Database["public"]["Enums"]["event_status"]
           title: string
@@ -127,9 +282,12 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           ends_at?: string | null
+          form_template_id?: string | null
           id?: string
           is_member_only?: boolean
           location?: string | null
+          recurring_event_id?: string | null
+          requires_payment?: boolean
           starts_at: string
           status?: Database["public"]["Enums"]["event_status"]
           title: string
@@ -142,9 +300,12 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           ends_at?: string | null
+          form_template_id?: string | null
           id?: string
           is_member_only?: boolean
           location?: string | null
+          recurring_event_id?: string | null
+          requires_payment?: boolean
           starts_at?: string
           status?: Database["public"]["Enums"]["event_status"]
           title?: string
@@ -156,6 +317,20 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_form_template_id_fkey"
+            columns: ["form_template_id"]
+            isOneToOne: false
+            referencedRelation: "form_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_recurring_event_id_fkey"
+            columns: ["recurring_event_id"]
+            isOneToOne: false
+            referencedRelation: "recurring_events"
             referencedColumns: ["id"]
           },
         ]
@@ -189,6 +364,93 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      form_submissions: {
+        Row: {
+          created_at: string
+          data: Json
+          event_id: string | null
+          id: string
+          template_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          event_id?: string | null
+          id?: string
+          template_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          event_id?: string | null
+          id?: string
+          template_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_submissions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "form_submissions_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "form_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "form_submissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      form_templates: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          schema: Json
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          schema?: Json
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          schema?: Json
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       idempotency_keys: {
         Row: {
@@ -350,6 +612,36 @@ export type Database = {
           },
         ]
       }
+      og_cache: {
+        Row: {
+          description: string | null
+          fetched_at: string
+          image_url: string | null
+          site_name: string | null
+          title: string | null
+          url: string
+          url_hash: string
+        }
+        Insert: {
+          description?: string | null
+          fetched_at?: string
+          image_url?: string | null
+          site_name?: string | null
+          title?: string | null
+          url: string
+          url_hash: string
+        }
+        Update: {
+          description?: string | null
+          fetched_at?: string
+          image_url?: string | null
+          site_name?: string | null
+          title?: string | null
+          url?: string
+          url_hash?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age_demographic: string | null
@@ -360,6 +652,7 @@ export type Database = {
           display_name: string | null
           id: string
           onboarding_completed_at: string | null
+          suspended_at: string | null
           updated_at: string
         }
         Insert: {
@@ -371,6 +664,7 @@ export type Database = {
           display_name?: string | null
           id: string
           onboarding_completed_at?: string | null
+          suspended_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -382,6 +676,52 @@ export type Database = {
           display_name?: string | null
           id?: string
           onboarding_completed_at?: string | null
+          suspended_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      recurring_events: {
+        Row: {
+          cadence_label: string | null
+          cadence_rrule: string | null
+          cover_image_url: string | null
+          created_at: string
+          default_capacity: number | null
+          description_md: string
+          id: string
+          is_active: boolean
+          location: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cadence_label?: string | null
+          cadence_rrule?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          default_capacity?: number | null
+          description_md?: string
+          id?: string
+          is_active?: boolean
+          location?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cadence_label?: string | null
+          cadence_rrule?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          default_capacity?: number | null
+          description_md?: string
+          id?: string
+          is_active?: boolean
+          location?: string | null
+          slug?: string
+          title?: string
           updated_at?: string
         }
         Relationships: []
@@ -625,6 +965,7 @@ export type Database = {
       }
     }
     Enums: {
+      announcement_status: "draft" | "published" | "archived"
       app_role: "member_isij" | "member_standalone" | "scholar" | "admin"
       article_status: "draft" | "in_review" | "published"
       check_in_status: "registered" | "checked_in" | "no_show" | "cancelled"
@@ -640,6 +981,12 @@ export type Database = {
         | "incomplete"
         | "trialing"
         | "unpaid"
+      ticket_order_status:
+        | "pending"
+        | "paid"
+        | "refunded"
+        | "failed"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -767,6 +1114,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      announcement_status: ["draft", "published", "archived"],
       app_role: ["member_isij", "member_standalone", "scholar", "admin"],
       article_status: ["draft", "in_review", "published"],
       check_in_status: ["registered", "checked_in", "no_show", "cancelled"],
@@ -782,6 +1130,13 @@ export const Constants = {
         "incomplete",
         "trialing",
         "unpaid",
+      ],
+      ticket_order_status: [
+        "pending",
+        "paid",
+        "refunded",
+        "failed",
+        "cancelled",
       ],
     },
   },
