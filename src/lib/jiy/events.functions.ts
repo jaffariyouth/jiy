@@ -57,13 +57,15 @@ export const getEventAdmin = createServerFn({ method: "GET" })
 const createEventSchema = z.object({
   idempotencyKey: z.string().min(8),
   title: z.string().min(1).max(200),
-  description: z.string().max(5000).optional(),
+  description: z.string().max(50_000).optional(),
   location: z.string().max(500).optional(),
   starts_at: z.string().datetime(),
   ends_at: z.string().datetime().optional(),
   capacity: z.number().int().min(0).optional(),
   is_member_only: z.boolean().default(false),
   cover_image_url: z.string().url().optional(),
+  form_template_id: z.string().uuid().nullable().optional(),
+  requires_payment: z.boolean().optional(),
 });
 
 export const createEvent = createServerFn({ method: "POST" })
