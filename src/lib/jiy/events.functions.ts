@@ -34,6 +34,24 @@ export const listMemberEvents = createServerFn({ method: "GET" })
     return { events: data ?? [] };
   });
 
+// ---------- Admin reads ----------
+
+export const getEventAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./idempotency.server");
+    await assertAdmin(context.supabase, context.userId);
+    const { data: row, error } = await context.supabase
+      .from("events")
+      .select("*")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!row) throw new Error("NOT_FOUND");
+    return { event: row };
+  });
+
 // ---------- Admin mutations ----------
 
 const createEventSchema = z.object({
