@@ -177,3 +177,73 @@ export const publishArticle = createServerFn({ method: "POST" })
     await idem.complete({ ok: true });
     return { ok: true as const };
   });
+// ---------- Admin reads / extra mutations ----------
+
+export const listAllArticlesAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("./idempotency.server");
+    await assertAdmin(context.supabase, context.userId);
+    const { data, error } = await context.supabase
+      .from("youth_press_articles")
+      .select("id, title, slug, status, excerpt, cover_image_url, published_at, updated_at, author_id")
+      .order("updated_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { articles: data ?? [] };
+  });
+
+export const getArticleByIdAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./idempotency.server");
+    await assertAdmin(context.supabase, context.userId);
+    const { data: row, error } = await context.supabase
+      .from("youth_press_articles").select("*").eq("id", data.id).maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!row) throw new Error("NOT_FOUND");
+    return { article: row };
+  });
+
+export const unpublishArticle = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid(), idempotencyKey: z.string().min(8) }).parse(i))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin, checkIdempotency, writeAudit } = await import("./idempotency.server");
+    await assertAdmin(context.supabase, context.userId);
+    const idem = await checkIdempotency<{ ok: true }>(context.supabase, data.idempotencyKey, context.userId);
+    if (idem.cached) return idem.cached;
+    const { error } = await context.supabase
+      .from("youth_press_articles").update({ status: "draft" }).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    await writeAudit(context.supabase, { actorId: context.userId, action: "article.unpublished", entity: "youth_press_articles", entityId: data.id });
+    await idem.complete({ ok: true });
+    return { ok: true as const };
+  });
+
+export const deleteArticle = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid(), idempotencyKey: z.string().min(8) }).parse(i))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin, checkIdempotency, writeAudit } = await import("./idempotency.server");
+    await assertAdmin(context.supabase, context.userId);
+    const idem = await checkIdempotency<{ ok: true }>(context.supabase, data.idempotencyKey, context.userId);
+    if (idem.cached) return idem.cached;
+    const { error } = await context.supabase
+      .from("youth_press_articles").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    await writeAudit(context.supabase, { actorId: context.userId, action: "article.deleted", entity: "youth_press_articles", entityId: data.id });
+    await idem.complete({ ok: true });
+    return { ok: true as const };
+  });
+
+export const getPublicFormTemplate = createServerFn({ method: "GET" })
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i as { id: string }))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row, error } = await supabaseAdmin
+      .from("form_templates").select("id, name, slug, schema").eq("id", data.id).maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!row) throw new Error("NOT_FOUND");
+    return { template: row };
+  });
