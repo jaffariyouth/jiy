@@ -45,9 +45,8 @@ export const listUsers = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }): Promise<AdminUserDTO[]> => {
     await assertAdmin(context.supabase, context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    let q = supabaseAdmin
+    let q = context.supabase
       .from("profiles")
       .select("id, display_name, country, onboarding_completed_at")
       .order("created_at", { ascending: false })
@@ -60,7 +59,7 @@ export const listUsers = createServerFn({ method: "POST" })
     if (!profiles || profiles.length === 0) return [];
 
     const ids = profiles.map((p) => p.id);
-    const { data: roleRows } = await supabaseAdmin
+    const { data: roleRows } = await context.supabase
       .from("user_roles")
       .select("user_id, role")
       .in("user_id", ids);
