@@ -93,6 +93,8 @@ export const createEvent = createServerFn({ method: "POST" })
         capacity: data.capacity ?? null,
         is_member_only: data.is_member_only,
         cover_image_url: data.cover_image_url ?? null,
+        form_template_id: data.form_template_id ?? null,
+        requires_payment: data.requires_payment ?? false,
         created_by: context.userId,
         status: "draft",
       })
