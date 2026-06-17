@@ -64,8 +64,8 @@ function AuditPage() {
             </thead>
             <tbody className="divide-y divide-[#f0ead7]">
               {q.data?.entries.map((e) => (
-                <>
-                  <tr key={e.id}>
+                <Fragment key={e.id}>
+                  <tr>
                     <td className="px-4 py-2 text-xs text-[#6b6453]">{new Date(e.created_at).toLocaleString()}</td>
                     <td className="px-4 py-2 font-medium text-[#010b21]">{e.action}</td>
                     <td className="px-4 py-2">{e.entity ?? "—"}<div className="text-xs text-[#6b6453] truncate max-w-[200px]">{e.entity_id ?? ""}</div></td>
@@ -80,13 +80,13 @@ function AuditPage() {
                     </td>
                   </tr>
                   {expanded === e.id && (
-                    <tr key={`${e.id}-x`}>
+                    <tr>
                       <td colSpan={5} className="px-4 py-3 bg-[#FAF8F5]">
                         <pre className="text-xs overflow-x-auto">{JSON.stringify(e.metadata, null, 2)}</pre>
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               ))}
               {q.data && q.data.entries.length === 0 && (
                 <tr><td colSpan={5} className="px-4 py-8 text-center text-[#6b6453]">No entries.</td></tr>
