@@ -192,3 +192,42 @@ export const cancelEvent = createServerFn({ method: "POST" })
     await idem.complete({ ok: true });
     return { ok: true as const };
   });
+export const duplicateEvent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z.object({ id: z.string().uuid(), idempotencyKey: z.string().min(8) }).parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin, checkIdempotency, writeAudit } = await import("./idempotency.server");
+    await assertAdmin(context.supabase, context.userId);
+    const idem = await checkIdempotency<{ id: string }>(context.supabase, data.idempotencyKey, context.userId);
+    if (idem.cached) return idem.cached;
+    const { data: src, error: srcErr } = await context.supabase
+      .from("events").select("*").eq("id", data.id).maybeSingle();
+    if (srcErr) throw new Error(srcErr.message);
+    if (!src) throw new Error("NOT_FOUND");
+    const { data: row, error } = await context.supabase
+      .from("events")
+      .insert({
+        title: `${src.title} (copy)`,
+        description: src.description,
+        location: src.location,
+        starts_at: src.starts_at,
+        ends_at: src.ends_at,
+        capacity: src.capacity,
+        is_member_only: src.is_member_only,
+        cover_image_url: src.cover_image_url,
+        form_template_id: src.form_template_id,
+        requires_payment: src.requires_payment,
+        created_by: context.userId,
+        status: "draft",
+      })
+      .select("id").single();
+    if (error) throw new Error(error.message);
+    await writeAudit(context.supabase, {
+      actorId: context.userId, action: "event.duplicated",
+      entity: "events", entityId: row.id, metadata: { source_id: data.id },
+    });
+    await idem.complete({ id: row.id });
+    return { id: row.id };
+  });
