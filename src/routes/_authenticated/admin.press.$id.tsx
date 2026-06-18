@@ -64,6 +64,7 @@ function PressEditPage() {
         title, slug, excerpt: excerpt || undefined, body_md: body,
         cover_image_url: cover || undefined,
         ...audience,
+        featured_on_home: featured,
       }});
       toast.success("Saved"); qc.invalidateQueries({ queryKey: ["admin", "article", id] });
     } catch (e) { toast.error((e as Error).message); }
