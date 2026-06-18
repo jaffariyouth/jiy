@@ -107,12 +107,48 @@ const DEFAULTS = {
     section_kicker: "OUR CORE VALUES",
     section_headline: "Strategic Foundations",
     items: [
-      { number: "01", title: "Authentic Engagement", body: "Connecting with our youth through real conversations, shared experiences, and relevant initiatives." },
-      { number: "02", title: "Sustainability", body: "Developing long-term non-profit frameworks that secure structural consistency across terms." },
-      { number: "03", title: "Service & Social Impact", body: "Uplifting the youth to become active, positive contributors within our community and broader society." },
-      { number: "04", title: "Faith as Identity", body: "Fostering a sense of belonging and building systems of care, justice, and spiritual unity." },
-      { number: "05", title: "Community Connection", body: "Creating spaces where deep friendships grow, voices are heard, and purpose is shared." },
-      { number: "06", title: "Scholarly Guidance", body: "Providing direct connection and regular engagement with resident scholars for moral alignment." },
+      {
+        number: "01",
+        title: "Authentic Engagement",
+        body: "Connecting with our youth through real conversations, shared experiences, and relevant initiatives.",
+        detail:
+          "When we realize all of us are creations of Allah (S.W.T), the desire to love, care, and support each other becomes stronger. With this intention, we want to connect with our youth, as well as give them opportunities to connect with each other through real conversations, shared experiences, and relevant initiatives. It's about quality over quantity — focusing on building genuine relationships and creating programs that reflect the real interests, needs, and concerns of our youth.",
+      },
+      {
+        number: "02",
+        title: "Sustainability",
+        body: "Developing long-term non-profit frameworks that secure structural consistency across terms.",
+        detail:
+          "To build structural longevity across leadership terms. By maintaining transparent, organized, and robust non-profit processes, JIY ensures that each term's initiatives are consistently handed over to the next generation without loss of cultural and community capital.",
+      },
+      {
+        number: "03",
+        title: "Service & Social Impact",
+        body: "Uplifting the youth to become active, positive contributors within our community and broader society.",
+        detail:
+          "Rooted in the prophetic tradition of service, we strive to empower youth to become active contributors — first within our own communities, and then in the broader society. Our goal is to cultivate a sense of responsibility and purpose, encouraging youth to use their time, energy, and skills to meet real needs and drive meaningful change. When we recognize that we are stronger together, and bring our unique strengths into collective action, we unlock the power to uplift one another and serve more effectively. This spirit of service also prepares us for the reappearance of our 12th Imam (A.T.F.S), by building systems of care, justice, and unity. It calls us to look beyond ourselves — to the needs of our fellow Muslims, both locally and globally.",
+      },
+      {
+        number: "04",
+        title: "Faith as Identity",
+        body: "Fostering a sense of belonging and building systems of care, justice, and spiritual unity.",
+        detail:
+          "Building a genuine sense of belonging and unity is one of our biggest goals this year. We know that for many youth, connection to the mosque can sometimes feel limited — often revolving around sports or occasional programs. But we believe there's potential for so much more. We want every young person to feel that this community is truly theirs — a space where friendships grow, voices are heard, and purpose is shared. This year, we're working to create that kind of environment: one that goes beyond just showing up to events, and moves toward building lasting bonds and meaningful involvement. Together, we can shape a culture where every youth feels seen, valued, and proud to be part of the future of their mosque.",
+      },
+      {
+        number: "05",
+        title: "Community Connection",
+        body: "Creating spaces where deep friendships grow, voices are heard, and purpose is shared.",
+        detail:
+          "We believe in establishing active platforms that allow youth members to collaborate, share academic resources, post job opportunities, and engage in open dialogue inside safe boundaries, expanding deep social kinship throughout the year.",
+      },
+      {
+        number: "06",
+        title: "Scholarly Guidance",
+        body: "Providing direct connection and regular engagement with resident scholars for moral alignment.",
+        detail:
+          "Establishing effective and open communication with our scholars — including Resident Aalim Maulana Rizvi and Sr. Tahera Kassamali — remains a cornerstone of our mission to deepen the youth's connection with Allah (S.W.T). While we have made progress in building internal communication channels, our focus this term is to extend that bridge to the wider youth community. By creating accessible, consistent, and youth-centered avenues for engagement with our scholars, we aim to foster a stronger relationship between the youth and the teachings of the Ahlul-Bayt (A.S). This effort is not only to ensure alignment with authentic Islamic guidance, but to also enable our youth with the confidence, clarity, and spiritual grounding needed to walk firmly on the path of faith in today's world.",
+      },
     ],
   },
   press: {
@@ -679,8 +715,10 @@ function OngoingEvents({ ongoing }: { ongoing?: Section }) {
 
 function CoreValues({ values }: { values?: Section }) {
   const d = DEFAULTS.values;
-  const items = arr<{ number: string; title: string; body: string; cta_label?: string; cta_href?: string }>(values, "items", d.items);
+  const items = arr<{ number: string; title: string; body: string; detail?: string; cta_label?: string; cta_href?: string }>(values, "items", d.items);
   const [active, setActive] = useState(0);
+  const [openDetail, setOpenDetail] = useState<number | null>(null);
+  const detailItem = openDetail !== null ? items[openDetail] : null;
 
   return (
     <section id="core-values" className="py-24 border-b border-horizon-mist bg-alabaster-parchment relative overflow-hidden">
@@ -725,18 +763,46 @@ function CoreValues({ values }: { values?: Section }) {
                 </span>
                 <h3 className="font-headline text-3xl md:text-4xl text-persian-indigo mb-4">{it.title}</h3>
                 <p className="font-body text-base text-ash-slate leading-relaxed mb-8">{it.body}</p>
-                <a
-                  href={it.cta_href || "#about-us"}
-                  className="interactive-btn inline-flex items-center gap-2 self-start font-body text-sm font-bold tracking-[0.2em] uppercase text-deep-garnet hover:text-persian-indigo transition-colors"
+                <button
+                  type="button"
+                  onClick={() => setOpenDetail(i)}
+                  className="interactive-btn self-start bg-persian-indigo text-white hover:bg-damascus-gold hover:text-persian-indigo font-body text-[10px] font-bold tracking-[0.2em] py-3.5 px-6 uppercase transition-all duration-300"
                 >
-                  {it.cta_label || "Read More"}
-                  <span aria-hidden="true">→</span>
-                </a>
+                  {it.cta_label || "Read More"} →
+                </button>
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {detailItem && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-persian-indigo/70 px-4"
+          onClick={() => setOpenDetail(null)}
+        >
+          <div
+            className="bg-alabaster-parchment max-w-xl w-full p-8 md:p-10 rounded-2xl border border-horizon-mist relative shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setOpenDetail(null)}
+              className="absolute top-3 right-4 text-ash-slate hover:text-persian-indigo text-2xl leading-none"
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <p className="font-body text-[10px] uppercase tracking-[0.25em] text-damascus-gold font-bold mb-2">OUR GOAL</p>
+            <h3 className="font-headline text-2xl text-persian-indigo mb-4">{detailItem.title}</h3>
+            <p className="font-body text-sm text-ash-slate leading-relaxed text-left whitespace-pre-line">
+              {detailItem.detail || detailItem.body}
+            </p>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
