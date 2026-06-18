@@ -284,6 +284,64 @@ function HomePage() {
   );
 }
 
+function EventsDropdown() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    function onDoc(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+  const go = (id: string) => {
+    setOpen(false);
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  return (
+    <div
+      ref={ref}
+      className="relative py-1"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-haspopup="true"
+        className="hover:text-damascus-gold transition-colors duration-200 flex items-center gap-1 uppercase outline-none"
+      >
+        Events
+        <span
+          className={`material-symbols-outlined text-[16px] transition-transform duration-300 ${open ? "-rotate-180" : ""}`}
+        >
+          expand_more
+        </span>
+      </button>
+      {open && (
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-white border border-horizon-mist shadow-xl flex flex-col z-50 rounded-sm">
+          <button
+            type="button"
+            onClick={() => go("upcoming-events")}
+            className="text-left px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold border-b border-horizon-mist/50 transition-colors whitespace-nowrap"
+          >
+            Upcoming Events
+          </button>
+          <button
+            type="button"
+            onClick={() => go("ongoing-events")}
+            className="text-left px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold transition-colors whitespace-nowrap"
+          >
+            Ongoing Events
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /* Header                                                              */
 /* ------------------------------------------------------------------ */
