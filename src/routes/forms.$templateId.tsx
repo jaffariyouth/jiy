@@ -9,14 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { getPublicFormTemplate } from "@/lib/jiy/youth-press.functions";
-import { submitForm, evalVisibility as _unused } from "@/lib/jiy/form-templates.functions"; // type-only
+import { submitForm } from "@/lib/jiy/form-templates.functions";
 import { evalVisibility } from "@/components/admin/FormBuilder";
 import { registerForEvent } from "@/lib/jiy/event-registrations.functions";
 import type { FormFieldDef, FormSettings } from "@/lib/jiy/form-templates.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
-void _unused; // keep import for tree-shaking safety; not used at runtime
 
 export const Route = createFileRoute("/forms/$templateId")({
   validateSearch: (s: Record<string, unknown>) => ({ event: typeof s.event === "string" ? s.event : undefined }),
