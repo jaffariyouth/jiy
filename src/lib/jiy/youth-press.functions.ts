@@ -72,6 +72,10 @@ export const createDraft = createServerFn({ method: "POST" })
         body_md: data.body_md,
         cover_image_url: data.cover_image_url ?? null,
         status: "draft",
+        audience_visibility: data.audience_visibility ?? "members",
+        audience_gender: data.audience_gender ?? "all",
+        audience_min_age: data.audience_min_age ?? null,
+        audience_max_age: data.audience_max_age ?? null,
       })
       .select("id")
       .single();
