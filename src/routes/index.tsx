@@ -715,8 +715,10 @@ function OngoingEvents({ ongoing }: { ongoing?: Section }) {
 
 function CoreValues({ values }: { values?: Section }) {
   const d = DEFAULTS.values;
-  const items = arr<{ number: string; title: string; body: string; cta_label?: string; cta_href?: string }>(values, "items", d.items);
+  const items = arr<{ number: string; title: string; body: string; detail?: string; cta_label?: string; cta_href?: string }>(values, "items", d.items);
   const [active, setActive] = useState(0);
+  const [openDetail, setOpenDetail] = useState<number | null>(null);
+  const detailItem = openDetail !== null ? items[openDetail] : null;
 
   return (
     <section id="core-values" className="py-24 border-b border-horizon-mist bg-alabaster-parchment relative overflow-hidden">
@@ -761,18 +763,46 @@ function CoreValues({ values }: { values?: Section }) {
                 </span>
                 <h3 className="font-headline text-3xl md:text-4xl text-persian-indigo mb-4">{it.title}</h3>
                 <p className="font-body text-base text-ash-slate leading-relaxed mb-8">{it.body}</p>
-                <a
-                  href={it.cta_href || "#about-us"}
-                  className="interactive-btn inline-flex items-center gap-2 self-start font-body text-sm font-bold tracking-[0.2em] uppercase text-deep-garnet hover:text-persian-indigo transition-colors"
+                <button
+                  type="button"
+                  onClick={() => setOpenDetail(i)}
+                  className="interactive-btn self-start bg-persian-indigo text-white hover:bg-damascus-gold hover:text-persian-indigo font-body text-[10px] font-bold tracking-[0.2em] py-3.5 px-6 uppercase transition-all duration-300"
                 >
-                  {it.cta_label || "Read More"}
-                  <span aria-hidden="true">→</span>
-                </a>
+                  {it.cta_label || "Read More"} →
+                </button>
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {detailItem && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-persian-indigo/70 px-4"
+          onClick={() => setOpenDetail(null)}
+        >
+          <div
+            className="bg-alabaster-parchment max-w-xl w-full p-8 md:p-10 rounded-2xl border border-horizon-mist relative shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setOpenDetail(null)}
+              className="absolute top-3 right-4 text-ash-slate hover:text-persian-indigo text-2xl leading-none"
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <p className="font-body text-[10px] uppercase tracking-[0.25em] text-damascus-gold font-bold mb-2">OUR GOAL</p>
+            <h3 className="font-headline text-2xl text-persian-indigo mb-4">{detailItem.title}</h3>
+            <p className="font-body text-sm text-ash-slate leading-relaxed text-left whitespace-pre-line">
+              {detailItem.detail || detailItem.body}
+            </p>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
