@@ -176,9 +176,9 @@ function PublicFormPage() {
                     onChange={(e) => { const file = e.target.files?.[0]; if (file) uploadFile(f.id, file); }}
                     className="text-sm"
                   />
-                  {values[f.id] && (
+                  {typeof values[f.id] === "string" && (values[f.id] as string).length > 0 && (
                     <a href={values[f.id] as string} target="_blank" rel="noreferrer" className="text-xs underline text-[#caa460] break-all">
-                      Uploaded: {values[f.id] as string}
+                      {`Uploaded: ${values[f.id] as string}`}
                     </a>
                   )}
                 </div>
