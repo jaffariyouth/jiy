@@ -235,6 +235,10 @@ export const duplicateEvent = createServerFn({ method: "POST" })
         cover_image_url: src.cover_image_url,
         form_template_id: src.form_template_id,
         requires_payment: src.requires_payment,
+        audience_visibility: src.audience_visibility,
+        audience_gender: src.audience_gender,
+        audience_min_age: src.audience_min_age,
+        audience_max_age: src.audience_max_age,
         created_by: context.userId,
         status: "draft",
       })
