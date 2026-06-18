@@ -34,8 +34,12 @@ export type HomepageArticle = {
 
 // Public — used by `/` loader.
 export const getHomepageData = createServerFn({ method: "GET" }).handler(async () => {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const sb = supabaseAdmin;
+  const { createClient } = await import("@supabase/supabase-js");
+  const sb = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_PUBLISHABLE_KEY!,
+    { auth: { persistSession: false, autoRefreshToken: false } },
+  );
   const nowIso = new Date().toISOString();
 
   const [sectionsRes, eventsRes, articlesFeaturedRes, articlesLatestRes] = await Promise.all([
