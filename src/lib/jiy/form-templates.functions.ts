@@ -2,18 +2,55 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+const visibilitySchema = z
+  .object({
+    fieldId: z.string().min(1),
+    operator: z.enum(["equals", "not_equals", "is_empty", "is_not_empty"]),
+    value: z.string().max(500).optional(),
+  })
+  .optional();
+
 const fieldSchema = z.object({
   id: z.string().min(1),
-  type: z.enum(["text", "email", "phone", "textarea", "select", "checkbox", "number", "date"]),
+  type: z.enum([
+    "text",
+    "email",
+    "phone",
+    "textarea",
+    "select",
+    "radio",
+    "checkbox",
+    "number",
+    "date",
+    "file",
+    "section",
+    "paragraph",
+  ]),
   label: z.string().min(1).max(200),
   required: z.boolean().default(false),
   helpText: z.string().max(500).optional(),
   options: z.array(z.string().min(1).max(200)).optional(),
   placeholder: z.string().max(200).optional(),
+  // For `paragraph` we treat `helpText` as the markdown body; for `section`
+  // `label` is the heading and `helpText` is the optional subhead. Both are
+  // non-input field types — skipped during validation.
+  visibility: visibilitySchema,
 });
 
-export const formSchemaShape = z.object({ fields: z.array(fieldSchema) });
+const settingsSchema = z
+  .object({
+    confirmationMessage: z.string().max(5_000).optional(),
+    redirectUrl: z.string().max(500).optional(),
+    notificationEmail: z.string().email().max(254).optional(),
+  })
+  .default({});
+
+export const formSchemaShape = z.object({
+  fields: z.array(fieldSchema),
+  settings: settingsSchema.optional(),
+});
 export type FormFieldDef = z.infer<typeof fieldSchema>;
+export type FormSettings = z.infer<typeof settingsSchema>;
 
 const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
