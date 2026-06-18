@@ -198,6 +198,63 @@ function OgeeArchDefs() {
   );
 }
 
+function EventsDropdown() {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent) => {
+      if (!(e.target as HTMLElement).closest("[data-events-dropdown]")) setOpen(false);
+    };
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [open]);
+  const go = (hash: string) => {
+    setOpen(false);
+    const el = document.querySelector(hash);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    else window.location.hash = hash;
+  };
+  return (
+    <div className="relative py-1" data-events-dropdown>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="hover:text-damascus-gold transition-colors duration-200 flex items-center gap-1 uppercase outline-none"
+        aria-expanded={open}
+        aria-haspopup="menu"
+      >
+        Events
+        <span
+          className={`material-symbols-outlined text-[16px] transition-transform duration-300 ${open ? "-rotate-180" : ""}`}
+        >
+          expand_more
+        </span>
+      </button>
+      <div
+        className={`absolute top-full left-1/2 -translate-x-1/2 w-56 bg-white border border-horizon-mist shadow-xl flex flex-col z-50 rounded-sm transition-all duration-200 ${
+          open ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-1 pointer-events-none"
+        }`}
+        role="menu"
+      >
+        <button
+          type="button"
+          onClick={() => go("#upcoming-events")}
+          className="text-left px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold border-b border-horizon-mist/50 transition-colors whitespace-nowrap"
+        >
+          Upcoming Events
+        </button>
+        <button
+          type="button"
+          onClick={() => go("#ongoing-events")}
+          className="text-left px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold transition-colors whitespace-nowrap"
+        >
+          Ongoing Events
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
 /* ------------------------------------------------------------------ */
 /* Social icon set (matches the brand colors in the HTML)              */
 /* ------------------------------------------------------------------ */
@@ -309,28 +366,8 @@ function Header({ signedIn }: { signedIn: boolean }) {
             Our Team
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-damascus-gold transition-all duration-300 group-hover:w-full" />
           </Link>
-          <div className="relative group py-1">
-            <button className="hover:text-damascus-gold transition-colors duration-200 flex items-center gap-1 uppercase outline-none">
-              Events
-              <span className="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:-rotate-180">
-                expand_more
-              </span>
-            </button>
-            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-white border border-horizon-mist shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col z-50 rounded-sm">
-              <a
-                href="#upcoming-events"
-                className="px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold border-b border-horizon-mist/50 transition-colors whitespace-nowrap"
-              >
-                Upcoming Events
-              </a>
-              <a
-                href="#ongoing-events"
-                className="px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold transition-colors whitespace-nowrap"
-              >
-                Ongoing Events
-              </a>
-            </div>
-          </div>
+          <EventsDropdown />
+
           <a className="hover:text-damascus-gold transition-colors duration-200 relative py-1 group" href="#journal">
             The Press
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-damascus-gold transition-all duration-300 group-hover:w-full" />
