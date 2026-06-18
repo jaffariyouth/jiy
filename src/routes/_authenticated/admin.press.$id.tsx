@@ -32,12 +32,19 @@ function PressEditPage() {
   const [excerpt, setExcerpt] = useState("");
   const [body, setBody] = useState("");
   const [cover, setCover] = useState("");
+  const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
 
   useEffect(() => {
-    const a = q.data?.article;
+    const a = q.data?.article as Record<string, unknown> | undefined;
     if (!a) return;
-    setTitle(a.title); setSlug(a.slug);
-    setExcerpt(a.excerpt ?? ""); setBody(a.body_md); setCover(a.cover_image_url ?? "");
+    setTitle(a.title as string); setSlug(a.slug as string);
+    setExcerpt((a.excerpt as string | null) ?? ""); setBody(a.body_md as string); setCover((a.cover_image_url as string | null) ?? "");
+    setAudience({
+      audience_visibility: (a.audience_visibility as "public" | "members") ?? "members",
+      audience_gender: (a.audience_gender as "all" | "male" | "female") ?? "all",
+      audience_min_age: (a.audience_min_age as number | null) ?? null,
+      audience_max_age: (a.audience_max_age as number | null) ?? null,
+    });
   }, [q.data?.article]);
 
   const uploadCover = async (file: File) => {
