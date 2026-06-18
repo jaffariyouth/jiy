@@ -3,6 +3,7 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getTeamPageData } from "@/lib/jiy/site-content.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { OrnamentalArchFrame, OGEE_INNER_ARCH_BBOX_D } from "@/components/dashboard/OrnamentalArchFrame";
 
 const teamQueryOptions = queryOptions({
   queryKey: ["team-page"],
@@ -152,7 +153,7 @@ function OgeeArchDefs() {
     <svg width="0" height="0" className="absolute" aria-hidden="true">
       <defs>
         <clipPath id="ogee-arch-mask" clipPathUnits="objectBoundingBox">
-          <path d="M0.1,1 L0.1,0.52 L0.04,0.52 L0.04,0.48 C0.04,0.40 0.10,0.34 0.18,0.34 C0.26,0.34 0.34,0.18 0.5,0.02 C0.66,0.18 0.74,0.34 0.82,0.34 C0.90,0.34 0.96,0.40 0.96,0.48 L0.96,0.52 L0.90,0.52 L0.90,1 Z" />
+          <path d={OGEE_INNER_ARCH_BBOX_D} />
         </clipPath>
       </defs>
     </svg>
@@ -270,6 +271,7 @@ function TeamHero({ hero }: { hero?: Section }) {
 
           <div className="lg:col-span-5 relative flex justify-center">
             <div className="relative w-full max-w-[400px] aspect-[4/5] bg-warm-silk-grey p-4 border border-horizon-mist group shadow-xl transition-all duration-500 hover:border-damascus-gold">
+              <OrnamentalArchFrame className="inset-4 z-20" colorClassName="text-persian-indigo" />
               <div className="w-full h-full overflow-hidden relative ogee-arch-portal bg-white">
                 <img
                   src={str(hero, "photo_url", d.photo_url)}
@@ -361,18 +363,21 @@ function Leadership({ leadership }: { leadership?: Section }) {
               key={i}
               className="studio-card p-6 flex flex-col gap-4 group"
             >
-              <div className="aspect-[4/5] w-full overflow-hidden bg-warm-silk-grey border border-horizon-mist/60 relative ogee-arch-portal">
-                {m.photo_url ? (
-                  <img
-                    src={m.photo_url}
-                    alt={m.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-ash-slate text-xs uppercase tracking-widest">
-                    No photo
-                  </div>
-                )}
+              <div className="relative aspect-[4/5] w-full">
+                <OrnamentalArchFrame className="inset-0 z-20" colorClassName="text-persian-indigo" />
+                <div className="aspect-[4/5] w-full overflow-hidden bg-warm-silk-grey border border-horizon-mist/60 relative ogee-arch-portal">
+                  {m.photo_url ? (
+                    <img
+                      src={m.photo_url}
+                      alt={m.name}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-ash-slate text-xs uppercase tracking-widest">
+                      No photo
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="flex flex-col gap-1">
                 <span className="font-body text-[10px] uppercase tracking-[0.22em] text-damascus-gold font-bold">
