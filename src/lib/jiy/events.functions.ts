@@ -68,6 +68,13 @@ const audienceFields = {
   audience_max_age: z.number().int().min(0).max(120).nullable().optional(),
 };
 
+const speakerSchema = z.object({
+  name: z.string().min(1).max(120),
+  role: z.string().max(160).optional().default(""),
+  bio: z.string().max(2000).optional().default(""),
+  photo_url: z.string().url().or(z.literal("")).optional().default(""),
+});
+
 const createEventSchema = z.object({
   idempotencyKey: z.string().min(8),
   title: z.string().min(1).max(200),
@@ -81,8 +88,11 @@ const createEventSchema = z.object({
   form_template_id: z.string().uuid().nullable().optional(),
   requires_payment: z.boolean().optional(),
   featured_on_home: z.boolean().optional(),
+  category_label: z.string().max(120).nullable().optional(),
+  speakers: z.array(speakerSchema).max(20).optional(),
   ...audienceFields,
 });
+
 
 export const createEvent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -116,9 +126,12 @@ export const createEvent = createServerFn({ method: "POST" })
         audience_gender: data.audience_gender ?? "all",
         audience_min_age: data.audience_min_age ?? null,
         audience_max_age: data.audience_max_age ?? null,
+        category_label: data.category_label ?? null,
+        speakers: data.speakers ?? [],
         created_by: context.userId,
         status: "draft",
       })
+
       .select("id")
       .single();
     if (error) throw new Error(error.message);
@@ -260,3 +273,216 @@ export const duplicateEvent = createServerFn({ method: "POST" })
     await idem.complete({ id: row.id });
     return { id: row.id };
   });
+
+// ---------- Public detail + public registration ----------
+
+function makePublicClient() {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  return import("@supabase/supabase-js").then(({ createClient }) =>
+    createClient<Database>(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_PUBLISHABLE_KEY!,
+      { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
+    ),
+  );
+}
+
+export const getPublicEvent = createServerFn({ method: "GET" })
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
+  .handler(async ({ data }) => {
+    const sb = await makePublicClient();
+    const { data: event, error } = await sb
+      .from("events")
+      .select(
+        "id, title, description, location, starts_at, ends_at, capacity, cover_image_url, category_label, speakers, requires_payment, status, audience_visibility, audience_gender, audience_min_age, audience_max_age",
+      )
+      .eq("id", data.id)
+      .eq("status", "published")
+      .eq("audience_visibility", "public")
+      .eq("audience_gender", "all")
+      .is("audience_min_age", null)
+      .is("audience_max_age", null)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!event) throw new Error("NOT_FOUND");
+
+    const { data: pay } = await sb
+      .from("event_payments")
+      .select("price_cents, currency, requires_payment")
+      .eq("event_id", data.id)
+      .maybeSingle();
+
+    return {
+      event,
+      payment: pay ?? { price_cents: 0, currency: "usd", requires_payment: false },
+    };
+  });
+
+const publicRegisterSchema = z.object({
+  eventId: z.string().uuid(),
+  fullName: z.string().trim().min(2).max(120),
+  email: z.string().trim().toLowerCase().email().max(255),
+  quantity: z.number().int().min(1).max(10).default(1),
+});
+
+export const registerPublicForEvent = createServerFn({ method: "POST" })
+  .inputValidator((i: unknown) => publicRegisterSchema.parse(i))
+  .handler(async ({ data }) => {
+    const sb = await makePublicClient();
+    // Re-validate event eligibility server-side.
+    const { data: event, error: evErr } = await sb
+      .from("events")
+      .select("id, status, audience_visibility, audience_gender, audience_min_age, audience_max_age, capacity, title")
+      .eq("id", data.eventId)
+      .maybeSingle();
+    if (evErr) throw new Error(evErr.message);
+    if (
+      !event ||
+      event.status !== "published" ||
+      event.audience_visibility !== "public" ||
+      event.audience_gender !== "all" ||
+      event.audience_min_age !== null ||
+      event.audience_max_age !== null
+    ) {
+      throw new Error("This event is not open for public registration.");
+    }
+
+    const { data: pay } = await sb
+      .from("event_payments")
+      .select("price_cents, currency, requires_payment")
+      .eq("event_id", data.eventId)
+      .maybeSingle();
+    const requiresPayment = pay?.requires_payment ?? false;
+    const priceCents = pay?.price_cents ?? 0;
+    const currency = (pay?.currency ?? "usd").toLowerCase();
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Capacity guard (best-effort; race-tolerant).
+    if (event.capacity != null) {
+      const { count: confirmed } = await supabaseAdmin
+        .from("event_public_registrations")
+        .select("*", { count: "exact", head: true })
+        .eq("event_id", data.eventId)
+        .eq("status", "confirmed");
+      const { count: authConfirmed } = await supabaseAdmin
+        .from("event_registrations")
+        .select("*", { count: "exact", head: true })
+        .eq("event_id", data.eventId)
+        .neq("check_in_status", "cancelled");
+      const taken = (confirmed ?? 0) + (authConfirmed ?? 0);
+      if (taken + data.quantity > event.capacity) {
+        throw new Error("Sorry, this event is full.");
+      }
+    }
+
+    // Rate-limit: max 5 pending/confirmed rows per email per event in the last hour.
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { count: recent } = await supabaseAdmin
+      .from("event_public_registrations")
+      .select("*", { count: "exact", head: true })
+      .eq("event_id", data.eventId)
+      .eq("email", data.email)
+      .gte("created_at", oneHourAgo);
+    if ((recent ?? 0) >= 5) {
+      throw new Error("Too many registrations from this email recently. Please try again later.");
+    }
+
+    const totalCents = requiresPayment ? priceCents * data.quantity : 0;
+
+    if (!requiresPayment) {
+      const { data: row, error } = await supabaseAdmin
+        .from("event_public_registrations")
+        .insert({
+          event_id: data.eventId,
+          full_name: data.fullName,
+          email: data.email,
+          quantity: data.quantity,
+          status: "confirmed",
+          amount_cents: 0,
+          currency,
+          confirmed_at: new Date().toISOString(),
+        })
+        .select("id")
+        .single();
+      if (error) throw new Error(error.message);
+      return { ok: true as const, registrationId: row.id, checkoutUrl: null as string | null };
+    }
+
+    // Paid: create Stripe Checkout Session via REST API.
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error("Online payment is not configured yet. Please contact us to register.");
+    }
+
+    const { data: row, error: insErr } = await supabaseAdmin
+      .from("event_public_registrations")
+      .insert({
+        event_id: data.eventId,
+        full_name: data.fullName,
+        email: data.email,
+        quantity: data.quantity,
+        status: "pending",
+        amount_cents: totalCents,
+        currency,
+      })
+      .select("id")
+      .single();
+    if (insErr) throw new Error(insErr.message);
+
+    const origin =
+      process.env.PUBLIC_SITE_URL ||
+      process.env.SUPABASE_URL?.replace(/^https:\/\//, "https://") ||
+      "https://jiy.lovable.app";
+    const params = new URLSearchParams();
+    params.append("mode", "payment");
+    params.append("success_url", `${origin}/events/${data.eventId}?registration=success`);
+    params.append("cancel_url", `${origin}/events/${data.eventId}?registration=cancelled`);
+    params.append("customer_email", data.email);
+    params.append("client_reference_id", row.id);
+    params.append("metadata[registration_id]", row.id);
+    params.append("metadata[event_id]", data.eventId);
+    params.append("line_items[0][quantity]", String(data.quantity));
+    params.append("line_items[0][price_data][currency]", currency);
+    params.append("line_items[0][price_data][unit_amount]", String(priceCents));
+    params.append("line_items[0][price_data][product_data][name]", event.title);
+
+    const resp = await fetch("https://api.stripe.com/v1/checkout/sessions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params.toString(),
+    });
+    if (!resp.ok) {
+      const text = await resp.text();
+      console.error("Stripe checkout error", text);
+      throw new Error("Payment session could not be started.");
+    }
+    const session = (await resp.json()) as { id: string; url: string };
+
+    await supabaseAdmin
+      .from("event_public_registrations")
+      .update({ stripe_session_id: session.id })
+      .eq("id", row.id);
+
+    return { ok: true as const, registrationId: row.id, checkoutUrl: session.url };
+  });
+
+// Admin: list public registrations for an event
+export const listPublicRegistrationsAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ eventId: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./idempotency.server");
+    await assertAdmin(context.supabase, context.userId);
+    const { data: rows, error } = await context.supabase
+      .from("event_public_registrations")
+      .select("id, full_name, email, quantity, status, amount_cents, currency, created_at, confirmed_at")
+      .eq("event_id", data.eventId)
+      .order("created_at", { ascending: false })
+      .limit(500);
+    if (error) throw new Error(error.message);
+    return { registrations: rows ?? [] };
+  });
+

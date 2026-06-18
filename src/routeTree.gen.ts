@@ -16,6 +16,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FormsTemplateIdRouteImport } from './routes/forms.$templateId'
+import { Route as EventsEventIdRouteImport } from './routes/events.$eventId'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -90,6 +91,11 @@ const FormsTemplateIdRoute = FormsTemplateIdRouteImport.update({
   id: '/forms/$templateId',
   path: '/forms/$templateId',
   getParentRoute: () => rootRouteImport,
+} as any)
+const EventsEventIdRoute = EventsEventIdRouteImport.update({
+  id: '/$eventId',
+  path: '/$eventId',
+  getParentRoute: () => EventsRoute,
 } as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   id: '/onboarding',
@@ -324,12 +330,13 @@ const AuthenticatedAdminEventsIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/register': typeof RegisterRoute
   '/team': typeof TeamRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
+  '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
   '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
@@ -372,11 +379,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/register': typeof RegisterRoute
   '/team': typeof TeamRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
+  '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
   '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
@@ -417,12 +425,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/register': typeof RegisterRoute
   '/team': typeof TeamRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
+  '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
   '/_authenticated/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
@@ -473,6 +482,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/dashboard'
     | '/onboarding'
+    | '/events/$eventId'
     | '/forms/$templateId'
     | '/admin/announcements'
     | '/admin/audit'
@@ -520,6 +530,7 @@ export interface FileRouteTypes {
     | '/team'
     | '/dashboard'
     | '/onboarding'
+    | '/events/$eventId'
     | '/forms/$templateId'
     | '/admin/announcements'
     | '/admin/audit'
@@ -565,6 +576,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
+    | '/events/$eventId'
     | '/forms/$templateId'
     | '/_authenticated/admin/announcements'
     | '/_authenticated/admin/audit'
@@ -609,7 +621,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
-  EventsRoute: typeof EventsRoute
+  EventsRoute: typeof EventsRouteWithChildren
   RegisterRoute: typeof RegisterRoute
   TeamRoute: typeof TeamRoute
   FormsTemplateIdRoute: typeof FormsTemplateIdRoute
@@ -667,6 +679,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/forms/$templateId'
       preLoaderRoute: typeof FormsTemplateIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/events/$eventId': {
+      id: '/events/$eventId'
+      path: '/$eventId'
+      fullPath: '/events/$eventId'
+      preLoaderRoute: typeof EventsEventIdRouteImport
+      parentRoute: typeof EventsRoute
     }
     '/_authenticated/onboarding': {
       id: '/_authenticated/onboarding'
@@ -1122,11 +1141,22 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface EventsRouteChildren {
+  EventsEventIdRoute: typeof EventsEventIdRoute
+}
+
+const EventsRouteChildren: EventsRouteChildren = {
+  EventsEventIdRoute: EventsEventIdRoute,
+}
+
+const EventsRouteWithChildren =
+  EventsRoute._addFileChildren(EventsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
-  EventsRoute: EventsRoute,
+  EventsRoute: EventsRouteWithChildren,
   RegisterRoute: RegisterRoute,
   TeamRoute: TeamRoute,
   FormsTemplateIdRoute: FormsTemplateIdRoute,

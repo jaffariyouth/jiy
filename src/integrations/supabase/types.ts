@@ -144,6 +144,59 @@ export type Database = {
           },
         ]
       }
+      event_public_registrations: {
+        Row: {
+          amount_cents: number
+          confirmed_at: string | null
+          created_at: string
+          currency: string
+          email: string
+          event_id: string
+          full_name: string
+          id: string
+          quantity: number
+          status: string
+          stripe_session_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_cents?: number
+          confirmed_at?: string | null
+          created_at?: string
+          currency?: string
+          email: string
+          event_id: string
+          full_name: string
+          id?: string
+          quantity?: number
+          status?: string
+          stripe_session_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_cents?: number
+          confirmed_at?: string | null
+          created_at?: string
+          currency?: string
+          email?: string
+          event_id?: string
+          full_name?: string
+          id?: string
+          quantity?: number
+          status?: string
+          stripe_session_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_public_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_registrations: {
         Row: {
           cancelled_at: string | null
@@ -275,6 +328,7 @@ export type Database = {
           audience_min_age: number | null
           audience_visibility: string
           capacity: number | null
+          category_label: string | null
           cover_image_url: string | null
           created_at: string
           created_by: string | null
@@ -287,6 +341,7 @@ export type Database = {
           location: string | null
           recurring_event_id: string | null
           requires_payment: boolean
+          speakers: Json
           starts_at: string
           status: Database["public"]["Enums"]["event_status"]
           title: string
@@ -298,6 +353,7 @@ export type Database = {
           audience_min_age?: number | null
           audience_visibility?: string
           capacity?: number | null
+          category_label?: string | null
           cover_image_url?: string | null
           created_at?: string
           created_by?: string | null
@@ -310,6 +366,7 @@ export type Database = {
           location?: string | null
           recurring_event_id?: string | null
           requires_payment?: boolean
+          speakers?: Json
           starts_at: string
           status?: Database["public"]["Enums"]["event_status"]
           title: string
@@ -321,6 +378,7 @@ export type Database = {
           audience_min_age?: number | null
           audience_visibility?: string
           capacity?: number | null
+          category_label?: string | null
           cover_image_url?: string | null
           created_at?: string
           created_by?: string | null
@@ -333,6 +391,7 @@ export type Database = {
           location?: string | null
           recurring_event_id?: string | null
           requires_payment?: boolean
+          speakers?: Json
           starts_at?: string
           status?: Database["public"]["Enums"]["event_status"]
           title?: string

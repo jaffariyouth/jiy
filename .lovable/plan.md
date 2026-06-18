@@ -1,46 +1,63 @@
-# Meet the Team Page
+## Event Detail & Public Registration Page
 
-Build a new `/team` route styled to match the homepage's JIY editorial system, fully editable from the admin panel.
+Build a public event detail page at `/events/$eventId` styled like the mockup (editorial portal image, breadcrumbs, side registration card, featured speakers). Anyone can register with name + email — no sign-in required. Paid events route through Stripe Checkout.
 
-## 1. Route & Navigation
+### Pages
 
-- Create `src/routes/team.tsx` — public route, wrapped in `.jiy-dashboard` shell with the same dotted background, top nav, and footer used on the homepage.
-- Update the "Our Team" link in `src/routes/index.tsx` (currently anchors to `#` or homepage) to `<Link to="/team">`.
-- Add SEO `head()` with route-specific title, description, and og tags.
+- **`/events/$eventId`** — public route, SSR-friendly. Loads event via a new public server fn.
+  - Breadcrumbs: Community Events / [Category] / [Title]
+  - Left column: kicker label, headline, date/time/venue meta row, About section, Featured Speakers cards
+  - Right column: sticky "Public Registration" card — price (or "Free"), quantity stepper, full name, email, "Complete Registration" CTA
+  - Mosque-arch portal image on hero right (re-use existing `ogee-arch-portal` mask)
 
-## 2. Page Sections (1:1 with homepage design language)
+- **`/events`** — turn each list item into a `<Link to="/events/$eventId">` and refresh visual style to match the editorial look.
 
-Each section is a separate `site_content` key so admins can edit independently:
+### Database
 
-1. **Hero band** (`team_hero`) — eyebrow kicker, italic display headline, supporting paragraph, optional portrait image inside an ogee-arch portal.
-2. **Mission strip** (`team_intro`) — short editorial paragraph + pull-quote, mirroring the About section's typography.
-3. **Leadership grid** (`team_leadership`) — repeatable cards (photo, name, role, short bio, optional email/LinkedIn). Uses `studio-card` styling with gold hover border.
-4. **Members grid** (`team_members`) — denser repeatable grid (photo, name, role, region). Same card system, smaller scale.
-5. **Join CTA** (`team_cta`) — kicker, headline, body, button label + href. Matches homepage closing CTA band.
+New migration:
 
-Loader fetches all five keys in one `getHomepageData`-style server function (`getTeamPageData`) using the public Supabase client (same pattern as homepage to avoid SSR 500s). Sensible `DEFAULTS` ensure the page renders before admin populates content.
+1. Add JSONB columns to `public.events`:
+   - `speakers jsonb NOT NULL DEFAULT '[]'::jsonb` — `[{ name, role, bio, photo_url }]`
+   - `category_label text` — e.g. "Lectures & Seminars"
+2. New `public.event_public_registrations` table for unauthenticated sign-ups:
+   - `event_id uuid → events(id)`, `full_name`, `email`, `quantity int default 1`, `status` (`pending|confirmed|cancelled`), `stripe_session_id`, `amount_cents`, `currency`, `confirmed_at`, timestamps
+   - RLS: no anon read, no anon write; all writes go through server functions using service role after Zod validation + rate-limit check on email/event pair
+   - GRANTs: `service_role` ALL only
+3. Update `getEventAdmin` / create/update schemas to accept `speakers` and `category_label`.
 
-## 3. Admin Editors
+### Server Functions (new in `events.functions.ts` + `event-registrations.functions.ts`)
 
-Add a "Team Page" section to `src/routes/_authenticated/admin.homepage.tsx` nav (or a sibling `admin.team.tsx` index), with five editor routes mirroring the homepage editor pattern:
+- `getPublicEvent({ id })` — public, returns event + payment row (price/currency/requires_payment) + remaining capacity. Uses publishable client; restricts to `status='published'` and `audience_visibility='public'`.
+- `registerPublicForEvent({ eventId, fullName, email, quantity })` — public (no auth):
+  - Validates with Zod (email regex, name length, quantity 1–10)
+  - Loads event + payment row server-side; rejects if not public/published or full
+  - If `requires_payment`: creates Stripe Checkout Session, writes `event_public_registrations` row with `status='pending'`, returns `{ checkoutUrl }`
+  - If free: writes row `status='confirmed'`, returns `{ ok: true }`
+  - Uses admin client inside handler (after validation) to bypass RLS for the insert
+- Stripe webhook in existing `/api/public/webhooks/stripe.ts` (or new) marks `confirmed_at`/`status='confirmed'` on `checkout.session.completed`. If no webhook file exists, add one with signature verification.
 
-- `admin.team.hero.tsx`
-- `admin.team.intro.tsx`
-- `admin.team.leadership.tsx` — repeatable list editor (add/remove/reorder rows; each row: photo upload via `ImageField`, name, role, bio textarea, email, linkedin)
-- `admin.team.members.tsx` — repeatable list editor (photo, name, role, region)
-- `admin.team.cta.tsx`
+### Admin
 
-Each uses the existing `SectionEditor`, `TextField`, `TextareaField`, `ImageField` primitives. `SECTION_KEYS` in `site-content.functions.ts` extended with the five new keys (`team_hero`, `team_intro`, `team_leadership`, `team_members`, `team_cta`).
+- `admin.events.$id.tsx` — extend the existing event editor with:
+  - Category label input
+  - Speakers repeater (add/remove/reorder; name, role, bio, photo URL using existing storage bucket)
+- New `admin.events.$id.registrations.tsx` viewer — list public registrations for the event (read-only table) using a new admin server fn.
 
-## 4. Technical Notes
+### Visual/Design
 
-- No DB migration needed — `site_content` table already stores arbitrary JSONB by key.
-- Reuses existing brand tokens, fonts, ogee-arch SVG mask, `studio-card`, `interactive-btn` styles from `src/styles.css`.
-- Repeatable editors render an array in state; add/remove buttons mutate the array and persist via the existing `updateSectionContent` server fn.
-- Images upload to the existing `editorial-media` bucket under `homepage/team/...`.
+- Re-use brand tokens from `styles.css` (persian-indigo, damascus-gold, alabaster-parchment, hanken/playfair fonts)
+- Use existing `.ogee-arch-portal` for the cover image frame
+- Right registration card: white surface, horizon-mist border, persian-indigo CTA filled button with damascus-gold hover
+- Responsive: two-column grid at `lg`, single column below; sticky card disabled on mobile
 
-## Files
+### Out of scope
 
-**Create:** `src/routes/team.tsx`, `src/routes/_authenticated/admin.team.hero.tsx`, `admin.team.intro.tsx`, `admin.team.leadership.tsx`, `admin.team.members.tsx`, `admin.team.cta.tsx`
+- Member-only event detail variant (kept for follow-up — current flow only renders public events at this URL; member-only events will 404 here)
+- Refunds / cancellations from the public side
+- Speakers media upload UI in this pass (URLs only)
 
-**Edit:** `src/lib/jiy/site-content.functions.ts` (add keys + `getTeamPageData`), `src/routes/index.tsx` ("Our Team" link), `src/routes/_authenticated/admin.homepage.tsx` (add Team Page nav group)
+### Technical notes
+
+- Stripe price is computed per-quantity server-side; client never sets price
+- Webhook re-checks event capacity before confirming
+- All public mutations protected by Zod validation, length limits, and idempotency key on the checkout endpoint

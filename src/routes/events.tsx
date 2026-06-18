@@ -57,19 +57,25 @@ function EventsPage() {
       ) : (
         <ul className="space-y-4">
           {events.map((e: (typeof events)[number]) => (
-            <li key={e.id} className="rounded-lg border bg-card p-4 sm:p-5">
-              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                <h2 className="text-base sm:text-lg font-medium min-w-0">{e.title}</h2>
-                <time className="text-xs text-muted-foreground shrink-0">
-                  {new Date(e.starts_at).toLocaleString()}
-                </time>
-              </div>
-              {e.location && (
-                <p className="mt-1 text-sm text-muted-foreground">{e.location}</p>
-              )}
-              {e.description && (
-                <p className="mt-3 text-sm leading-relaxed">{e.description}</p>
-              )}
+            <li key={e.id}>
+              <Link
+                to="/events/$eventId"
+                params={{ eventId: e.id }}
+                className="block rounded-lg border bg-card p-4 sm:p-5 hover:border-primary transition-colors"
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                  <h2 className="text-base sm:text-lg font-medium min-w-0">{e.title}</h2>
+                  <time className="text-xs text-muted-foreground shrink-0">
+                    {new Date(e.starts_at).toLocaleString()}
+                  </time>
+                </div>
+                {e.location && (
+                  <p className="mt-1 text-sm text-muted-foreground">{e.location}</p>
+                )}
+                {e.description && (
+                  <p className="mt-3 text-sm leading-relaxed line-clamp-3">{e.description}</p>
+                )}
+              </Link>
             </li>
           ))}
         </ul>
