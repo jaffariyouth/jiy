@@ -759,6 +759,11 @@ function CoreValues({ values }: { values?: Section }) {
 
   return (
     <section id="core-values" className="py-24 border-b border-horizon-mist bg-alabaster-parchment relative overflow-hidden">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-center bg-no-repeat bg-contain opacity-[0.06] mix-blend-multiply"
+        style={{ backgroundImage: "url(/__l5e/assets-v1/08a51463-76ec-4b12-9425-273130c7a4d7/ornament.svg)" }}
+      />
       <div className="max-w-max-width mx-auto px-margin-safe relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
           <div>
