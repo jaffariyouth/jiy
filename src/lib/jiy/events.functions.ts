@@ -105,6 +105,7 @@ export const createEvent = createServerFn({ method: "POST" })
         cover_image_url: data.cover_image_url ?? null,
         form_template_id: data.form_template_id ?? null,
         requires_payment: data.requires_payment ?? false,
+        featured_on_home: data.featured_on_home ?? false,
         audience_visibility: data.audience_visibility ?? (data.is_member_only ? "members" : "public"),
         audience_gender: data.audience_gender ?? "all",
         audience_min_age: data.audience_min_age ?? null,
