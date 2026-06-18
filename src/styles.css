@@ -315,9 +315,16 @@
 .jiy-dashboard .interactive-btn:hover::after {
   opacity: 1;
 }
-/* Ogee arch clip mask reference (relies on inline <svg defs> with #ogee-arch-mask) */
+/* Mosque silhouette mask — replaces former ogee arch clip-path */
 .jiy-dashboard .ogee-arch-portal {
-  clip-path: url(#ogee-arch-mask);
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='10 2.9 80 94.8' preserveAspectRatio='none'><path fill='black' d='M87.501,97.374c0,0.154-0.126,0.28-0.28,0.28h-2.786c-0.154,0-0.28-0.126-0.28-0.28v-62.56l-0.734-5.479l-2.102-5.174l-3.371-4.418l-4.406-3.411L50.244,6.576l-23.297,9.757l-4.393,3.411l-3.372,4.418l-2.112,5.174l-0.726,5.515l0.003,62.523c0,0.154-0.126,0.28-0.28,0.28h-2.836c-0.154,0-0.28-0.126-0.28-0.28V34.948l0.854-6.46l2.444-5.918l3.842-5.083l5.048-3.902L50.136,2.969l24.834,10.396l5.043,3.902l3.839,5.083l2.456,5.917l0.807,6.423L87.501,97.374z'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='10 2.9 80 94.8' preserveAspectRatio='none'><path fill='black' d='M87.501,97.374c0,0.154-0.126,0.28-0.28,0.28h-2.786c-0.154,0-0.28-0.126-0.28-0.28v-62.56l-0.734-5.479l-2.102-5.174l-3.371-4.418l-4.406-3.411L50.244,6.576l-23.297,9.757l-4.393,3.411l-3.372,4.418l-2.112,5.174l-0.726,5.515l0.003,62.523c0,0.154-0.126,0.28-0.28,0.28h-2.836c-0.154,0-0.28-0.126-0.28-0.28V34.948l0.854-6.46l2.444-5.918l3.842-5.083l5.048-3.902L50.136,2.969l24.834,10.396l5.043,3.902l3.839,5.083l2.456,5.917l0.807,6.423L87.501,97.374z'/></svg>");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 /* Strategic Values tabs */
 .jiy-dashboard .value-tab {
