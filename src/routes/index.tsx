@@ -199,8 +199,8 @@ function SocialSvg({ network }: { network: string }) {
       );
     case "linktree":
       return (
-        <svg className={cls} viewBox="0 0 24 24">
-          <path d="M13.511 5.833c-.445 0-.806.361-.806.806v5.105c0 .445.361.806.806.806h1.105c.445 0 .806-.361.806-.806v-5.105c0-.445-.361-.806-.806-.806h-1.105zm-4.122 0c-.445 0-.806.361-.806.806v5.105c0 .445.361.806.806.806h1.105c.445 0 .806-.361.806-.806v-5.105c0-.445-.361-.806-.806-.806h-1.105zm-4.122 0c-.445 0-.806.361-.806.806v5.105c0 .445.361.806.806.806h1.105c.445 0 .806-.361.806-.806v-5.105c0-.445-.361-.806-.806-.806h-1.105zm13.122-5.833h-12.778c-3.533 0-6.389 2.856-6.389 6.389v11.222c0 3.533 2.856 6.389 6.389 6.389h12.778c3.533 0 6.389-2.856 6.389-6.389v-11.222c0-3.533-2.856-6.389-6.389-6.389zm-1.105 19.111h-10.568c-.445 0-.806-.361-.806-.806v-1.105c0-.445.361-.806.806-.806h10.568c.445 0 .806.361.806.806v1.105c0 .445-.361.806-.806.806z" />
+        <svg className={cls} viewBox="0 0 417 512.238" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 197.834h126.219L36.418 112.094l56.529-57.567 85.42 86.726V0h60.20v141.253l85.42-86.726 56.529 57.567-89.801 85.358H417v80.04H290.176l90.18 87.107L323.827 421.84 208.687 305.66 93.547 421.84l-56.529-56.94 90.182-87.106H0v-80.04zm178.367 124.46h60.198v189.944h-60.198V322.294z" />
         </svg>
       );
     default:
@@ -679,7 +679,7 @@ function OngoingEvents({ ongoing }: { ongoing?: Section }) {
 
 function CoreValues({ values }: { values?: Section }) {
   const d = DEFAULTS.values;
-  const items = arr<{ number: string; title: string; body: string }>(values, "items", d.items);
+  const items = arr<{ number: string; title: string; body: string; cta_label?: string; cta_href?: string }>(values, "items", d.items);
   const [active, setActive] = useState(0);
 
   return (
@@ -725,6 +725,13 @@ function CoreValues({ values }: { values?: Section }) {
                 </span>
                 <h3 className="font-headline text-3xl md:text-4xl text-persian-indigo mb-4">{it.title}</h3>
                 <p className="font-body text-base text-ash-slate leading-relaxed mb-8">{it.body}</p>
+                <a
+                  href={it.cta_href || "#about-us"}
+                  className="interactive-btn inline-flex items-center gap-2 self-start font-body text-sm font-bold tracking-[0.2em] uppercase text-deep-garnet hover:text-persian-indigo transition-colors"
+                >
+                  {it.cta_label || "Read More"}
+                  <span aria-hidden="true">→</span>
+                </a>
               </div>
             ))}
           </div>
