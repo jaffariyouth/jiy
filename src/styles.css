@@ -315,3 +315,32 @@
 .jiy-dashboard .interactive-btn:hover::after {
   opacity: 1;
 }
+/* Ogee arch clip mask reference (relies on inline <svg defs> with #ogee-arch-mask) */
+.jiy-dashboard .ogee-arch-portal {
+  clip-path: url(#ogee-arch-mask);
+}
+/* Strategic Values tabs */
+.jiy-dashboard .value-tab {
+  border-left-color: transparent;
+  transition: all 0.4s ease;
+}
+.jiy-dashboard .value-tab:hover {
+  border-left-color: #caa460;
+}
+.jiy-dashboard .value-tab.is-active {
+  border-left-color: #7a2230;
+  color: #14243b;
+}
+.jiy-dashboard .value-tab .progress-bg {
+  transition: transform 6s linear;
+}
+.jiy-dashboard .value-tab.is-active .progress-bg {
+  transform: scaleX(1);
+}
+.jiy-dashboard .value-slide {
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+/* Max-width / margin-safe / gap-section utility aliases for the dashboard scope */
+.jiy-dashboard .max-w-max-width { max-width: 1280px; }
+.jiy-dashboard .px-margin-safe { padding-left: clamp(20px, 5vw, 40px); padding-right: clamp(20px, 5vw, 40px); }
+
