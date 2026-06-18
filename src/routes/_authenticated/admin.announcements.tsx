@@ -49,6 +49,7 @@ function AnnouncementsPage() {
               <div className="space-y-3">
                 <Input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
                 <MarkdownEditor value={body} onChange={setBody} rows={10} />
+                <AudiencePanel value={audience} onChange={setAudience} />
               </div>
               <DialogFooter>
                 <Button onClick={() => createMut.mutate()} disabled={!title.trim() || createMut.isPending}>
