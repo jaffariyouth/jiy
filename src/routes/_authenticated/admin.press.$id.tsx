@@ -46,6 +46,7 @@ function PressEditPage() {
       audience_min_age: (a.audience_min_age as number | null) ?? null,
       audience_max_age: (a.audience_max_age as number | null) ?? null,
     });
+    setFeatured((a.featured_on_home as boolean | undefined) ?? false);
   }, [q.data?.article]);
 
   const uploadCover = async (file: File) => {
