@@ -433,7 +433,7 @@ function Hero({ hero }: { hero?: Section }) {
         src="/__l5e/assets-v1/31e78581-68e7-47f5-a567-b8f54b63f0f7/ornament-back.svg"
         alt=""
         aria-hidden
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none z-0 opacity-[0.06]"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none z-0 opacity-[0.03]"
         style={{
           maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.2) 100%)",
           WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.2) 100%)",
@@ -494,7 +494,7 @@ function Hero({ hero }: { hero?: Section }) {
             </div>
           </div>
 
-          <div className="absolute right-0 top-0 lg:relative lg:col-span-5 flex justify-end lg:justify-center items-start lg:items-center h-[70%] sm:h-[80%] lg:h-auto w-full max-w-[95%] md:max-w-[70%] lg:max-w-none pointer-events-none select-none z-0 opacity-[0.05] sm:opacity-20 lg:opacity-[0.75] overflow-hidden">
+          <div className="absolute right-0 top-0 lg:relative lg:col-span-5 flex justify-end lg:justify-center items-start lg:items-center h-[70%] sm:h-[80%] lg:h-auto w-full max-w-[95%] md:max-w-[70%] lg:max-w-none pointer-events-none select-none z-0 opacity-[0.15] sm:opacity-20 lg:opacity-[0.85] overflow-hidden">
             <img
               src="/__l5e/assets-v1/08a51463-76ec-4b12-9425-273130c7a4d7/ornament.svg"
               alt=""
