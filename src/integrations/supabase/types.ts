@@ -16,6 +16,10 @@ export type Database = {
     Tables: {
       announcements: {
         Row: {
+          audience_gender: string
+          audience_max_age: number | null
+          audience_min_age: number | null
+          audience_visibility: string
           body_md: string
           created_at: string
           created_by: string | null
@@ -27,6 +31,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          audience_gender?: string
+          audience_max_age?: number | null
+          audience_min_age?: number | null
+          audience_visibility?: string
           body_md?: string
           created_at?: string
           created_by?: string | null
@@ -38,6 +46,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          audience_gender?: string
+          audience_max_age?: number | null
+          audience_min_age?: number | null
+          audience_visibility?: string
           body_md?: string
           created_at?: string
           created_by?: string | null
@@ -258,6 +270,10 @@ export type Database = {
       }
       events: {
         Row: {
+          audience_gender: string
+          audience_max_age: number | null
+          audience_min_age: number | null
+          audience_visibility: string
           capacity: number | null
           cover_image_url: string | null
           created_at: string
@@ -276,6 +292,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          audience_gender?: string
+          audience_max_age?: number | null
+          audience_min_age?: number | null
+          audience_visibility?: string
           capacity?: number | null
           cover_image_url?: string | null
           created_at?: string
@@ -294,6 +314,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          audience_gender?: string
+          audience_max_age?: number | null
+          audience_min_age?: number | null
+          audience_visibility?: string
           capacity?: number | null
           cover_image_url?: string | null
           created_at?: string
@@ -649,7 +673,9 @@ export type Database = {
           consent_marketing: boolean
           country: string | null
           created_at: string
+          date_of_birth: string | null
           display_name: string | null
+          gender: string | null
           id: string
           onboarding_completed_at: string | null
           suspended_at: string | null
@@ -661,7 +687,9 @@ export type Database = {
           consent_marketing?: boolean
           country?: string | null
           created_at?: string
+          date_of_birth?: string | null
           display_name?: string | null
+          gender?: string | null
           id: string
           onboarding_completed_at?: string | null
           suspended_at?: string | null
@@ -673,7 +701,9 @@ export type Database = {
           consent_marketing?: boolean
           country?: string | null
           created_at?: string
+          date_of_birth?: string | null
           display_name?: string | null
+          gender?: string | null
           id?: string
           onboarding_completed_at?: string | null
           suspended_at?: string | null
@@ -683,6 +713,10 @@ export type Database = {
       }
       recurring_events: {
         Row: {
+          audience_gender: string
+          audience_max_age: number | null
+          audience_min_age: number | null
+          audience_visibility: string
           cadence_label: string | null
           cadence_rrule: string | null
           cover_image_url: string | null
@@ -697,6 +731,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          audience_gender?: string
+          audience_max_age?: number | null
+          audience_min_age?: number | null
+          audience_visibility?: string
           cadence_label?: string | null
           cadence_rrule?: string | null
           cover_image_url?: string | null
@@ -711,6 +749,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          audience_gender?: string
+          audience_max_age?: number | null
+          audience_min_age?: number | null
+          audience_visibility?: string
           cadence_label?: string | null
           cadence_rrule?: string | null
           cover_image_url?: string | null
@@ -873,6 +915,10 @@ export type Database = {
       }
       youth_press_articles: {
         Row: {
+          audience_gender: string
+          audience_max_age: number | null
+          audience_min_age: number | null
+          audience_visibility: string
           author_id: string
           body_md: string
           cover_image_url: string | null
@@ -887,6 +933,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          audience_gender?: string
+          audience_max_age?: number | null
+          audience_min_age?: number | null
+          audience_visibility?: string
           author_id: string
           body_md: string
           cover_image_url?: string | null
@@ -901,6 +951,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          audience_gender?: string
+          audience_max_age?: number | null
+          audience_min_age?: number | null
+          audience_visibility?: string
           author_id?: string
           body_md?: string
           cover_image_url?: string | null
@@ -946,6 +1000,16 @@ export type Database = {
         }
         Returns: string
       }
+      can_view_audience: {
+        Args: {
+          _gender: string
+          _max: number
+          _min: number
+          _user_id: string
+          _vis: string
+        }
+        Returns: boolean
+      }
       enqueue_notification: {
         Args: {
           _channel: Database["public"]["Enums"]["notification_channel"]
@@ -963,6 +1027,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      profile_age: { Args: { _user_id: string }; Returns: number }
     }
     Enums: {
       announcement_status: "draft" | "published" | "archived"
