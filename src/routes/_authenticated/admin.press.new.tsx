@@ -25,6 +25,7 @@ function NewPressPage() {
   const [slug, setSlug] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [body, setBody] = useState("");
+  const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
   const [saving, setSaving] = useState(false);
 
   const submit = async () => {
@@ -35,6 +36,7 @@ function NewPressPage() {
         slug: slug || slugify(title),
         excerpt: excerpt || undefined,
         body_md: body || "Draft.",
+        ...audience,
       }});
       toast.success("Draft created");
       navigate({ to: "/admin/press/$id", params: { id: r.id } });
