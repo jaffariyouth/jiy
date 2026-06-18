@@ -54,6 +54,7 @@ function EventEditPage() {
   const [coverUrl, setCoverUrl] = useState("");
   const [formTplId, setFormTplId] = useState<string>("none");
   const [requiresPayment, setRequiresPayment] = useState(false);
+  const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
 
   useEffect(() => {
     const e = q.data?.event;
