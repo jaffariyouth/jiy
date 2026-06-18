@@ -26,6 +26,7 @@ function NewPressPage() {
   const [excerpt, setExcerpt] = useState("");
   const [body, setBody] = useState("");
   const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
+  const [featured, setFeatured] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const submit = async () => {
@@ -37,6 +38,7 @@ function NewPressPage() {
         excerpt: excerpt || undefined,
         body_md: body || "Draft.",
         ...audience,
+        featured_on_home: featured,
       }});
       toast.success("Draft created");
       navigate({ to: "/admin/press/$id", params: { id: r.id } });
@@ -53,6 +55,10 @@ function NewPressPage() {
         <div><Label>Excerpt</Label><Input value={excerpt} onChange={(e) => setExcerpt(e.target.value)} maxLength={500} /></div>
         <div><Label>Body</Label><MarkdownEditor value={body} onChange={setBody} rows={18} /></div>
         <AudiencePanel value={audience} onChange={setAudience} />
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
+          Feature on homepage
+        </label>
         <Button type="submit" disabled={saving || !title.trim()}>{saving ? "Creating…" : "Create draft"}</Button>
       </form>
     </div>

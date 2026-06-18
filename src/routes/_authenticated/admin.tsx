@@ -11,6 +11,7 @@ import {
   Users,
   Flag,
   ScrollText,
+  Home,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -28,6 +29,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
 const NAV: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/admin/homepage", label: "Homepage", icon: Home },
   { to: "/admin/events", label: "Events", icon: Calendar },
   { to: "/admin/forms", label: "Forms", icon: FormInput },
   { to: "/admin/press", label: "Press", icon: Newspaper },

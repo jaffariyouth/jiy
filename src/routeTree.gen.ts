@@ -25,17 +25,24 @@ import { Route as AuthenticatedOnboardingStep1RouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminRecurringRouteImport } from './routes/_authenticated/admin.recurring'
 import { Route as AuthenticatedAdminPressRouteImport } from './routes/_authenticated/admin.press'
+import { Route as AuthenticatedAdminHomepageRouteImport } from './routes/_authenticated/admin.homepage'
 import { Route as AuthenticatedAdminFormsRouteImport } from './routes/_authenticated/admin.forms'
 import { Route as AuthenticatedAdminFlagsRouteImport } from './routes/_authenticated/admin.flags'
 import { Route as AuthenticatedAdminEventsRouteImport } from './routes/_authenticated/admin.events'
 import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin.audit'
 import { Route as AuthenticatedAdminAnnouncementsRouteImport } from './routes/_authenticated/admin.announcements'
+import { Route as AuthenticatedAdminHomepageIndexRouteImport } from './routes/_authenticated/admin.homepage.index'
 import { Route as AuthenticatedAdminFormsIndexRouteImport } from './routes/_authenticated/admin.forms.index'
 import { Route as AuthenticatedAdminEventsIndexRouteImport } from './routes/_authenticated/admin.events.index'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
 import { Route as ApiPublicCronDispatchNotificationsRouteImport } from './routes/api/public/cron/dispatch-notifications'
 import { Route as AuthenticatedAdminPressNewRouteImport } from './routes/_authenticated/admin.press.new'
 import { Route as AuthenticatedAdminPressIdRouteImport } from './routes/_authenticated/admin.press.$id'
+import { Route as AuthenticatedAdminHomepageValuesRouteImport } from './routes/_authenticated/admin.homepage.values'
+import { Route as AuthenticatedAdminHomepageOngoingRouteImport } from './routes/_authenticated/admin.homepage.ongoing'
+import { Route as AuthenticatedAdminHomepageHeroRouteImport } from './routes/_authenticated/admin.homepage.hero'
+import { Route as AuthenticatedAdminHomepageFooterRouteImport } from './routes/_authenticated/admin.homepage.footer'
+import { Route as AuthenticatedAdminHomepageAboutRouteImport } from './routes/_authenticated/admin.homepage.about'
 import { Route as AuthenticatedAdminFormsIdRouteImport } from './routes/_authenticated/admin.forms.$id'
 import { Route as AuthenticatedAdminEventsNewRouteImport } from './routes/_authenticated/admin.events.new'
 import { Route as AuthenticatedAdminEventsIdRouteImport } from './routes/_authenticated/admin.events.$id'
@@ -123,6 +130,12 @@ const AuthenticatedAdminPressRoute = AuthenticatedAdminPressRouteImport.update({
   path: '/press',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminHomepageRoute =
+  AuthenticatedAdminHomepageRouteImport.update({
+    id: '/homepage',
+    path: '/homepage',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminFormsRoute = AuthenticatedAdminFormsRouteImport.update({
   id: '/forms',
   path: '/forms',
@@ -149,6 +162,12 @@ const AuthenticatedAdminAnnouncementsRoute =
     id: '/announcements',
     path: '/announcements',
     getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminHomepageIndexRoute =
+  AuthenticatedAdminHomepageIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAdminHomepageRoute,
   } as any)
 const AuthenticatedAdminFormsIndexRoute =
   AuthenticatedAdminFormsIndexRouteImport.update({
@@ -185,6 +204,36 @@ const AuthenticatedAdminPressIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedAdminPressRoute,
   } as any)
+const AuthenticatedAdminHomepageValuesRoute =
+  AuthenticatedAdminHomepageValuesRouteImport.update({
+    id: '/values',
+    path: '/values',
+    getParentRoute: () => AuthenticatedAdminHomepageRoute,
+  } as any)
+const AuthenticatedAdminHomepageOngoingRoute =
+  AuthenticatedAdminHomepageOngoingRouteImport.update({
+    id: '/ongoing',
+    path: '/ongoing',
+    getParentRoute: () => AuthenticatedAdminHomepageRoute,
+  } as any)
+const AuthenticatedAdminHomepageHeroRoute =
+  AuthenticatedAdminHomepageHeroRouteImport.update({
+    id: '/hero',
+    path: '/hero',
+    getParentRoute: () => AuthenticatedAdminHomepageRoute,
+  } as any)
+const AuthenticatedAdminHomepageFooterRoute =
+  AuthenticatedAdminHomepageFooterRouteImport.update({
+    id: '/footer',
+    path: '/footer',
+    getParentRoute: () => AuthenticatedAdminHomepageRoute,
+  } as any)
+const AuthenticatedAdminHomepageAboutRoute =
+  AuthenticatedAdminHomepageAboutRouteImport.update({
+    id: '/about',
+    path: '/about',
+    getParentRoute: () => AuthenticatedAdminHomepageRoute,
+  } as any)
 const AuthenticatedAdminFormsIdRoute =
   AuthenticatedAdminFormsIdRouteImport.update({
     id: '/$id',
@@ -218,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/admin/events': typeof AuthenticatedAdminEventsRouteWithChildren
   '/admin/flags': typeof AuthenticatedAdminFlagsRoute
   '/admin/forms': typeof AuthenticatedAdminFormsRouteWithChildren
+  '/admin/homepage': typeof AuthenticatedAdminHomepageRouteWithChildren
   '/admin/press': typeof AuthenticatedAdminPressRouteWithChildren
   '/admin/recurring': typeof AuthenticatedAdminRecurringRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -228,12 +278,18 @@ export interface FileRoutesByFullPath {
   '/admin/events/$id': typeof AuthenticatedAdminEventsIdRoute
   '/admin/events/new': typeof AuthenticatedAdminEventsNewRoute
   '/admin/forms/$id': typeof AuthenticatedAdminFormsIdRoute
+  '/admin/homepage/about': typeof AuthenticatedAdminHomepageAboutRoute
+  '/admin/homepage/footer': typeof AuthenticatedAdminHomepageFooterRoute
+  '/admin/homepage/hero': typeof AuthenticatedAdminHomepageHeroRoute
+  '/admin/homepage/ongoing': typeof AuthenticatedAdminHomepageOngoingRoute
+  '/admin/homepage/values': typeof AuthenticatedAdminHomepageValuesRoute
   '/admin/press/$id': typeof AuthenticatedAdminPressIdRoute
   '/admin/press/new': typeof AuthenticatedAdminPressNewRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/admin/events/': typeof AuthenticatedAdminEventsIndexRoute
   '/admin/forms/': typeof AuthenticatedAdminFormsIndexRoute
+  '/admin/homepage/': typeof AuthenticatedAdminHomepageIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -256,12 +312,18 @@ export interface FileRoutesByTo {
   '/admin/events/$id': typeof AuthenticatedAdminEventsIdRoute
   '/admin/events/new': typeof AuthenticatedAdminEventsNewRoute
   '/admin/forms/$id': typeof AuthenticatedAdminFormsIdRoute
+  '/admin/homepage/about': typeof AuthenticatedAdminHomepageAboutRoute
+  '/admin/homepage/footer': typeof AuthenticatedAdminHomepageFooterRoute
+  '/admin/homepage/hero': typeof AuthenticatedAdminHomepageHeroRoute
+  '/admin/homepage/ongoing': typeof AuthenticatedAdminHomepageOngoingRoute
+  '/admin/homepage/values': typeof AuthenticatedAdminHomepageValuesRoute
   '/admin/press/$id': typeof AuthenticatedAdminPressIdRoute
   '/admin/press/new': typeof AuthenticatedAdminPressNewRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/admin/events': typeof AuthenticatedAdminEventsIndexRoute
   '/admin/forms': typeof AuthenticatedAdminFormsIndexRoute
+  '/admin/homepage': typeof AuthenticatedAdminHomepageIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -279,6 +341,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/events': typeof AuthenticatedAdminEventsRouteWithChildren
   '/_authenticated/admin/flags': typeof AuthenticatedAdminFlagsRoute
   '/_authenticated/admin/forms': typeof AuthenticatedAdminFormsRouteWithChildren
+  '/_authenticated/admin/homepage': typeof AuthenticatedAdminHomepageRouteWithChildren
   '/_authenticated/admin/press': typeof AuthenticatedAdminPressRouteWithChildren
   '/_authenticated/admin/recurring': typeof AuthenticatedAdminRecurringRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -289,12 +352,18 @@ export interface FileRoutesById {
   '/_authenticated/admin/events/$id': typeof AuthenticatedAdminEventsIdRoute
   '/_authenticated/admin/events/new': typeof AuthenticatedAdminEventsNewRoute
   '/_authenticated/admin/forms/$id': typeof AuthenticatedAdminFormsIdRoute
+  '/_authenticated/admin/homepage/about': typeof AuthenticatedAdminHomepageAboutRoute
+  '/_authenticated/admin/homepage/footer': typeof AuthenticatedAdminHomepageFooterRoute
+  '/_authenticated/admin/homepage/hero': typeof AuthenticatedAdminHomepageHeroRoute
+  '/_authenticated/admin/homepage/ongoing': typeof AuthenticatedAdminHomepageOngoingRoute
+  '/_authenticated/admin/homepage/values': typeof AuthenticatedAdminHomepageValuesRoute
   '/_authenticated/admin/press/$id': typeof AuthenticatedAdminPressIdRoute
   '/_authenticated/admin/press/new': typeof AuthenticatedAdminPressNewRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/_authenticated/admin/events/': typeof AuthenticatedAdminEventsIndexRoute
   '/_authenticated/admin/forms/': typeof AuthenticatedAdminFormsIndexRoute
+  '/_authenticated/admin/homepage/': typeof AuthenticatedAdminHomepageIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -312,6 +381,7 @@ export interface FileRouteTypes {
     | '/admin/events'
     | '/admin/flags'
     | '/admin/forms'
+    | '/admin/homepage'
     | '/admin/press'
     | '/admin/recurring'
     | '/admin/users'
@@ -322,12 +392,18 @@ export interface FileRouteTypes {
     | '/admin/events/$id'
     | '/admin/events/new'
     | '/admin/forms/$id'
+    | '/admin/homepage/about'
+    | '/admin/homepage/footer'
+    | '/admin/homepage/hero'
+    | '/admin/homepage/ongoing'
+    | '/admin/homepage/values'
     | '/admin/press/$id'
     | '/admin/press/new'
     | '/api/public/cron/dispatch-notifications'
     | '/api/public/stripe/webhook'
     | '/admin/events/'
     | '/admin/forms/'
+    | '/admin/homepage/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -350,12 +426,18 @@ export interface FileRouteTypes {
     | '/admin/events/$id'
     | '/admin/events/new'
     | '/admin/forms/$id'
+    | '/admin/homepage/about'
+    | '/admin/homepage/footer'
+    | '/admin/homepage/hero'
+    | '/admin/homepage/ongoing'
+    | '/admin/homepage/values'
     | '/admin/press/$id'
     | '/admin/press/new'
     | '/api/public/cron/dispatch-notifications'
     | '/api/public/stripe/webhook'
     | '/admin/events'
     | '/admin/forms'
+    | '/admin/homepage'
   id:
     | '__root__'
     | '/'
@@ -372,6 +454,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/events'
     | '/_authenticated/admin/flags'
     | '/_authenticated/admin/forms'
+    | '/_authenticated/admin/homepage'
     | '/_authenticated/admin/press'
     | '/_authenticated/admin/recurring'
     | '/_authenticated/admin/users'
@@ -382,12 +465,18 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/events/$id'
     | '/_authenticated/admin/events/new'
     | '/_authenticated/admin/forms/$id'
+    | '/_authenticated/admin/homepage/about'
+    | '/_authenticated/admin/homepage/footer'
+    | '/_authenticated/admin/homepage/hero'
+    | '/_authenticated/admin/homepage/ongoing'
+    | '/_authenticated/admin/homepage/values'
     | '/_authenticated/admin/press/$id'
     | '/_authenticated/admin/press/new'
     | '/api/public/cron/dispatch-notifications'
     | '/api/public/stripe/webhook'
     | '/_authenticated/admin/events/'
     | '/_authenticated/admin/forms/'
+    | '/_authenticated/admin/homepage/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -515,6 +604,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPressRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/homepage': {
+      id: '/_authenticated/admin/homepage'
+      path: '/homepage'
+      fullPath: '/admin/homepage'
+      preLoaderRoute: typeof AuthenticatedAdminHomepageRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/forms': {
       id: '/_authenticated/admin/forms'
       path: '/forms'
@@ -549,6 +645,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/announcements'
       preLoaderRoute: typeof AuthenticatedAdminAnnouncementsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/homepage/': {
+      id: '/_authenticated/admin/homepage/'
+      path: '/'
+      fullPath: '/admin/homepage/'
+      preLoaderRoute: typeof AuthenticatedAdminHomepageIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminHomepageRoute
     }
     '/_authenticated/admin/forms/': {
       id: '/_authenticated/admin/forms/'
@@ -591,6 +694,41 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/press/$id'
       preLoaderRoute: typeof AuthenticatedAdminPressIdRouteImport
       parentRoute: typeof AuthenticatedAdminPressRoute
+    }
+    '/_authenticated/admin/homepage/values': {
+      id: '/_authenticated/admin/homepage/values'
+      path: '/values'
+      fullPath: '/admin/homepage/values'
+      preLoaderRoute: typeof AuthenticatedAdminHomepageValuesRouteImport
+      parentRoute: typeof AuthenticatedAdminHomepageRoute
+    }
+    '/_authenticated/admin/homepage/ongoing': {
+      id: '/_authenticated/admin/homepage/ongoing'
+      path: '/ongoing'
+      fullPath: '/admin/homepage/ongoing'
+      preLoaderRoute: typeof AuthenticatedAdminHomepageOngoingRouteImport
+      parentRoute: typeof AuthenticatedAdminHomepageRoute
+    }
+    '/_authenticated/admin/homepage/hero': {
+      id: '/_authenticated/admin/homepage/hero'
+      path: '/hero'
+      fullPath: '/admin/homepage/hero'
+      preLoaderRoute: typeof AuthenticatedAdminHomepageHeroRouteImport
+      parentRoute: typeof AuthenticatedAdminHomepageRoute
+    }
+    '/_authenticated/admin/homepage/footer': {
+      id: '/_authenticated/admin/homepage/footer'
+      path: '/footer'
+      fullPath: '/admin/homepage/footer'
+      preLoaderRoute: typeof AuthenticatedAdminHomepageFooterRouteImport
+      parentRoute: typeof AuthenticatedAdminHomepageRoute
+    }
+    '/_authenticated/admin/homepage/about': {
+      id: '/_authenticated/admin/homepage/about'
+      path: '/about'
+      fullPath: '/admin/homepage/about'
+      preLoaderRoute: typeof AuthenticatedAdminHomepageAboutRouteImport
+      parentRoute: typeof AuthenticatedAdminHomepageRoute
     }
     '/_authenticated/admin/forms/$id': {
       id: '/_authenticated/admin/forms/$id'
@@ -650,6 +788,33 @@ const AuthenticatedAdminFormsRouteWithChildren =
     AuthenticatedAdminFormsRouteChildren,
   )
 
+interface AuthenticatedAdminHomepageRouteChildren {
+  AuthenticatedAdminHomepageAboutRoute: typeof AuthenticatedAdminHomepageAboutRoute
+  AuthenticatedAdminHomepageFooterRoute: typeof AuthenticatedAdminHomepageFooterRoute
+  AuthenticatedAdminHomepageHeroRoute: typeof AuthenticatedAdminHomepageHeroRoute
+  AuthenticatedAdminHomepageOngoingRoute: typeof AuthenticatedAdminHomepageOngoingRoute
+  AuthenticatedAdminHomepageValuesRoute: typeof AuthenticatedAdminHomepageValuesRoute
+  AuthenticatedAdminHomepageIndexRoute: typeof AuthenticatedAdminHomepageIndexRoute
+}
+
+const AuthenticatedAdminHomepageRouteChildren: AuthenticatedAdminHomepageRouteChildren =
+  {
+    AuthenticatedAdminHomepageAboutRoute: AuthenticatedAdminHomepageAboutRoute,
+    AuthenticatedAdminHomepageFooterRoute:
+      AuthenticatedAdminHomepageFooterRoute,
+    AuthenticatedAdminHomepageHeroRoute: AuthenticatedAdminHomepageHeroRoute,
+    AuthenticatedAdminHomepageOngoingRoute:
+      AuthenticatedAdminHomepageOngoingRoute,
+    AuthenticatedAdminHomepageValuesRoute:
+      AuthenticatedAdminHomepageValuesRoute,
+    AuthenticatedAdminHomepageIndexRoute: AuthenticatedAdminHomepageIndexRoute,
+  }
+
+const AuthenticatedAdminHomepageRouteWithChildren =
+  AuthenticatedAdminHomepageRoute._addFileChildren(
+    AuthenticatedAdminHomepageRouteChildren,
+  )
+
 interface AuthenticatedAdminPressRouteChildren {
   AuthenticatedAdminPressIdRoute: typeof AuthenticatedAdminPressIdRoute
   AuthenticatedAdminPressNewRoute: typeof AuthenticatedAdminPressNewRoute
@@ -672,6 +837,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminEventsRoute: typeof AuthenticatedAdminEventsRouteWithChildren
   AuthenticatedAdminFlagsRoute: typeof AuthenticatedAdminFlagsRoute
   AuthenticatedAdminFormsRoute: typeof AuthenticatedAdminFormsRouteWithChildren
+  AuthenticatedAdminHomepageRoute: typeof AuthenticatedAdminHomepageRouteWithChildren
   AuthenticatedAdminPressRoute: typeof AuthenticatedAdminPressRouteWithChildren
   AuthenticatedAdminRecurringRoute: typeof AuthenticatedAdminRecurringRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
@@ -684,6 +850,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminEventsRoute: AuthenticatedAdminEventsRouteWithChildren,
   AuthenticatedAdminFlagsRoute: AuthenticatedAdminFlagsRoute,
   AuthenticatedAdminFormsRoute: AuthenticatedAdminFormsRouteWithChildren,
+  AuthenticatedAdminHomepageRoute: AuthenticatedAdminHomepageRouteWithChildren,
   AuthenticatedAdminPressRoute: AuthenticatedAdminPressRouteWithChildren,
   AuthenticatedAdminRecurringRoute: AuthenticatedAdminRecurringRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,

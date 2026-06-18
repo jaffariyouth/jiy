@@ -280,6 +280,7 @@ export type Database = {
           created_by: string | null
           description: string | null
           ends_at: string | null
+          featured_on_home: boolean
           form_template_id: string | null
           id: string
           is_member_only: boolean
@@ -302,6 +303,7 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           ends_at?: string | null
+          featured_on_home?: boolean
           form_template_id?: string | null
           id?: string
           is_member_only?: boolean
@@ -324,6 +326,7 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           ends_at?: string | null
+          featured_on_home?: boolean
           form_template_id?: string | null
           id?: string
           is_member_only?: boolean
@@ -825,6 +828,27 @@ export type Database = {
           },
         ]
       }
+      site_content: {
+        Row: {
+          content: Json
+          section_key: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          content?: Json
+          section_key: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          content?: Json
+          section_key?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           amount_cents: number
@@ -925,6 +949,7 @@ export type Database = {
           created_at: string
           editor_id: string | null
           excerpt: string | null
+          featured_on_home: boolean
           id: string
           published_at: string | null
           slug: string
@@ -943,6 +968,7 @@ export type Database = {
           created_at?: string
           editor_id?: string | null
           excerpt?: string | null
+          featured_on_home?: boolean
           id?: string
           published_at?: string | null
           slug: string
@@ -961,6 +987,7 @@ export type Database = {
           created_at?: string
           editor_id?: string | null
           excerpt?: string | null
+          featured_on_home?: boolean
           id?: string
           published_at?: string | null
           slug?: string

@@ -74,6 +74,7 @@ const createEventSchema = z.object({
   cover_image_url: z.string().url().optional(),
   form_template_id: z.string().uuid().nullable().optional(),
   requires_payment: z.boolean().optional(),
+  featured_on_home: z.boolean().optional(),
   ...audienceFields,
 });
 
@@ -104,6 +105,7 @@ export const createEvent = createServerFn({ method: "POST" })
         cover_image_url: data.cover_image_url ?? null,
         form_template_id: data.form_template_id ?? null,
         requires_payment: data.requires_payment ?? false,
+        featured_on_home: data.featured_on_home ?? false,
         audience_visibility: data.audience_visibility ?? (data.is_member_only ? "members" : "public"),
         audience_gender: data.audience_gender ?? "all",
         audience_min_age: data.audience_min_age ?? null,

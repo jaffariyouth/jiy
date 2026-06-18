@@ -53,6 +53,7 @@ function EventEditPage() {
   const [coverUrl, setCoverUrl] = useState("");
   const [formTplId, setFormTplId] = useState<string>("none");
   const [requiresPayment, setRequiresPayment] = useState(false);
+  const [featured, setFeatured] = useState(false);
   const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
 
   useEffect(() => {
@@ -67,6 +68,7 @@ function EventEditPage() {
     setCoverUrl(e.cover_image_url ?? "");
     setFormTplId(e.form_template_id ?? "none");
     setRequiresPayment(e.requires_payment);
+    setFeatured((e as { featured_on_home?: boolean }).featured_on_home ?? false);
     setAudience({
       audience_visibility: (e.audience_visibility as "public" | "members") ?? (e.is_member_only ? "members" : "public"),
       audience_gender: (e.audience_gender as "all" | "male" | "female") ?? "all",
@@ -97,6 +99,7 @@ function EventEditPage() {
         cover_image_url: coverUrl || undefined,
         form_template_id: formTplId === "none" ? null : formTplId,
         requires_payment: requiresPayment,
+        featured_on_home: featured,
         ...audience,
       },
     }),
@@ -194,6 +197,10 @@ function EventEditPage() {
               </div>
             </div>
             <AudiencePanel value={audience} onChange={setAudience} />
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
+              Feature on homepage
+            </label>
             <Button onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
               {saveMut.isPending ? "Saving…" : "Save changes"}
             </Button>

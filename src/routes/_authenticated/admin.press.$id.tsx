@@ -33,6 +33,7 @@ function PressEditPage() {
   const [body, setBody] = useState("");
   const [cover, setCover] = useState("");
   const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
+  const [featured, setFeatured] = useState(false);
 
   useEffect(() => {
     const a = q.data?.article as Record<string, unknown> | undefined;
@@ -45,6 +46,7 @@ function PressEditPage() {
       audience_min_age: (a.audience_min_age as number | null) ?? null,
       audience_max_age: (a.audience_max_age as number | null) ?? null,
     });
+    setFeatured((a.featured_on_home as boolean | undefined) ?? false);
   }, [q.data?.article]);
 
   const uploadCover = async (file: File) => {
@@ -62,6 +64,7 @@ function PressEditPage() {
         title, slug, excerpt: excerpt || undefined, body_md: body,
         cover_image_url: cover || undefined,
         ...audience,
+        featured_on_home: featured,
       }});
       toast.success("Saved"); qc.invalidateQueries({ queryKey: ["admin", "article", id] });
     } catch (e) { toast.error((e as Error).message); }
@@ -107,6 +110,10 @@ function PressEditPage() {
         </div>
         <div><Label>Body</Label><MarkdownEditor value={body} onChange={setBody} rows={20} /></div>
         <AudiencePanel value={audience} onChange={setAudience} />
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
+          Feature on homepage
+        </label>
       </div>
     </div>
   );

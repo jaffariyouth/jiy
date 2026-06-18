@@ -56,6 +56,7 @@ const createDraftSchema = z.object({
   audience_gender: z.enum(["all", "male", "female"]).optional(),
   audience_min_age: z.number().int().min(0).max(120).nullable().optional(),
   audience_max_age: z.number().int().min(0).max(120).nullable().optional(),
+  featured_on_home: z.boolean().optional(),
 });
 
 export const createDraft = createServerFn({ method: "POST" })
@@ -84,6 +85,7 @@ export const createDraft = createServerFn({ method: "POST" })
         audience_gender: data.audience_gender ?? "all",
         audience_min_age: data.audience_min_age ?? null,
         audience_max_age: data.audience_max_age ?? null,
+        featured_on_home: data.featured_on_home ?? false,
       })
       .select("id")
       .single();

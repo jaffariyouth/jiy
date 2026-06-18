@@ -33,6 +33,7 @@ function NewEventPage() {
   const [coverUrl, setCoverUrl] = useState("");
   const [formTplId, setFormTplId] = useState<string>("none");
   const [requiresPayment, setRequiresPayment] = useState(false);
+  const [featured, setFeatured] = useState(false);
   const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
 
   const uploadCover = async (file: File) => {
@@ -67,6 +68,7 @@ function NewEventPage() {
           cover_image_url: coverUrl || undefined,
           form_template_id: formTplId === "none" ? null : formTplId,
           requires_payment: requiresPayment,
+          featured_on_home: featured,
           ...audience,
         },
       });
@@ -158,6 +160,12 @@ function NewEventPage() {
         </div>
 
         <AudiencePanel value={audience} onChange={setAudience} />
+
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
+          Feature on homepage
+        </label>
+
 
 
         <Button type="submit" disabled={mut.isPending}>
