@@ -61,6 +61,7 @@ function PressEditPage() {
         id, idempotencyKey: crypto.randomUUID(),
         title, slug, excerpt: excerpt || undefined, body_md: body,
         cover_image_url: cover || undefined,
+        ...audience,
       }});
       toast.success("Saved"); qc.invalidateQueries({ queryKey: ["admin", "article", id] });
     } catch (e) { toast.error((e as Error).message); }
