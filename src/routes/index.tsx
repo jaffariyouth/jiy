@@ -811,10 +811,9 @@ function Press({ press, articles }: { press?: Section; articles: HomepageArticle
                 ? new Date(a.published_at).toLocaleDateString(undefined, { month: "long", year: "numeric" })
                 : "";
               return (
-                <Link
+                <a
                   key={a.id}
-                  to="/press/$slug"
-                  params={{ slug: a.slug }}
+                  href={`/press/${a.slug}`}
                   className="group cursor-pointer flex flex-col gap-4"
                 >
                   <span className="font-body text-[10px] uppercase tracking-[0.2em] text-damascus-gold font-bold">
@@ -832,7 +831,7 @@ function Press({ press, articles }: { press?: Section; articles: HomepageArticle
                       {date}
                     </span>
                   </div>
-                </Link>
+                </a>
               );
             })}
           </div>
