@@ -34,6 +34,7 @@ function NewEventPage() {
   const [coverUrl, setCoverUrl] = useState("");
   const [formTplId, setFormTplId] = useState<string>("none");
   const [requiresPayment, setRequiresPayment] = useState(false);
+  const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
 
   const uploadCover = async (file: File) => {
     const path = `events/new/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
