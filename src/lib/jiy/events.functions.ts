@@ -103,6 +103,10 @@ export const createEvent = createServerFn({ method: "POST" })
         cover_image_url: data.cover_image_url ?? null,
         form_template_id: data.form_template_id ?? null,
         requires_payment: data.requires_payment ?? false,
+        audience_visibility: data.audience_visibility ?? (data.is_member_only ? "members" : "public"),
+        audience_gender: data.audience_gender ?? "all",
+        audience_min_age: data.audience_min_age ?? null,
+        audience_max_age: data.audience_max_age ?? null,
         created_by: context.userId,
         status: "draft",
       })
