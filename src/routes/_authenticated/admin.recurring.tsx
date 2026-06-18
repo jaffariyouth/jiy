@@ -25,12 +25,13 @@ function RecurringPage() {
   const [slug, setSlug] = useState("");
   const [cadence, setCadence] = useState("");
   const [location, setLocation] = useState("");
+  const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
 
   const submit = async () => {
     try {
-      await create({ data: { idempotencyKey: crypto.randomUUID(), title, slug, cadence_label: cadence, location, description_md: "" } });
+      await create({ data: { idempotencyKey: crypto.randomUUID(), title, slug, cadence_label: cadence, location, description_md: "", ...audience } });
       toast.success("Created");
-      setOpen(false); setTitle(""); setSlug(""); setCadence(""); setLocation("");
+      setOpen(false); setTitle(""); setSlug(""); setCadence(""); setLocation(""); setAudience(DEFAULT_AUDIENCE);
       qc.invalidateQueries({ queryKey: ["admin", "recurring"] });
     } catch (e) { toast.error((e as Error).message); }
   };
