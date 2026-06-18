@@ -10,6 +10,10 @@ export const listPublishedArticles = createServerFn({ method: "GET" }).handler(a
     .from("youth_press_articles")
     .select("id, title, slug, excerpt, cover_image_url, published_at, author_id")
     .eq("status", "published")
+    .eq("audience_visibility", "public")
+    .eq("audience_gender", "all")
+    .is("audience_min_age", null)
+    .is("audience_max_age", null)
     .order("published_at", { ascending: false })
     .limit(50);
   if (error) throw new Error(error.message);
@@ -26,6 +30,10 @@ export const getArticleBySlug = createServerFn({ method: "GET" })
       .from("youth_press_articles")
       .select("id, title, slug, excerpt, body_md, cover_image_url, published_at, author_id")
       .eq("status", "published")
+      .eq("audience_visibility", "public")
+      .eq("audience_gender", "all")
+      .is("audience_min_age", null)
+      .is("audience_max_age", null)
       .eq("slug", data.slug)
       .maybeSingle();
     if (error) throw new Error(error.message);
