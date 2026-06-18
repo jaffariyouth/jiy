@@ -126,9 +126,12 @@ export const createEvent = createServerFn({ method: "POST" })
         audience_gender: data.audience_gender ?? "all",
         audience_min_age: data.audience_min_age ?? null,
         audience_max_age: data.audience_max_age ?? null,
+        category_label: data.category_label ?? null,
+        speakers: data.speakers ?? [],
         created_by: context.userId,
         status: "draft",
       })
+
       .select("id")
       .single();
     if (error) throw new Error(error.message);
