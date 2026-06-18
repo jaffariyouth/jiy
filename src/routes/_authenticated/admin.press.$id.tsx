@@ -106,6 +106,7 @@ function PressEditPage() {
           </div>
         </div>
         <div><Label>Body</Label><MarkdownEditor value={body} onChange={setBody} rows={20} /></div>
+        <AudiencePanel value={audience} onChange={setAudience} />
       </div>
     </div>
   );
