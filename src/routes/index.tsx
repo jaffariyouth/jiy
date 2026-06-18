@@ -495,7 +495,7 @@ function Hero({ hero }: { hero?: Section }) {
             </div>
           </div>
 
-          <div className="absolute right-0 top-0 lg:relative lg:col-span-5 flex justify-end lg:justify-center items-start lg:items-center h-[70%] sm:h-[80%] lg:h-auto w-full max-w-[95%] md:max-w-[70%] lg:max-w-none pointer-events-none select-none z-0 opacity-[0.12] sm:opacity-20 lg:opacity-[0.25] overflow-hidden">
+          <div className="absolute right-0 top-0 lg:relative lg:col-span-5 flex justify-end lg:justify-center items-start lg:items-center h-[70%] sm:h-[80%] lg:h-auto w-full max-w-[95%] md:max-w-[70%] lg:max-w-none pointer-events-none select-none z-0 opacity-[0.05] sm:opacity-20 lg:opacity-[0.75] overflow-hidden">
             <img
               src="/__l5e/assets-v1/08a51463-76ec-4b12-9425-273130c7a4d7/ornament.svg"
               alt=""
