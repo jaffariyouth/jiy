@@ -3,6 +3,7 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { getHomepageData, type HomepageEvent, type HomepageArticle } from "@/lib/jiy/site-content.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { OrnamentalArchFrame, OGEE_INNER_ARCH_BBOX_D } from "@/components/dashboard/OrnamentalArchFrame";
 
 const homepageQueryOptions = queryOptions({
   queryKey: ["homepage"],
@@ -191,7 +192,7 @@ function OgeeArchDefs() {
     <svg width="0" height="0" className="absolute" aria-hidden="true">
       <defs>
         <clipPath id="ogee-arch-mask" clipPathUnits="objectBoundingBox">
-          <path d="M0.1,1 L0.1,0.52 L0.04,0.52 L0.04,0.48 C0.04,0.40 0.10,0.34 0.18,0.34 C0.26,0.34 0.34,0.18 0.5,0.02 C0.66,0.18 0.74,0.34 0.82,0.34 C0.90,0.34 0.96,0.40 0.96,0.48 L0.96,0.52 L0.90,0.52 L0.90,1 Z" />
+          <path d={OGEE_INNER_ARCH_BBOX_D} />
         </clipPath>
       </defs>
     </svg>
@@ -482,6 +483,7 @@ function Hero({ hero }: { hero?: Section }) {
 
           <div className="lg:col-span-5 relative flex justify-center">
             <div className="relative w-full max-w-[400px] aspect-[4/5] bg-warm-silk-grey p-4 border border-horizon-mist group shadow-xl transition-all duration-500 hover:border-damascus-gold">
+              <OrnamentalArchFrame className="inset-4 z-20" colorClassName="text-persian-indigo" />
               <div className="w-full h-full overflow-hidden relative ogee-arch-portal bg-white">
                 <img
                   src={str(hero, "photo_url", d.photo_url)}
@@ -634,6 +636,7 @@ function UpcomingEvents({ events }: { events: HomepageEvent[] }) {
             return (
               <div key={ev.id} className="studio-card rounded-xl overflow-hidden flex flex-col bg-white">
                 <div className="relative overflow-hidden aspect-[4/5] bg-warm-silk-grey border-b border-horizon-mist p-2">
+                  <OrnamentalArchFrame className="inset-2 z-20" colorClassName="text-persian-indigo" />
                   <div className="w-full h-full overflow-hidden relative ogee-arch-portal">
                     <img
                       src={ev.cover_image_url ?? "https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&q=80&w=800"}
@@ -713,6 +716,7 @@ function OngoingEvents({ ongoing }: { ongoing?: Section }) {
 
           <div className="lg:col-span-4 flex justify-center">
             <div className="relative w-full max-w-[340px] aspect-square bg-warm-silk-grey rounded-xl overflow-hidden border border-horizon-mist shadow-lg group">
+              <OrnamentalArchFrame className="inset-0 z-20" colorClassName="text-persian-indigo" />
               <div className="w-full h-full ogee-arch-portal overflow-hidden relative bg-white">
                 <img
                   src={str(ongoing, "photo_url", d.photo_url)}
