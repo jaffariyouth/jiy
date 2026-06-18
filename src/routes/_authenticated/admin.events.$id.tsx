@@ -69,6 +69,12 @@ function EventEditPage() {
     setCoverUrl(e.cover_image_url ?? "");
     setFormTplId(e.form_template_id ?? "none");
     setRequiresPayment(e.requires_payment);
+    setAudience({
+      audience_visibility: (e.audience_visibility as "public" | "members") ?? (e.is_member_only ? "members" : "public"),
+      audience_gender: (e.audience_gender as "all" | "male" | "female") ?? "all",
+      audience_min_age: e.audience_min_age ?? null,
+      audience_max_age: e.audience_max_age ?? null,
+    });
   }, [q.data?.event]);
 
   const uploadCover = async (file: File) => {
