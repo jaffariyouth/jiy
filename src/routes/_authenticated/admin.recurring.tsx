@@ -51,6 +51,7 @@ function RecurringPage() {
                 <Input placeholder="slug" value={slug} onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))} />
                 <Input placeholder="Cadence label (e.g. Sundays at 10am)" value={cadence} onChange={(e) => setCadence(e.target.value)} />
                 <Input placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} />
+                <AudiencePanel value={audience} onChange={setAudience} />
               </div>
               <DialogFooter><Button onClick={submit} disabled={!title.trim() || !slug.trim()}>Create</Button></DialogFooter>
             </DialogContent>
