@@ -2,71 +2,99 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
 
 const SECTION_KEYS = ["hero", "about", "ongoing", "values", "footer"] as const;
 export type SectionKey = (typeof SECTION_KEYS)[number];
 
+type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [k: string]: Json | undefined }
+  | Json[];
+
+export type HomepageEvent = {
+  id: string;
+  title: string;
+  description: string | null;
+  location: string | null;
+  starts_at: string;
+  ends_at: string | null;
+  cover_image_url: string | null;
+};
+
+export type HomepageArticle = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  cover_image_url: string | null;
+  published_at: string | null;
+};
+
 function publicClient() {
-  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
-    auth: { persistSession: false, autoRefreshToken: false, storage: undefined },
+  return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+    auth: { persistSession: false, autoRefreshToken: false },
   });
 }
 
-// Public — used by `/` loader. Returns all sections + featured/upcoming events + featured press.
+// Public — used by `/` loader.
 export const getHomepageData = createServerFn({ method: "GET" }).handler(async () => {
   const sb = publicClient();
   const nowIso = new Date().toISOString();
 
-  const [sectionsRes, featuredEventsRes, articlesFeaturedRes, articlesLatestRes] =
-    await Promise.all([
-      sb.from("site_content").select("section_key, content"),
-      sb
-        .from("events")
-        .select("id, title, description, location, starts_at, ends_at, cover_image_url, featured_on_home")
-        .eq("status", "published")
-        .eq("audience_visibility", "public")
-        .eq("audience_gender", "all")
-        .is("audience_min_age", null)
-        .is("audience_max_age", null)
-        .gte("starts_at", nowIso)
-        .order("featured_on_home", { ascending: false })
-        .order("starts_at", { ascending: true })
-        .limit(20),
-      sb
-        .from("youth_press_articles")
-        .select("id, title, slug, excerpt, cover_image_url, published_at, featured_on_home")
-        .eq("status", "published")
-        .eq("audience_visibility", "public")
-        .eq("audience_gender", "all")
-        .is("audience_min_age", null)
-        .is("audience_max_age", null)
-        .eq("featured_on_home", true)
-        .order("published_at", { ascending: false })
-        .limit(2),
-      sb
-        .from("youth_press_articles")
-        .select("id, title, slug, excerpt, cover_image_url, published_at, featured_on_home")
-        .eq("status", "published")
-        .eq("audience_visibility", "public")
-        .eq("audience_gender", "all")
-        .is("audience_min_age", null)
-        .is("audience_max_age", null)
-        .order("published_at", { ascending: false })
-        .limit(2),
-    ]);
+  const [sectionsRes, eventsRes, articlesFeaturedRes, articlesLatestRes] = await Promise.all([
+    sb.from("site_content").select("section_key, content"),
+    sb
+      .from("events")
+      .select("id, title, description, location, starts_at, ends_at, cover_image_url, featured_on_home")
+      .eq("status", "published")
+      .eq("audience_visibility", "public")
+      .eq("audience_gender", "all")
+      .is("audience_min_age", null)
+      .is("audience_max_age", null)
+      .gte("starts_at", nowIso)
+      .order("featured_on_home", { ascending: false })
+      .order("starts_at", { ascending: true })
+      .limit(20),
+    sb
+      .from("youth_press_articles")
+      .select("id, title, slug, excerpt, cover_image_url, published_at, featured_on_home")
+      .eq("status", "published")
+      .eq("audience_visibility", "public")
+      .eq("audience_gender", "all")
+      .is("audience_min_age", null)
+      .is("audience_max_age", null)
+      .eq("featured_on_home", true)
+      .order("published_at", { ascending: false })
+      .limit(2),
+    sb
+      .from("youth_press_articles")
+      .select("id, title, slug, excerpt, cover_image_url, published_at")
+      .eq("status", "published")
+      .eq("audience_visibility", "public")
+      .eq("audience_gender", "all")
+      .is("audience_min_age", null)
+      .is("audience_max_age", null)
+      .order("published_at", { ascending: false })
+      .limit(2),
+  ]);
 
-  const sections: Record<string, Record<string, unknown>> = {};
+  const sections: Record<string, Json> = {};
   for (const row of sectionsRes.data ?? []) {
-    sections[row.section_key] = (row.content as Record<string, unknown>) ?? {};
+    sections[row.section_key] = (row.content as Json) ?? {};
   }
 
-  const allEvents = featuredEventsRes.data ?? [];
+  const allEvents = (eventsRes.data ?? []) as Array<HomepageEvent & { featured_on_home: boolean }>;
   const featuredEvents = allEvents.filter((e) => e.featured_on_home);
-  const events = (featuredEvents.length > 0 ? featuredEvents : allEvents).slice(0, 3);
+  const eventsPool = featuredEvents.length > 0 ? featuredEvents : allEvents;
+  const events: HomepageEvent[] = eventsPool.slice(0, 3).map(({ featured_on_home: _f, ...rest }) => rest);
 
-  const featuredArticles = articlesFeaturedRes.data ?? [];
-  const articles =
-    featuredArticles.length > 0 ? featuredArticles.slice(0, 2) : (articlesLatestRes.data ?? []).slice(0, 2);
+  const featuredArticles = (articlesFeaturedRes.data ?? []) as HomepageArticle[];
+  const latestArticles = (articlesLatestRes.data ?? []) as HomepageArticle[];
+  const articles: HomepageArticle[] = (featuredArticles.length > 0 ? featuredArticles : latestArticles).slice(0, 2);
 
   return { sections, events, articles };
 });
@@ -84,7 +112,9 @@ export const getSectionContent = createServerFn({ method: "GET" })
       .eq("section_key", data.key)
       .maybeSingle();
     if (error) throw new Error(error.message);
-    return { section: row ?? { section_key: data.key, content: {}, updated_at: null } };
+    return {
+      section: row ?? { section_key: data.key, content: {} as Json, updated_at: null },
+    };
   });
 
 export const updateSectionContent = createServerFn({ method: "POST" })
@@ -97,7 +127,7 @@ export const updateSectionContent = createServerFn({ method: "POST" })
     await assertAdmin(context.supabase, context.userId);
     const { error } = await context.supabase.from("site_content").upsert({
       section_key: data.key,
-      content: data.content,
+      content: data.content as Json,
       updated_by: context.userId,
       updated_at: new Date().toISOString(),
     });
@@ -106,7 +136,6 @@ export const updateSectionContent = createServerFn({ method: "POST" })
       actorId: context.userId,
       action: "site_content.updated",
       entity: "site_content",
-      entityId: null,
       metadata: { key: data.key },
     });
     return { ok: true as const };
