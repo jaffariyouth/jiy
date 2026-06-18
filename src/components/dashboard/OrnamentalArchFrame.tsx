@@ -97,13 +97,17 @@ export function OrnamentalArchFrame({
         </pattern>
 
         {/* Frame band = outer rect minus inner arch (evenodd) */}
-        <clipPath id={`${uid}-band-clip`}>
-          <path d={`${OUTER_RECT_VB} ${INNER_ARCH_VB}`} fillRule="evenodd" />
+        <clipPath id={`${uid}-band-clip`} clipPathUnits="userSpaceOnUse">
+          <path
+            d={`${OUTER_RECT_VB} ${INNER_ARCH_VB}`}
+            clipRule="evenodd"
+            fillRule="evenodd"
+          />
         </clipPath>
       </defs>
 
-      {/* Patterned band */}
-      <g clipPath={`url(#${uid}-band-clip)`}>
+      {/* Patterned band (rect filled with pattern, clipped to band shape) */}
+      <g clipPath={`url(#${uid}-band-clip)`} clipRule="evenodd">
         <rect x="0" y="0" width="100" height="140" fill={`url(#${uid}-pattern)`} />
       </g>
 
