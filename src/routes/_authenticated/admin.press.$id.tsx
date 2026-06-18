@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MarkdownEditor } from "@/components/admin/MarkdownEditor";
+import { AudiencePanel, DEFAULT_AUDIENCE, type AudienceValue } from "@/components/admin/AudiencePanel";
 import { supabase } from "@/integrations/supabase/client";
 import {
   getArticleByIdAdmin, updateDraft, publishArticle, unpublishArticle,
@@ -31,12 +32,19 @@ function PressEditPage() {
   const [excerpt, setExcerpt] = useState("");
   const [body, setBody] = useState("");
   const [cover, setCover] = useState("");
+  const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
 
   useEffect(() => {
-    const a = q.data?.article;
+    const a = q.data?.article as Record<string, unknown> | undefined;
     if (!a) return;
-    setTitle(a.title); setSlug(a.slug);
-    setExcerpt(a.excerpt ?? ""); setBody(a.body_md); setCover(a.cover_image_url ?? "");
+    setTitle(a.title as string); setSlug(a.slug as string);
+    setExcerpt((a.excerpt as string | null) ?? ""); setBody(a.body_md as string); setCover((a.cover_image_url as string | null) ?? "");
+    setAudience({
+      audience_visibility: (a.audience_visibility as "public" | "members") ?? "members",
+      audience_gender: (a.audience_gender as "all" | "male" | "female") ?? "all",
+      audience_min_age: (a.audience_min_age as number | null) ?? null,
+      audience_max_age: (a.audience_max_age as number | null) ?? null,
+    });
   }, [q.data?.article]);
 
   const uploadCover = async (file: File) => {
@@ -53,6 +61,7 @@ function PressEditPage() {
         id, idempotencyKey: crypto.randomUUID(),
         title, slug, excerpt: excerpt || undefined, body_md: body,
         cover_image_url: cover || undefined,
+        ...audience,
       }});
       toast.success("Saved"); qc.invalidateQueries({ queryKey: ["admin", "article", id] });
     } catch (e) { toast.error((e as Error).message); }
@@ -97,6 +106,7 @@ function PressEditPage() {
           </div>
         </div>
         <div><Label>Body</Label><MarkdownEditor value={body} onChange={setBody} rows={20} /></div>
+        <AudiencePanel value={audience} onChange={setAudience} />
       </div>
     </div>
   );

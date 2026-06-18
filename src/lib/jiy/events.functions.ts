@@ -54,6 +54,13 @@ export const getEventAdmin = createServerFn({ method: "GET" })
 
 // ---------- Admin mutations ----------
 
+const audienceFields = {
+  audience_visibility: z.enum(["public", "members"]).optional(),
+  audience_gender: z.enum(["all", "male", "female"]).optional(),
+  audience_min_age: z.number().int().min(0).max(120).nullable().optional(),
+  audience_max_age: z.number().int().min(0).max(120).nullable().optional(),
+};
+
 const createEventSchema = z.object({
   idempotencyKey: z.string().min(8),
   title: z.string().min(1).max(200),
@@ -66,6 +73,7 @@ const createEventSchema = z.object({
   cover_image_url: z.string().url().optional(),
   form_template_id: z.string().uuid().nullable().optional(),
   requires_payment: z.boolean().optional(),
+  ...audienceFields,
 });
 
 export const createEvent = createServerFn({ method: "POST" })
@@ -95,6 +103,10 @@ export const createEvent = createServerFn({ method: "POST" })
         cover_image_url: data.cover_image_url ?? null,
         form_template_id: data.form_template_id ?? null,
         requires_payment: data.requires_payment ?? false,
+        audience_visibility: data.audience_visibility ?? (data.is_member_only ? "members" : "public"),
+        audience_gender: data.audience_gender ?? "all",
+        audience_min_age: data.audience_min_age ?? null,
+        audience_max_age: data.audience_max_age ?? null,
         created_by: context.userId,
         status: "draft",
       })
@@ -223,6 +235,10 @@ export const duplicateEvent = createServerFn({ method: "POST" })
         cover_image_url: src.cover_image_url,
         form_template_id: src.form_template_id,
         requires_payment: src.requires_payment,
+        audience_visibility: src.audience_visibility,
+        audience_gender: src.audience_gender,
+        audience_min_age: src.audience_min_age,
+        audience_max_age: src.audience_max_age,
         created_by: context.userId,
         status: "draft",
       })

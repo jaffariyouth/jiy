@@ -7,6 +7,7 @@ import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { AudiencePanel, DEFAULT_AUDIENCE, type AudienceValue } from "@/components/admin/AudiencePanel";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/recurring")({
@@ -24,12 +25,13 @@ function RecurringPage() {
   const [slug, setSlug] = useState("");
   const [cadence, setCadence] = useState("");
   const [location, setLocation] = useState("");
+  const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
 
   const submit = async () => {
     try {
-      await create({ data: { idempotencyKey: crypto.randomUUID(), title, slug, cadence_label: cadence, location, description_md: "" } });
+      await create({ data: { idempotencyKey: crypto.randomUUID(), title, slug, cadence_label: cadence, location, description_md: "", ...audience } });
       toast.success("Created");
-      setOpen(false); setTitle(""); setSlug(""); setCadence(""); setLocation("");
+      setOpen(false); setTitle(""); setSlug(""); setCadence(""); setLocation(""); setAudience(DEFAULT_AUDIENCE);
       qc.invalidateQueries({ queryKey: ["admin", "recurring"] });
     } catch (e) { toast.error((e as Error).message); }
   };
@@ -49,6 +51,7 @@ function RecurringPage() {
                 <Input placeholder="slug" value={slug} onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))} />
                 <Input placeholder="Cadence label (e.g. Sundays at 10am)" value={cadence} onChange={(e) => setCadence(e.target.value)} />
                 <Input placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} />
+                <AudiencePanel value={audience} onChange={setAudience} />
               </div>
               <DialogFooter><Button onClick={submit} disabled={!title.trim() || !slug.trim()}>Create</Button></DialogFooter>
             </DialogContent>

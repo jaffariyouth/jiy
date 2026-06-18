@@ -7,6 +7,10 @@ const baseSchema = z.object({
   title: z.string().min(1).max(200),
   body_md: z.string().max(50_000).default(""),
   pinned: z.boolean().optional(),
+  audience_visibility: z.enum(["public", "members"]).optional(),
+  audience_gender: z.enum(["all", "male", "female"]).optional(),
+  audience_min_age: z.number().int().min(0).max(120).nullable().optional(),
+  audience_max_age: z.number().int().min(0).max(120).nullable().optional(),
 });
 
 export const listPublishedAnnouncements = createServerFn({ method: "GET" })
@@ -68,6 +72,10 @@ export const createAnnouncement = createServerFn({ method: "POST" })
         pinned: data.pinned ?? false,
         status: "draft",
         created_by: context.userId,
+        audience_visibility: data.audience_visibility ?? "members",
+        audience_gender: data.audience_gender ?? "all",
+        audience_min_age: data.audience_min_age ?? null,
+        audience_max_age: data.audience_max_age ?? null,
       })
       .select("id")
       .single();

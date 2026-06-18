@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { AudiencePanel, DEFAULT_AUDIENCE, type AudienceValue } from "@/components/admin/AudiencePanel";
 import {
   getEventAdmin, updateEvent, publishEvent, cancelEvent, duplicateEvent,
 } from "@/lib/jiy/events.functions";
@@ -49,10 +50,10 @@ function EventEditPage() {
   const [startsAt, setStartsAt] = useState("");
   const [endsAt, setEndsAt] = useState("");
   const [capacity, setCapacity] = useState("");
-  const [memberOnly, setMemberOnly] = useState(false);
   const [coverUrl, setCoverUrl] = useState("");
   const [formTplId, setFormTplId] = useState<string>("none");
   const [requiresPayment, setRequiresPayment] = useState(false);
+  const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
 
   useEffect(() => {
     const e = q.data?.event;
@@ -63,10 +64,15 @@ function EventEditPage() {
     setStartsAt(toLocalInput(e.starts_at));
     setEndsAt(toLocalInput(e.ends_at));
     setCapacity(e.capacity?.toString() ?? "");
-    setMemberOnly(e.is_member_only);
     setCoverUrl(e.cover_image_url ?? "");
     setFormTplId(e.form_template_id ?? "none");
     setRequiresPayment(e.requires_payment);
+    setAudience({
+      audience_visibility: (e.audience_visibility as "public" | "members") ?? (e.is_member_only ? "members" : "public"),
+      audience_gender: (e.audience_gender as "all" | "male" | "female") ?? "all",
+      audience_min_age: e.audience_min_age ?? null,
+      audience_max_age: e.audience_max_age ?? null,
+    });
   }, [q.data?.event]);
 
   const uploadCover = async (file: File) => {
@@ -87,10 +93,11 @@ function EventEditPage() {
         starts_at: new Date(startsAt).toISOString(),
         ends_at: endsAt ? new Date(endsAt).toISOString() : undefined,
         capacity: capacity ? Number(capacity) : undefined,
-        is_member_only: memberOnly,
+        is_member_only: audience.audience_visibility === "members",
         cover_image_url: coverUrl || undefined,
         form_template_id: formTplId === "none" ? null : formTplId,
         requires_payment: requiresPayment,
+        ...audience,
       },
     }),
     onSuccess: () => { toast.success("Saved"); qc.invalidateQueries({ queryKey: ["admin", "event", id] }); },
@@ -186,10 +193,7 @@ function EventEditPage() {
                 )}
               </div>
             </div>
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={memberOnly} onChange={(e) => setMemberOnly(e.target.checked)} />
-              Members-only
-            </label>
+            <AudiencePanel value={audience} onChange={setAudience} />
             <Button onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
               {saveMut.isPending ? "Saving…" : "Save changes"}
             </Button>

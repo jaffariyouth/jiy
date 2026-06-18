@@ -15,6 +15,10 @@ const baseSchema = z.object({
   default_capacity: z.number().int().min(0).optional(),
   cover_image_url: z.string().url().optional(),
   is_active: z.boolean().optional(),
+  audience_visibility: z.enum(["public", "members"]).optional(),
+  audience_gender: z.enum(["all", "male", "female"]).optional(),
+  audience_min_age: z.number().int().min(0).max(120).nullable().optional(),
+  audience_max_age: z.number().int().min(0).max(120).nullable().optional(),
 });
 
 export const listActiveRecurringEvents = createServerFn({ method: "GET" })

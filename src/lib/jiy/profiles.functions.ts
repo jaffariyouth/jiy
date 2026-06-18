@@ -15,6 +15,8 @@ const UpdateProfileSchema = z.object({
   country: z.string().min(2).max(80).optional(),
   consentMarketing: z.boolean().optional(),
   markOnboardingComplete: z.boolean().optional(),
+  gender: z.enum(["male", "female", "prefer_not_to_say"]).optional(),
+  dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
 });
 
 export type ProfileDTO = {
@@ -25,24 +27,26 @@ export type ProfileDTO = {
   consentMarketing: boolean;
   onboardingCompletedAt: string | null;
   avatarUrl: string | null;
+  gender: string | null;
+  dateOfBirth: string | null;
 };
 
 export const getMyProfile = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<ProfileDTO> => {
     const { supabase, userId } = context;
+    const SELECT = "id, display_name, age_demographic, country, consent_marketing, onboarding_completed_at, avatar_url, gender, date_of_birth";
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, display_name, age_demographic, country, consent_marketing, onboarding_completed_at, avatar_url")
+      .select(SELECT)
       .eq("id", userId)
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!data) {
-      // The auth trigger normally creates this row; defensively insert.
       const { data: inserted, error: insErr } = await supabase
         .from("profiles")
         .insert({ id: userId })
-        .select("id, display_name, age_demographic, country, consent_marketing, onboarding_completed_at, avatar_url")
+        .select(SELECT)
         .single();
       if (insErr) throw new Error(insErr.message);
       return mapProfile(inserted);
@@ -67,13 +71,15 @@ export const updateMyProfile = createServerFn({ method: "POST" })
     if (data.ageDemographic !== undefined) patch.age_demographic = data.ageDemographic;
     if (data.country !== undefined) patch.country = data.country;
     if (data.consentMarketing !== undefined) patch.consent_marketing = data.consentMarketing;
+    if (data.gender !== undefined) patch.gender = data.gender;
+    if (data.dateOfBirth !== undefined) patch.date_of_birth = data.dateOfBirth;
     if (data.markOnboardingComplete) patch.onboarding_completed_at = new Date().toISOString();
 
     const { data: updated, error } = await supabase
       .from("profiles")
       .update(patch)
       .eq("id", userId)
-      .select("id, display_name, age_demographic, country, consent_marketing, onboarding_completed_at, avatar_url")
+      .select("id, display_name, age_demographic, country, consent_marketing, onboarding_completed_at, avatar_url, gender, date_of_birth")
       .single();
     if (error) throw new Error(error.message);
 
@@ -97,6 +103,8 @@ function mapProfile(row: {
   consent_marketing: boolean | null;
   onboarding_completed_at: string | null;
   avatar_url: string | null;
+  gender?: string | null;
+  date_of_birth?: string | null;
 }): ProfileDTO {
   return {
     id: row.id,
@@ -106,5 +114,7 @@ function mapProfile(row: {
     consentMarketing: row.consent_marketing ?? false,
     onboardingCompletedAt: row.onboarding_completed_at,
     avatarUrl: row.avatar_url,
+    gender: row.gender ?? null,
+    dateOfBirth: row.date_of_birth ?? null,
   };
 }

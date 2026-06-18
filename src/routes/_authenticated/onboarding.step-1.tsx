@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import {
   AuthLayout,
@@ -8,6 +9,8 @@ import {
   PrimaryButton,
   MaterialIcon,
 } from "@/components/auth";
+import { updateMyProfile } from "@/lib/jiy/profiles.functions";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/onboarding/step-1")({
   head: () => ({ meta: [{ title: "JIY — Profile Step 1: Core Identity" }] }),
@@ -16,16 +19,32 @@ export const Route = createFileRoute("/_authenticated/onboarding/step-1")({
 
 function Step1Page() {
   const navigate = useNavigate();
+  const update = useServerFn(updateMyProfile);
   const [contactNumber, setContactNumber] = useState("");
   const [educationLevel, setEducationLevel] = useState("high-school");
   const [academicStatus, setAcademicStatus] = useState("");
   const [maritalStatus, setMaritalStatus] = useState("single");
+  const [gender, setGender] = useState<"" | "male" | "female" | "prefer_not_to_say">("");
+  const [dob, setDob] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // TODO: persist via server fn once profile schema accepts these fields.
-    console.log("[onboarding step-1]", { contactNumber, educationLevel, academicStatus, maritalStatus });
-    navigate({ to: "/onboarding/step-2" });
+    setSaving(true);
+    try {
+      await update({ data: {
+        idempotencyKey: crypto.randomUUID(),
+        gender: gender || undefined,
+        dateOfBirth: dob || undefined,
+      }});
+      // Other fields not yet persisted server-side; pass through silently.
+      console.log("[onboarding step-1]", { contactNumber, educationLevel, academicStatus, maritalStatus });
+      navigate({ to: "/onboarding/step-2" });
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -49,6 +68,30 @@ function Step1Page() {
             placeholder="+1 (555) 000-0000"
             value={contactNumber}
             onChange={(e) => setContactNumber(e.target.value)}
+          />
+
+          <FormInput
+            id="dob"
+            label="Date of Birth"
+            type="date"
+            containerClassName="pt-4"
+            value={dob}
+            onChange={(e) => setDob(e.target.value)}
+            required
+          />
+
+          <FormSelect
+            id="gender"
+            label="Gender"
+            containerClassName="pt-4"
+            value={gender}
+            onChange={(e) => setGender(e.target.value as typeof gender)}
+            options={[
+              { value: "", label: "Select…" },
+              { value: "male", label: "Male" },
+              { value: "female", label: "Female" },
+              { value: "prefer_not_to_say", label: "Prefer not to say" },
+            ]}
           />
 
           <FormSelect
@@ -93,9 +136,10 @@ function Step1Page() {
             <PrimaryButton
               type="submit"
               className="py-[12px]"
+              disabled={saving}
               trailingIcon={<MaterialIcon name="arrow_forward" className="text-[20px]" />}
             >
-              Save & Continue to Step 2
+              {saving ? "Saving…" : "Save & Continue to Step 2"}
             </PrimaryButton>
           </div>
         </form>

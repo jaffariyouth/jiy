@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MarkdownEditor } from "@/components/admin/MarkdownEditor";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { AudiencePanel, DEFAULT_AUDIENCE, type AudienceValue } from "@/components/admin/AudiencePanel";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/announcements")({
@@ -27,10 +28,11 @@ function AnnouncementsPage() {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
 
   const createMut = useMutation({
-    mutationFn: () => create({ data: { idempotencyKey: crypto.randomUUID(), title, body_md: body } }),
-    onSuccess: () => { toast.success("Draft created"); setOpen(false); setTitle(""); setBody(""); refresh(); },
+    mutationFn: () => create({ data: { idempotencyKey: crypto.randomUUID(), title, body_md: body, ...audience } }),
+    onSuccess: () => { toast.success("Draft created"); setOpen(false); setTitle(""); setBody(""); setAudience(DEFAULT_AUDIENCE); refresh(); },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -47,6 +49,7 @@ function AnnouncementsPage() {
               <div className="space-y-3">
                 <Input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
                 <MarkdownEditor value={body} onChange={setBody} rows={10} />
+                <AudiencePanel value={audience} onChange={setAudience} />
               </div>
               <DialogFooter>
                 <Button onClick={() => createMut.mutate()} disabled={!title.trim() || createMut.isPending}>

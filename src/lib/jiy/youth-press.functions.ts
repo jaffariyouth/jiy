@@ -44,6 +44,10 @@ const createDraftSchema = z.object({
   excerpt: z.string().max(500).optional(),
   body_md: z.string().min(1).max(200_000),
   cover_image_url: z.string().url().optional(),
+  audience_visibility: z.enum(["public", "members"]).optional(),
+  audience_gender: z.enum(["all", "male", "female"]).optional(),
+  audience_min_age: z.number().int().min(0).max(120).nullable().optional(),
+  audience_max_age: z.number().int().min(0).max(120).nullable().optional(),
 });
 
 export const createDraft = createServerFn({ method: "POST" })
@@ -68,6 +72,10 @@ export const createDraft = createServerFn({ method: "POST" })
         body_md: data.body_md,
         cover_image_url: data.cover_image_url ?? null,
         status: "draft",
+        audience_visibility: data.audience_visibility ?? "members",
+        audience_gender: data.audience_gender ?? "all",
+        audience_min_age: data.audience_min_age ?? null,
+        audience_max_age: data.audience_max_age ?? null,
       })
       .select("id")
       .single();

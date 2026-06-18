@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MarkdownEditor } from "@/components/admin/MarkdownEditor";
 import { createDraft } from "@/lib/jiy/youth-press.functions";
+import { AudiencePanel, DEFAULT_AUDIENCE, type AudienceValue } from "@/components/admin/AudiencePanel";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/press/new")({
@@ -24,6 +25,7 @@ function NewPressPage() {
   const [slug, setSlug] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [body, setBody] = useState("");
+  const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
   const [saving, setSaving] = useState(false);
 
   const submit = async () => {
@@ -34,6 +36,7 @@ function NewPressPage() {
         slug: slug || slugify(title),
         excerpt: excerpt || undefined,
         body_md: body || "Draft.",
+        ...audience,
       }});
       toast.success("Draft created");
       navigate({ to: "/admin/press/$id", params: { id: r.id } });
@@ -49,6 +52,7 @@ function NewPressPage() {
         <div><Label>Slug</Label><Input value={slug} onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))} required /></div>
         <div><Label>Excerpt</Label><Input value={excerpt} onChange={(e) => setExcerpt(e.target.value)} maxLength={500} /></div>
         <div><Label>Body</Label><MarkdownEditor value={body} onChange={setBody} rows={18} /></div>
+        <AudiencePanel value={audience} onChange={setAudience} />
         <Button type="submit" disabled={saving || !title.trim()}>{saving ? "Creating…" : "Create draft"}</Button>
       </form>
     </div>

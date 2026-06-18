@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MarkdownEditor } from "@/components/admin/MarkdownEditor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AudiencePanel, DEFAULT_AUDIENCE, type AudienceValue } from "@/components/admin/AudiencePanel";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -29,10 +30,10 @@ function NewEventPage() {
   const [startsAt, setStartsAt] = useState("");
   const [endsAt, setEndsAt] = useState("");
   const [capacity, setCapacity] = useState("");
-  const [memberOnly, setMemberOnly] = useState(false);
   const [coverUrl, setCoverUrl] = useState("");
   const [formTplId, setFormTplId] = useState<string>("none");
   const [requiresPayment, setRequiresPayment] = useState(false);
+  const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
 
   const uploadCover = async (file: File) => {
     const path = `events/new/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
@@ -62,10 +63,11 @@ function NewEventPage() {
           starts_at: startsIso,
           ends_at: endsIso,
           capacity: capacity ? Number(capacity) : undefined,
-          is_member_only: memberOnly,
+          is_member_only: audience.audience_visibility === "members",
           cover_image_url: coverUrl || undefined,
           form_template_id: formTplId === "none" ? null : formTplId,
           requires_payment: requiresPayment,
+          ...audience,
         },
       });
     },
@@ -155,10 +157,8 @@ function NewEventPage() {
           </div>
         </div>
 
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={memberOnly} onChange={(e) => setMemberOnly(e.target.checked)} />
-          Members-only event
-        </label>
+        <AudiencePanel value={audience} onChange={setAudience} />
+
 
         <Button type="submit" disabled={mut.isPending}>
           {mut.isPending ? "Creating…" : "Create draft"}
