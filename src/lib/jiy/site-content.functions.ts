@@ -1,8 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import type { Database } from "@/integrations/supabase/types";
 
 const SECTION_KEYS = ["hero", "about", "ongoing", "values", "footer"] as const;
 export type SectionKey = (typeof SECTION_KEYS)[number];
@@ -34,15 +32,10 @@ export type HomepageArticle = {
   published_at: string | null;
 };
 
-function publicClient() {
-  return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
-
 // Public — used by `/` loader.
 export const getHomepageData = createServerFn({ method: "GET" }).handler(async () => {
-  const sb = publicClient();
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const sb = supabaseAdmin;
   const nowIso = new Date().toISOString();
 
   const [sectionsRes, eventsRes, articlesFeaturedRes, articlesLatestRes] = await Promise.all([
