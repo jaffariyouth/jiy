@@ -191,7 +191,7 @@ function OgeeArchDefs() {
     <svg width="0" height="0" className="absolute" aria-hidden="true">
       <defs>
         <clipPath id="ogee-arch-mask" clipPathUnits="objectBoundingBox">
-          <path d="M0,1 L0,0.42 C0,0.32 0.08,0.28 0.18,0.28 C0.3,0.28 0.4,0.22 0.5,0 C0.6,0.22 0.7,0.28 0.82,0.28 C0.92,0.28 1,0.32 1,0.42 L1,1 Z" />
+          <path d="M0.1,1 L0.1,0.52 L0.04,0.52 L0.04,0.48 C0.04,0.40 0.10,0.34 0.18,0.34 C0.26,0.34 0.34,0.18 0.5,0.02 C0.66,0.18 0.74,0.34 0.82,0.34 C0.90,0.34 0.96,0.40 0.96,0.48 L0.96,0.52 L0.90,0.52 L0.90,1 Z" />
         </clipPath>
       </defs>
     </svg>
