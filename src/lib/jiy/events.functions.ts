@@ -74,6 +74,7 @@ const createEventSchema = z.object({
   cover_image_url: z.string().url().optional(),
   form_template_id: z.string().uuid().nullable().optional(),
   requires_payment: z.boolean().optional(),
+  featured_on_home: z.boolean().optional(),
   ...audienceFields,
 });
 
