@@ -195,10 +195,7 @@ function EventEditPage() {
                 )}
               </div>
             </div>
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={memberOnly} onChange={(e) => setMemberOnly(e.target.checked)} />
-              Members-only
-            </label>
+            <AudiencePanel value={audience} onChange={setAudience} />
             <Button onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
               {saveMut.isPending ? "Saving…" : "Save changes"}
             </Button>
