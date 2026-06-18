@@ -85,6 +85,7 @@ export const createDraft = createServerFn({ method: "POST" })
         audience_gender: data.audience_gender ?? "all",
         audience_min_age: data.audience_min_age ?? null,
         audience_max_age: data.audience_max_age ?? null,
+        featured_on_home: data.featured_on_home ?? false,
       })
       .select("id")
       .single();
