@@ -99,6 +99,7 @@ function EventEditPage() {
         cover_image_url: coverUrl || undefined,
         form_template_id: formTplId === "none" ? null : formTplId,
         requires_payment: requiresPayment,
+        featured_on_home: featured,
         ...audience,
       },
     }),
