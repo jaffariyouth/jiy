@@ -679,7 +679,7 @@ function OngoingEvents({ ongoing }: { ongoing?: Section }) {
 
 function CoreValues({ values }: { values?: Section }) {
   const d = DEFAULTS.values;
-  const items = arr<{ number: string; title: string; body: string }>(values, "items", d.items);
+  const items = arr<{ number: string; title: string; body: string; cta_label?: string; cta_href?: string }>(values, "items", d.items);
   const [active, setActive] = useState(0);
 
   return (
