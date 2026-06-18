@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { getHomepageData, type HomepageEvent, type HomepageArticle } from "@/lib/jiy/site-content.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { OrnamentalArchFrame, OGEE_INNER_ARCH_BBOX_D } from "@/components/dashboard/OrnamentalArchFrame";
 
 const homepageQueryOptions = queryOptions({
   queryKey: ["homepage"],
@@ -192,7 +191,7 @@ function OgeeArchDefs() {
     <svg width="0" height="0" className="absolute" aria-hidden="true">
       <defs>
         <clipPath id="ogee-arch-mask" clipPathUnits="objectBoundingBox">
-          <path d={OGEE_INNER_ARCH_BBOX_D} />
+          <path d="M0,1 L0,0.4 C0,0.18 0.2,0 0.5,0 C0.8,0 1,0.18 1,0.4 L1,1 Z" />
         </clipPath>
       </defs>
     </svg>
@@ -285,64 +284,6 @@ function HomePage() {
   );
 }
 
-function EventsDropdown() {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    function onDoc(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
-    document.addEventListener("mousedown", onDoc);
-    return () => document.removeEventListener("mousedown", onDoc);
-  }, []);
-  const go = (id: string) => {
-    setOpen(false);
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-  return (
-    <div
-      ref={ref}
-      className="relative py-1"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-    >
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-haspopup="true"
-        className="hover:text-damascus-gold transition-colors duration-200 flex items-center gap-1 uppercase outline-none"
-      >
-        Events
-        <span
-          className={`material-symbols-outlined text-[16px] transition-transform duration-300 ${open ? "-rotate-180" : ""}`}
-        >
-          expand_more
-        </span>
-      </button>
-      {open && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-white border border-horizon-mist shadow-xl flex flex-col z-50 rounded-sm">
-          <button
-            type="button"
-            onClick={() => go("upcoming-events")}
-            className="text-left px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold border-b border-horizon-mist/50 transition-colors whitespace-nowrap"
-          >
-            Upcoming Events
-          </button>
-          <button
-            type="button"
-            onClick={() => go("ongoing-events")}
-            className="text-left px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold transition-colors whitespace-nowrap"
-          >
-            Ongoing Events
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
 /* ------------------------------------------------------------------ */
 /* Header                                                              */
 /* ------------------------------------------------------------------ */
@@ -368,8 +309,28 @@ function Header({ signedIn }: { signedIn: boolean }) {
             Our Team
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-damascus-gold transition-all duration-300 group-hover:w-full" />
           </Link>
-          <EventsDropdown />
-
+          <div className="relative group py-1">
+            <button className="hover:text-damascus-gold transition-colors duration-200 flex items-center gap-1 uppercase outline-none">
+              Events
+              <span className="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:-rotate-180">
+                expand_more
+              </span>
+            </button>
+            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-white border border-horizon-mist shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col z-50 rounded-sm">
+              <a
+                href="#upcoming-events"
+                className="px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold border-b border-horizon-mist/50 transition-colors whitespace-nowrap"
+              >
+                Upcoming Events
+              </a>
+              <a
+                href="#ongoing-events"
+                className="px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold transition-colors whitespace-nowrap"
+              >
+                Ongoing Events
+              </a>
+            </div>
+          </div>
           <a className="hover:text-damascus-gold transition-colors duration-200 relative py-1 group" href="#journal">
             The Press
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-damascus-gold transition-all duration-300 group-hover:w-full" />
@@ -483,7 +444,6 @@ function Hero({ hero }: { hero?: Section }) {
 
           <div className="lg:col-span-5 relative flex justify-center">
             <div className="relative w-full max-w-[400px] aspect-[4/5] bg-warm-silk-grey p-4 border border-horizon-mist group shadow-xl transition-all duration-500 hover:border-damascus-gold">
-              <OrnamentalArchFrame className="inset-4 z-20" colorClassName="text-persian-indigo" />
               <div className="w-full h-full overflow-hidden relative ogee-arch-portal bg-white">
                 <img
                   src={str(hero, "photo_url", d.photo_url)}
@@ -636,7 +596,6 @@ function UpcomingEvents({ events }: { events: HomepageEvent[] }) {
             return (
               <div key={ev.id} className="studio-card rounded-xl overflow-hidden flex flex-col bg-white">
                 <div className="relative overflow-hidden aspect-[4/5] bg-warm-silk-grey border-b border-horizon-mist p-2">
-                  <OrnamentalArchFrame className="inset-2 z-20" colorClassName="text-persian-indigo" />
                   <div className="w-full h-full overflow-hidden relative ogee-arch-portal">
                     <img
                       src={ev.cover_image_url ?? "https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&q=80&w=800"}
@@ -716,7 +675,6 @@ function OngoingEvents({ ongoing }: { ongoing?: Section }) {
 
           <div className="lg:col-span-4 flex justify-center">
             <div className="relative w-full max-w-[340px] aspect-square bg-warm-silk-grey rounded-xl overflow-hidden border border-horizon-mist shadow-lg group">
-              <OrnamentalArchFrame className="inset-0 z-20" colorClassName="text-persian-indigo" />
               <div className="w-full h-full ogee-arch-portal overflow-hidden relative bg-white">
                 <img
                   src={str(ongoing, "photo_url", d.photo_url)}
