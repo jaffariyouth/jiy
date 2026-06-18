@@ -1,12 +1,18 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
 
 // ---------- Public reads ----------
 
 export const listPublishedArticles = createServerFn({ method: "GET" }).handler(async () => {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data, error } = await supabaseAdmin
+  const { createClient } = await import("@supabase/supabase-js");
+  const supabasePublic = createClient<Database>(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_PUBLISHABLE_KEY!,
+    { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
+  );
+  const { data, error } = await supabasePublic
     .from("youth_press_articles")
     .select("id, title, slug, excerpt, cover_image_url, published_at, author_id")
     .eq("status", "published")
@@ -25,8 +31,13 @@ const slugInput = z.object({ slug: z.string().min(1).max(200) });
 export const getArticleBySlug = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => slugInput.parse(input))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: row, error } = await supabaseAdmin
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabasePublic = createClient<Database>(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_PUBLISHABLE_KEY!,
+      { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
+    );
+    const { data: row, error } = await supabasePublic
       .from("youth_press_articles")
       .select("id, title, slug, excerpt, body_md, cover_image_url, published_at, author_id")
       .eq("status", "published")
