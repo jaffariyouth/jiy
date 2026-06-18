@@ -7,9 +7,11 @@ export const Route = createFileRoute("/_authenticated/admin/homepage")({
 
 const TABS = [
   { to: "/admin/homepage/hero", label: "Hero" },
+  { to: "/admin/homepage/metrics", label: "Metrics" },
   { to: "/admin/homepage/about", label: "About" },
-  { to: "/admin/homepage/ongoing", label: "Ongoing Events" },
+  { to: "/admin/homepage/ongoing", label: "Ongoing" },
   { to: "/admin/homepage/values", label: "Strategic Values" },
+  { to: "/admin/homepage/press", label: "The Press" },
   { to: "/admin/homepage/footer", label: "Footer" },
 ] as const;
 

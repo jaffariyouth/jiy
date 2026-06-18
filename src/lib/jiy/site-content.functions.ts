@@ -3,7 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 
-const SECTION_KEYS = ["hero", "about", "ongoing", "values", "footer"] as const;
+const SECTION_KEYS = ["hero", "metrics", "about", "ongoing", "values", "press", "footer"] as const;
 export type SectionKey = (typeof SECTION_KEYS)[number];
 
 type Json =
