@@ -28,10 +28,11 @@ function AnnouncementsPage() {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
 
   const createMut = useMutation({
-    mutationFn: () => create({ data: { idempotencyKey: crypto.randomUUID(), title, body_md: body } }),
-    onSuccess: () => { toast.success("Draft created"); setOpen(false); setTitle(""); setBody(""); refresh(); },
+    mutationFn: () => create({ data: { idempotencyKey: crypto.randomUUID(), title, body_md: body, ...audience } }),
+    onSuccess: () => { toast.success("Draft created"); setOpen(false); setTitle(""); setBody(""); setAudience(DEFAULT_AUDIENCE); refresh(); },
     onError: (e: Error) => toast.error(e.message),
   });
 
