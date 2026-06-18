@@ -103,6 +103,8 @@ function mapProfile(row: {
   consent_marketing: boolean | null;
   onboarding_completed_at: string | null;
   avatar_url: string | null;
+  gender?: string | null;
+  date_of_birth?: string | null;
 }): ProfileDTO {
   return {
     id: row.id,
@@ -112,5 +114,7 @@ function mapProfile(row: {
     consentMarketing: row.consent_marketing ?? false,
     onboardingCompletedAt: row.onboarding_completed_at,
     avatarUrl: row.avatar_url,
+    gender: row.gender ?? null,
+    dateOfBirth: row.date_of_birth ?? null,
   };
 }
