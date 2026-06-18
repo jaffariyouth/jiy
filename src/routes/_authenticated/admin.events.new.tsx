@@ -158,10 +158,8 @@ function NewEventPage() {
           </div>
         </div>
 
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={memberOnly} onChange={(e) => setMemberOnly(e.target.checked)} />
-          Members-only event
-        </label>
+        <AudiencePanel value={audience} onChange={setAudience} />
+
 
         <Button type="submit" disabled={mut.isPending}>
           {mut.isPending ? "Creating…" : "Create draft"}
