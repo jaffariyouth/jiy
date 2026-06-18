@@ -428,7 +428,7 @@ function Hero({ hero }: { hero?: Section }) {
         src="/__l5e/assets-v1/31e78581-68e7-47f5-a567-b8f54b63f0f7/ornament-back.svg"
         alt=""
         aria-hidden
-        className="absolute inset-y-0 right-0 h-full w-auto max-w-[70%] object-contain object-right pointer-events-none select-none z-0 opacity-25"
+        className="absolute top-0 lg:inset-y-0 right-0 h-[70%] sm:h-[80%] lg:h-full w-auto max-w-[90%] lg:max-w-[70%] object-contain object-top lg:object-right pointer-events-none select-none z-0 opacity-25"
         style={{
           maskImage:
             "radial-gradient(circle at 85% 0%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 80%)",
