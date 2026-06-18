@@ -494,12 +494,12 @@ function Hero({ hero }: { hero?: Section }) {
             </div>
           </div>
 
-          <div className="absolute right-0 bottom-0 top-0 lg:relative lg:col-span-5 flex justify-end lg:justify-center items-center min-h-[300px] sm:min-h-[420px] lg:min-h-[560px] w-full max-w-[90%] md:max-w-[70%] lg:max-w-none pointer-events-none select-none z-0 lg:z-10 opacity-35 sm:opacity-50 lg:opacity-100 overflow-hidden">
+          <div className="absolute right-0 top-0 lg:relative lg:col-span-5 flex justify-end lg:justify-center items-start lg:items-center h-[70%] sm:h-[80%] lg:h-auto w-full max-w-[95%] md:max-w-[70%] lg:max-w-none pointer-events-none select-none z-0 lg:z-10 opacity-35 sm:opacity-50 lg:opacity-100 overflow-hidden">
             <img
               src="/__l5e/assets-v1/08a51463-76ec-4b12-9425-273130c7a4d7/ornament.svg"
               alt=""
               aria-hidden
-              className="w-[120%] lg:w-[120%] max-w-none h-auto opacity-70 animate-fade-in select-none pointer-events-none object-contain object-right"
+              className="w-[110%] sm:w-[120%] lg:w-[120%] max-w-none h-auto opacity-70 animate-fade-in select-none pointer-events-none object-contain object-top lg:object-right"
               style={{
                 maskImage:
                   "radial-gradient(ellipse at center, #000 55%, transparent 85%)",
