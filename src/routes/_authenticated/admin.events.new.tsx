@@ -64,10 +64,11 @@ function NewEventPage() {
           starts_at: startsIso,
           ends_at: endsIso,
           capacity: capacity ? Number(capacity) : undefined,
-          is_member_only: memberOnly,
+          is_member_only: audience.audience_visibility === "members" || memberOnly,
           cover_image_url: coverUrl || undefined,
           form_template_id: formTplId === "none" ? null : formTplId,
           requires_payment: requiresPayment,
+          ...audience,
         },
       });
     },
