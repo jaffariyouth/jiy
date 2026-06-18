@@ -117,6 +117,15 @@ function EventEditPage() {
         form_template_id: formTplId === "none" ? null : formTplId,
         requires_payment: requiresPayment,
         featured_on_home: featured,
+        category_label: categoryLabel.trim() || null,
+        speakers: speakers
+          .filter((s) => s.name.trim())
+          .map((s) => ({
+            name: s.name.trim(),
+            role: s.role.trim(),
+            bio: s.bio.trim(),
+            photo_url: s.photo_url.trim(),
+          })),
         ...audience,
       },
     }),
