@@ -110,6 +110,10 @@ function PressEditPage() {
         </div>
         <div><Label>Body</Label><MarkdownEditor value={body} onChange={setBody} rows={20} /></div>
         <AudiencePanel value={audience} onChange={setAudience} />
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
+          Feature on homepage
+        </label>
       </div>
     </div>
   );
