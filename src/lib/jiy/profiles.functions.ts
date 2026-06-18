@@ -15,6 +15,8 @@ const UpdateProfileSchema = z.object({
   country: z.string().min(2).max(80).optional(),
   consentMarketing: z.boolean().optional(),
   markOnboardingComplete: z.boolean().optional(),
+  gender: z.enum(["male", "female", "prefer_not_to_say"]).optional(),
+  dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
 });
 
 export type ProfileDTO = {
@@ -25,6 +27,8 @@ export type ProfileDTO = {
   consentMarketing: boolean;
   onboardingCompletedAt: string | null;
   avatarUrl: string | null;
+  gender: string | null;
+  dateOfBirth: string | null;
 };
 
 export const getMyProfile = createServerFn({ method: "GET" })
