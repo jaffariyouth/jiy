@@ -68,6 +68,13 @@ const audienceFields = {
   audience_max_age: z.number().int().min(0).max(120).nullable().optional(),
 };
 
+const speakerSchema = z.object({
+  name: z.string().min(1).max(120),
+  role: z.string().max(160).optional().default(""),
+  bio: z.string().max(2000).optional().default(""),
+  photo_url: z.string().url().or(z.literal("")).optional().default(""),
+});
+
 const createEventSchema = z.object({
   idempotencyKey: z.string().min(8),
   title: z.string().min(1).max(200),
@@ -81,8 +88,11 @@ const createEventSchema = z.object({
   form_template_id: z.string().uuid().nullable().optional(),
   requires_payment: z.boolean().optional(),
   featured_on_home: z.boolean().optional(),
+  category_label: z.string().max(120).nullable().optional(),
+  speakers: z.array(speakerSchema).max(20).optional(),
   ...audienceFields,
 });
+
 
 export const createEvent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
