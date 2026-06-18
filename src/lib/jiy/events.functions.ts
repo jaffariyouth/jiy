@@ -5,14 +5,15 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 // ---------- Public reads ----------
 
 export const listPublicEvents = createServerFn({ method: "GET" }).handler(async () => {
-  // Public read — use admin client with explicit safe-column projection +
-  // strict WHERE filter (matches knowledge guidance for public reads).
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin
     .from("events")
     .select("id, title, description, location, starts_at, ends_at, capacity, cover_image_url")
     .eq("status", "published")
-    .eq("is_member_only", false)
+    .eq("audience_visibility", "public")
+    .eq("audience_gender", "all")
+    .is("audience_min_age", null)
+    .is("audience_max_age", null)
     .order("starts_at", { ascending: true })
     .limit(100);
   if (error) throw new Error(error.message);
