@@ -38,6 +38,7 @@ function NewPressPage() {
         excerpt: excerpt || undefined,
         body_md: body || "Draft.",
         ...audience,
+        featured_on_home: featured,
       }});
       toast.success("Draft created");
       navigate({ to: "/admin/press/$id", params: { id: r.id } });
