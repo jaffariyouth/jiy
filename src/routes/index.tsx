@@ -584,13 +584,12 @@ function UpcomingEvents({ events }: { events: HomepageEvent[] }) {
                   <p className="font-body text-xs text-ash-slate leading-relaxed flex-grow mb-5">
                     {ev.description ?? ""}
                   </p>
-                  <Link
-                    to="/events/$id"
-                    params={{ id: ev.id }}
+                  <a
+                    href={`/events/${ev.id}`}
                     className="interactive-btn w-full bg-persian-indigo text-white hover:bg-damascus-gold hover:text-persian-indigo font-body text-[10px] font-bold tracking-[0.2em] py-3.5 px-4 uppercase transition-all duration-300 text-center block"
                   >
                     Register Now
-                  </Link>
+                  </a>
                 </div>
               </div>
             );
