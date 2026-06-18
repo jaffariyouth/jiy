@@ -14,9 +14,12 @@ import { toast } from "sonner";
 import { AudiencePanel, DEFAULT_AUDIENCE, type AudienceValue } from "@/components/admin/AudiencePanel";
 import {
   getEventAdmin, updateEvent, publishEvent, cancelEvent, duplicateEvent,
+  listPublicRegistrationsAdmin,
 } from "@/lib/jiy/events.functions";
 import { listEventRoster, checkInRegistration } from "@/lib/jiy/event-registrations.functions";
 import { listFormTemplates, listSubmissionsForEvent } from "@/lib/jiy/form-templates.functions";
+
+type SpeakerInput = { name: string; role: string; bio: string; photo_url: string };
 
 export const Route = createFileRoute("/_authenticated/admin/events/$id")({
   component: EventEditPage,
