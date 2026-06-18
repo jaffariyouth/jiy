@@ -161,6 +161,12 @@ function NewEventPage() {
 
         <AudiencePanel value={audience} onChange={setAudience} />
 
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
+          Feature on homepage
+        </label>
+
+
 
         <Button type="submit" disabled={mut.isPending}>
           {mut.isPending ? "Creating…" : "Create draft"}
