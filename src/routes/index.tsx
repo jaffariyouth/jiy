@@ -54,7 +54,7 @@ const DEFAULTS = {
     cta_primary_label: "Upcoming Events",
     cta_primary_href: "#upcoming-events",
     cta_secondary_label: "Meet Our Team",
-    cta_secondary_href: "#about-us",
+    cta_secondary_href: "/team",
     socials: [
       { network: "instagram", url: "https://instagram.com/jaffariyouth" },
       { network: "linkedin", url: "https://www.linkedin.com/company/jaffari-islamic-youth" },
@@ -167,7 +167,7 @@ const DEFAULTS = {
     nav_links: [
       { label: "Home", href: "/" },
       { label: "About Us", href: "#about-us" },
-      { label: "Our Team", href: "https://youth.jaffari.org/our-team/" },
+      { label: "Our Team", href: "/team" },
     ],
     socials: [
       { network: "instagram", url: "https://instagram.com/jaffariyouth" },
@@ -305,10 +305,10 @@ function Header({ signedIn }: { signedIn: boolean }) {
             About Us
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-damascus-gold transition-all duration-300 group-hover:w-full" />
           </a>
-          <a className="hover:text-damascus-gold transition-colors duration-200 relative py-1 group" href="#about-us">
+          <Link to="/team" className="hover:text-damascus-gold transition-colors duration-200 relative py-1 group">
             Our Team
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-damascus-gold transition-all duration-300 group-hover:w-full" />
-          </a>
+          </Link>
           <div className="relative group py-1">
             <button className="hover:text-damascus-gold transition-colors duration-200 flex items-center gap-1 uppercase outline-none">
               Events

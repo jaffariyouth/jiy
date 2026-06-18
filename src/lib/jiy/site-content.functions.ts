@@ -3,7 +3,20 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 
-const SECTION_KEYS = ["hero", "metrics", "about", "ongoing", "values", "press", "footer"] as const;
+const SECTION_KEYS = [
+  "hero",
+  "metrics",
+  "about",
+  "ongoing",
+  "values",
+  "press",
+  "footer",
+  "team_hero",
+  "team_intro",
+  "team_leadership",
+  "team_members",
+  "team_cta",
+] as const;
 export type SectionKey = (typeof SECTION_KEYS)[number];
 
 type Json =
@@ -95,6 +108,21 @@ export const getHomepageData = createServerFn({ method: "GET" }).handler(async (
   const articles: HomepageArticle[] = (featuredArticles.length > 0 ? featuredArticles : latestArticles).slice(0, 2);
 
   return { sections, events, articles };
+});
+
+// Public — used by `/team` loader.
+export const getTeamPageData = createServerFn({ method: "GET" }).handler(async () => {
+  const { createClient } = await import("@supabase/supabase-js");
+  const sb = createClient<Database>(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_PUBLISHABLE_KEY!,
+    { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
+  );
+  const teamKeys = ["team_hero", "team_intro", "team_leadership", "team_members", "team_cta", "footer", "hero"];
+  const { data } = await sb.from("site_content").select("section_key, content").in("section_key", teamKeys);
+  const sections: Record<string, Json> = {};
+  for (const row of data ?? []) sections[row.section_key] = (row.content as Json) ?? {};
+  return { sections };
 });
 
 // Admin reads (single section)
