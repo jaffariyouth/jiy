@@ -350,3 +350,123 @@ function SubmissionsTab({ eventId, hasTemplate }: { eventId: string; hasTemplate
     </div>
   );
 }
+
+function SpeakersEditor({
+  speakers,
+  setSpeakers,
+  onSave,
+  saving,
+}: {
+  speakers: SpeakerInput[];
+  setSpeakers: React.Dispatch<React.SetStateAction<SpeakerInput[]>>;
+  onSave: () => void;
+  saving: boolean;
+}) {
+  const update = (i: number, patch: Partial<SpeakerInput>) =>
+    setSpeakers((arr) => arr.map((s, idx) => (idx === i ? { ...s, ...patch } : s)));
+  const remove = (i: number) => setSpeakers((arr) => arr.filter((_, idx) => idx !== i));
+  const move = (i: number, dir: -1 | 1) =>
+    setSpeakers((arr) => {
+      const j = i + dir;
+      if (j < 0 || j >= arr.length) return arr;
+      const copy = [...arr];
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+      return copy;
+    });
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-[#6b6453]">
+        Add speakers shown on the public event page. Order here is the order shown publicly.
+      </p>
+      {speakers.map((s, i) => (
+        <div key={i} className="bg-white border border-[#e5dec9] rounded-sm p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs uppercase tracking-[0.2em] text-[#6b6453]">Speaker {i + 1}</span>
+            <div className="flex gap-1">
+              <Button type="button" variant="ghost" size="sm" onClick={() => move(i, -1)} disabled={i === 0}>↑</Button>
+              <Button type="button" variant="ghost" size="sm" onClick={() => move(i, 1)} disabled={i === speakers.length - 1}>↓</Button>
+              <Button type="button" variant="ghost" size="sm" onClick={() => remove(i)}>Remove</Button>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div><Label>Name</Label><Input value={s.name} onChange={(e) => update(i, { name: e.target.value })} /></div>
+            <div><Label>Role / Title</Label><Input value={s.role} onChange={(e) => update(i, { role: e.target.value })} /></div>
+          </div>
+          <div><Label>Photo URL</Label><Input value={s.photo_url} onChange={(e) => update(i, { photo_url: e.target.value })} placeholder="https://…" /></div>
+          <div>
+            <Label>Bio</Label>
+            <textarea
+              value={s.bio}
+              onChange={(e) => update(i, { bio: e.target.value })}
+              rows={3}
+              maxLength={2000}
+              className="w-full border border-[#e5dec9] rounded-sm px-3 py-2 text-sm"
+            />
+          </div>
+        </div>
+      ))}
+      <div className="flex gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setSpeakers((arr) => [...arr, { name: "", role: "", bio: "", photo_url: "" }])}
+        >
+          + Add speaker
+        </Button>
+        <Button onClick={onSave} disabled={saving}>
+          {saving ? "Saving…" : "Save speakers"}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function PublicRegistrationsTab({ eventId }: { eventId: string }) {
+  const list = useServerFn(listPublicRegistrationsAdmin);
+  const q = useQuery({
+    queryKey: ["admin", "public-regs", eventId],
+    queryFn: () => list({ data: { eventId } }),
+  });
+  const rows = q.data?.registrations ?? [];
+
+  return (
+    <div>
+      <p className="text-sm text-[#6b6453] mb-3">{rows.length} public sign-ups</p>
+      <div className="bg-white border border-[#e5dec9] rounded-sm overflow-x-auto">
+        <table className="w-full text-sm min-w-[720px]">
+          <thead className="bg-[#FAF8F5] text-xs uppercase tracking-[0.18em] text-[#6b6453]">
+            <tr>
+              <th className="text-left px-4 py-3">Name</th>
+              <th className="text-left px-4 py-3">Email</th>
+              <th className="text-left px-4 py-3">Qty</th>
+              <th className="text-left px-4 py-3">Status</th>
+              <th className="text-left px-4 py-3">Amount</th>
+              <th className="text-left px-4 py-3">Registered</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#f0ead7]">
+            {rows.map((r) => (
+              <tr key={r.id}>
+                <td className="px-4 py-2">{r.full_name}</td>
+                <td className="px-4 py-2">{r.email}</td>
+                <td className="px-4 py-2">{r.quantity}</td>
+                <td className="px-4 py-2">{r.status}</td>
+                <td className="px-4 py-2">
+                  {r.amount_cents > 0
+                    ? `${(r.amount_cents / 100).toFixed(2)} ${r.currency.toUpperCase()}`
+                    : "Free"}
+                </td>
+                <td className="px-4 py-2 text-xs text-[#6b6453]">{new Date(r.created_at).toLocaleString()}</td>
+              </tr>
+            ))}
+            {rows.length === 0 && (
+              <tr><td colSpan={6} className="px-4 py-6 text-center text-[#6b6453]">No public sign-ups yet.</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
