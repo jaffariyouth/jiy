@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
 
 const SECTION_KEYS = ["hero", "about", "ongoing", "values", "footer"] as const;
 export type SectionKey = (typeof SECTION_KEYS)[number];
@@ -35,10 +36,10 @@ export type HomepageArticle = {
 // Public — used by `/` loader.
 export const getHomepageData = createServerFn({ method: "GET" }).handler(async () => {
   const { createClient } = await import("@supabase/supabase-js");
-  const sb = createClient(
+  const sb = createClient<Database>(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_PUBLISHABLE_KEY!,
-    { auth: { persistSession: false, autoRefreshToken: false } },
+    { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
   );
   const nowIso = new Date().toISOString();
 
