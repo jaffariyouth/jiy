@@ -68,6 +68,7 @@ function EventEditPage() {
     setCoverUrl(e.cover_image_url ?? "");
     setFormTplId(e.form_template_id ?? "none");
     setRequiresPayment(e.requires_payment);
+    setFeatured((e as { featured_on_home?: boolean }).featured_on_home ?? false);
     setAudience({
       audience_visibility: (e.audience_visibility as "public" | "members") ?? (e.is_member_only ? "members" : "public"),
       audience_gender: (e.audience_gender as "all" | "male" | "female") ?? "all",
