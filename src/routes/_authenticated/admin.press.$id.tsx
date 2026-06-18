@@ -33,6 +33,7 @@ function PressEditPage() {
   const [body, setBody] = useState("");
   const [cover, setCover] = useState("");
   const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
+  const [featured, setFeatured] = useState(false);
 
   useEffect(() => {
     const a = q.data?.article as Record<string, unknown> | undefined;
