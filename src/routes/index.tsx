@@ -422,6 +422,11 @@ function Hero({ hero }: { hero?: Section }) {
       />
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-deep-garnet/10 via-transparent to-transparent opacity-60" />
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-damascus-gold/15 via-transparent to-transparent opacity-60" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 w-full lg:w-[45%] h-[80%] bg-right bg-no-repeat bg-contain opacity-50 mix-blend-multiply z-0"
+        style={{ backgroundImage: "url(/__l5e/assets-v1/08a51463-76ec-4b12-9425-273130c7a4d7/ornament.svg)" }}
+      />
 
       <div className="max-w-max-width mx-auto px-margin-safe relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -759,11 +764,6 @@ function CoreValues({ values }: { values?: Section }) {
 
   return (
     <section id="core-values" className="py-24 border-b border-horizon-mist bg-alabaster-parchment relative overflow-hidden">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-center bg-no-repeat bg-contain opacity-[0.06] mix-blend-multiply"
-        style={{ backgroundImage: "url(/__l5e/assets-v1/08a51463-76ec-4b12-9425-273130c7a4d7/ornament.svg)" }}
-      />
       <div className="max-w-max-width mx-auto px-margin-safe relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
           <div>
