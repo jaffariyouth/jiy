@@ -11,6 +11,7 @@ import {
   Users,
   Flag,
   ScrollText,
+  Home,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
