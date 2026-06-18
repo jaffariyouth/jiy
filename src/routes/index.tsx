@@ -423,14 +423,28 @@ function Hero({ hero }: { hero?: Section }) {
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-deep-garnet/10 via-transparent to-transparent opacity-60" />
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-damascus-gold/15 via-transparent to-transparent opacity-60" />
 
+      {/* Full-bleed background ornament, right-aligned, fades toward text */}
+      <img
+        src="/__l5e/assets-v1/31e78581-68e7-47f5-a567-b8f54b63f0f7/ornament-back.svg"
+        alt=""
+        aria-hidden
+        className="absolute inset-y-0 right-0 h-full w-auto max-w-[70%] object-contain object-right pointer-events-none select-none z-0 opacity-25"
+        style={{
+          maskImage:
+            "linear-gradient(to left, rgba(0,0,0,1) 35%, rgba(0,0,0,0.5) 65%, rgba(0,0,0,0) 95%)",
+          WebkitMaskImage:
+            "linear-gradient(to left, rgba(0,0,0,1) 35%, rgba(0,0,0,0.5) 65%, rgba(0,0,0,0) 95%)",
+        }}
+      />
 
       <div className="max-w-max-width mx-auto px-margin-safe relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7 flex flex-col gap-6">
-            <span className="font-body text-xs uppercase tracking-[0.3em] text-deep-garnet font-black flex items-center gap-2">
+            <span className="font-headline italic text-2xl md:text-3xl text-deep-garnet flex items-center gap-3 tracking-wide">
               <span className="inline-block w-2 h-2 rounded-full bg-damascus-gold" />
               {str(hero, "kicker", d.kicker)}
             </span>
+
             <h1 className="font-headline text-5xl md:text-6xl lg:text-7xl text-persian-indigo leading-[1.05] tracking-tight">
               {str(hero, "headline_line1", d.headline_line1)} <br />
               <span className="font-light italic text-ash-slate">
