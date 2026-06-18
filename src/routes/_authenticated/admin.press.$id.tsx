@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MarkdownEditor } from "@/components/admin/MarkdownEditor";
+import { AudiencePanel, DEFAULT_AUDIENCE, type AudienceValue } from "@/components/admin/AudiencePanel";
 import { supabase } from "@/integrations/supabase/client";
 import {
   getArticleByIdAdmin, updateDraft, publishArticle, unpublishArticle,
