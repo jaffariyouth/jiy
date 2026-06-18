@@ -40,6 +40,7 @@ import { Route as AuthenticatedAdminPressNewRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminPressIdRouteImport } from './routes/_authenticated/admin.press.$id'
 import { Route as AuthenticatedAdminHomepageValuesRouteImport } from './routes/_authenticated/admin.homepage.values'
 import { Route as AuthenticatedAdminHomepageOngoingRouteImport } from './routes/_authenticated/admin.homepage.ongoing'
+import { Route as AuthenticatedAdminHomepageMetricsRouteImport } from './routes/_authenticated/admin.homepage.metrics'
 import { Route as AuthenticatedAdminHomepageHeroRouteImport } from './routes/_authenticated/admin.homepage.hero'
 import { Route as AuthenticatedAdminHomepageFooterRouteImport } from './routes/_authenticated/admin.homepage.footer'
 import { Route as AuthenticatedAdminHomepageAboutRouteImport } from './routes/_authenticated/admin.homepage.about'
@@ -216,6 +217,12 @@ const AuthenticatedAdminHomepageOngoingRoute =
     path: '/ongoing',
     getParentRoute: () => AuthenticatedAdminHomepageRoute,
   } as any)
+const AuthenticatedAdminHomepageMetricsRoute =
+  AuthenticatedAdminHomepageMetricsRouteImport.update({
+    id: '/metrics',
+    path: '/metrics',
+    getParentRoute: () => AuthenticatedAdminHomepageRoute,
+  } as any)
 const AuthenticatedAdminHomepageHeroRoute =
   AuthenticatedAdminHomepageHeroRouteImport.update({
     id: '/hero',
@@ -281,6 +288,7 @@ export interface FileRoutesByFullPath {
   '/admin/homepage/about': typeof AuthenticatedAdminHomepageAboutRoute
   '/admin/homepage/footer': typeof AuthenticatedAdminHomepageFooterRoute
   '/admin/homepage/hero': typeof AuthenticatedAdminHomepageHeroRoute
+  '/admin/homepage/metrics': typeof AuthenticatedAdminHomepageMetricsRoute
   '/admin/homepage/ongoing': typeof AuthenticatedAdminHomepageOngoingRoute
   '/admin/homepage/values': typeof AuthenticatedAdminHomepageValuesRoute
   '/admin/press/$id': typeof AuthenticatedAdminPressIdRoute
@@ -315,6 +323,7 @@ export interface FileRoutesByTo {
   '/admin/homepage/about': typeof AuthenticatedAdminHomepageAboutRoute
   '/admin/homepage/footer': typeof AuthenticatedAdminHomepageFooterRoute
   '/admin/homepage/hero': typeof AuthenticatedAdminHomepageHeroRoute
+  '/admin/homepage/metrics': typeof AuthenticatedAdminHomepageMetricsRoute
   '/admin/homepage/ongoing': typeof AuthenticatedAdminHomepageOngoingRoute
   '/admin/homepage/values': typeof AuthenticatedAdminHomepageValuesRoute
   '/admin/press/$id': typeof AuthenticatedAdminPressIdRoute
@@ -355,6 +364,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/homepage/about': typeof AuthenticatedAdminHomepageAboutRoute
   '/_authenticated/admin/homepage/footer': typeof AuthenticatedAdminHomepageFooterRoute
   '/_authenticated/admin/homepage/hero': typeof AuthenticatedAdminHomepageHeroRoute
+  '/_authenticated/admin/homepage/metrics': typeof AuthenticatedAdminHomepageMetricsRoute
   '/_authenticated/admin/homepage/ongoing': typeof AuthenticatedAdminHomepageOngoingRoute
   '/_authenticated/admin/homepage/values': typeof AuthenticatedAdminHomepageValuesRoute
   '/_authenticated/admin/press/$id': typeof AuthenticatedAdminPressIdRoute
@@ -395,6 +405,7 @@ export interface FileRouteTypes {
     | '/admin/homepage/about'
     | '/admin/homepage/footer'
     | '/admin/homepage/hero'
+    | '/admin/homepage/metrics'
     | '/admin/homepage/ongoing'
     | '/admin/homepage/values'
     | '/admin/press/$id'
@@ -429,6 +440,7 @@ export interface FileRouteTypes {
     | '/admin/homepage/about'
     | '/admin/homepage/footer'
     | '/admin/homepage/hero'
+    | '/admin/homepage/metrics'
     | '/admin/homepage/ongoing'
     | '/admin/homepage/values'
     | '/admin/press/$id'
@@ -468,6 +480,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/homepage/about'
     | '/_authenticated/admin/homepage/footer'
     | '/_authenticated/admin/homepage/hero'
+    | '/_authenticated/admin/homepage/metrics'
     | '/_authenticated/admin/homepage/ongoing'
     | '/_authenticated/admin/homepage/values'
     | '/_authenticated/admin/press/$id'
@@ -709,6 +722,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminHomepageOngoingRouteImport
       parentRoute: typeof AuthenticatedAdminHomepageRoute
     }
+    '/_authenticated/admin/homepage/metrics': {
+      id: '/_authenticated/admin/homepage/metrics'
+      path: '/metrics'
+      fullPath: '/admin/homepage/metrics'
+      preLoaderRoute: typeof AuthenticatedAdminHomepageMetricsRouteImport
+      parentRoute: typeof AuthenticatedAdminHomepageRoute
+    }
     '/_authenticated/admin/homepage/hero': {
       id: '/_authenticated/admin/homepage/hero'
       path: '/hero'
@@ -792,6 +812,7 @@ interface AuthenticatedAdminHomepageRouteChildren {
   AuthenticatedAdminHomepageAboutRoute: typeof AuthenticatedAdminHomepageAboutRoute
   AuthenticatedAdminHomepageFooterRoute: typeof AuthenticatedAdminHomepageFooterRoute
   AuthenticatedAdminHomepageHeroRoute: typeof AuthenticatedAdminHomepageHeroRoute
+  AuthenticatedAdminHomepageMetricsRoute: typeof AuthenticatedAdminHomepageMetricsRoute
   AuthenticatedAdminHomepageOngoingRoute: typeof AuthenticatedAdminHomepageOngoingRoute
   AuthenticatedAdminHomepageValuesRoute: typeof AuthenticatedAdminHomepageValuesRoute
   AuthenticatedAdminHomepageIndexRoute: typeof AuthenticatedAdminHomepageIndexRoute
@@ -803,6 +824,8 @@ const AuthenticatedAdminHomepageRouteChildren: AuthenticatedAdminHomepageRouteCh
     AuthenticatedAdminHomepageFooterRoute:
       AuthenticatedAdminHomepageFooterRoute,
     AuthenticatedAdminHomepageHeroRoute: AuthenticatedAdminHomepageHeroRoute,
+    AuthenticatedAdminHomepageMetricsRoute:
+      AuthenticatedAdminHomepageMetricsRoute,
     AuthenticatedAdminHomepageOngoingRoute:
       AuthenticatedAdminHomepageOngoingRoute,
     AuthenticatedAdminHomepageValuesRoute:
