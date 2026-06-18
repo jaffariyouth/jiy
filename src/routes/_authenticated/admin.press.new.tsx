@@ -52,6 +52,7 @@ function NewPressPage() {
         <div><Label>Slug</Label><Input value={slug} onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))} required /></div>
         <div><Label>Excerpt</Label><Input value={excerpt} onChange={(e) => setExcerpt(e.target.value)} maxLength={500} /></div>
         <div><Label>Body</Label><MarkdownEditor value={body} onChange={setBody} rows={18} /></div>
+        <AudiencePanel value={audience} onChange={setAudience} />
         <Button type="submit" disabled={saving || !title.trim()}>{saving ? "Creating…" : "Create draft"}</Button>
       </form>
     </div>
