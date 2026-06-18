@@ -444,7 +444,6 @@ function Hero({ hero }: { hero?: Section }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative">
           <div className="lg:col-span-7 flex flex-col gap-6 relative z-10">
             <span className="font-headline italic text-2xl md:text-3xl text-deep-garnet flex items-center gap-3 tracking-wide">
-              <span className="inline-block w-2 h-2 rounded-full bg-damascus-gold" />
               {str(hero, "kicker", d.kicker)}
             </span>
 
