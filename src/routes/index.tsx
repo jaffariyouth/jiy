@@ -484,29 +484,22 @@ function Hero({ hero }: { hero?: Section }) {
             </div>
           </div>
 
-          <div className="lg:col-span-5 relative flex justify-center">
-            <div className="relative w-full max-w-[400px] aspect-[4/5] bg-warm-silk-grey p-4 border border-horizon-mist group shadow-xl transition-all duration-500 hover:border-damascus-gold">
-              <div className="w-full h-full overflow-hidden relative ogee-arch-portal bg-white">
-                <img
-                  src={str(hero, "photo_url", d.photo_url)}
-                  className="w-full h-full object-cover transition-all duration-1000 scale-100 group-hover:scale-105"
-                  alt="JIY Executive Board"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-persian-indigo/60 via-transparent to-transparent" />
-                <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-md p-4 border border-horizon-mist/60 shadow-md">
-                  <p className="font-headline italic text-lg text-persian-indigo">{str(hero, "quote", d.quote)}</p>
-                  <p className="font-body text-[9px] uppercase tracking-wider text-ash-slate font-bold mt-2">
-                    {str(hero, "quote_attribution", d.quote_attribution)}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="absolute -top-6 -left-6 bg-white border border-horizon-mist/80 p-3 shadow-md hidden sm:block">
-              <span className="text-damascus-gold">
-                <PersianStar />
-              </span>
-            </div>
+          <div className="lg:col-span-5 relative flex justify-center items-center min-h-[420px] lg:min-h-[560px]">
+            <img
+              src="/__l5e/assets-v1/08a51463-76ec-4b12-9425-273130c7a4d7/ornament.svg"
+              alt=""
+              aria-hidden
+              className="w-[120%] max-w-none h-auto opacity-70 animate-fade-in select-none pointer-events-none"
+              style={{
+                maskImage:
+                  "radial-gradient(ellipse at center, #000 55%, transparent 85%)",
+                WebkitMaskImage:
+                  "radial-gradient(ellipse at center, #000 55%, transparent 85%)",
+                animationDuration: "1.4s",
+              }}
+            />
           </div>
+
         </div>
       </div>
     </section>
