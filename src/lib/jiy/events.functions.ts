@@ -54,6 +54,13 @@ export const getEventAdmin = createServerFn({ method: "GET" })
 
 // ---------- Admin mutations ----------
 
+const audienceFields = {
+  audience_visibility: z.enum(["public", "members"]).optional(),
+  audience_gender: z.enum(["all", "male", "female"]).optional(),
+  audience_min_age: z.number().int().min(0).max(120).nullable().optional(),
+  audience_max_age: z.number().int().min(0).max(120).nullable().optional(),
+};
+
 const createEventSchema = z.object({
   idempotencyKey: z.string().min(8),
   title: z.string().min(1).max(200),
@@ -66,6 +73,7 @@ const createEventSchema = z.object({
   cover_image_url: z.string().url().optional(),
   form_template_id: z.string().uuid().nullable().optional(),
   requires_payment: z.boolean().optional(),
+  ...audienceFields,
 });
 
 export const createEvent = createServerFn({ method: "POST" })
