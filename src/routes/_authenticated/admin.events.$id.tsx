@@ -80,6 +80,18 @@ function EventEditPage() {
       audience_min_age: e.audience_min_age ?? null,
       audience_max_age: e.audience_max_age ?? null,
     });
+    setCategoryLabel((e as { category_label?: string | null }).category_label ?? "");
+    const rawSpeakers = (e as { speakers?: unknown }).speakers;
+    setSpeakers(
+      Array.isArray(rawSpeakers)
+        ? (rawSpeakers as Array<Partial<SpeakerInput>>).map((s) => ({
+            name: s.name ?? "",
+            role: s.role ?? "",
+            bio: s.bio ?? "",
+            photo_url: s.photo_url ?? "",
+          }))
+        : [],
+    );
   }, [q.data?.event]);
 
   const uploadCover = async (file: File) => {
