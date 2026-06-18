@@ -64,7 +64,6 @@ function EventEditPage() {
     setStartsAt(toLocalInput(e.starts_at));
     setEndsAt(toLocalInput(e.ends_at));
     setCapacity(e.capacity?.toString() ?? "");
-    setMemberOnly(e.is_member_only);
     setCoverUrl(e.cover_image_url ?? "");
     setFormTplId(e.form_template_id ?? "none");
     setRequiresPayment(e.requires_payment);
