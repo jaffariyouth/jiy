@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getHomepageData, type HomepageEvent, type HomepageArticle } from "@/lib/jiy/site-content.functions";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -191,7 +191,7 @@ function OgeeArchDefs() {
     <svg width="0" height="0" className="absolute" aria-hidden="true">
       <defs>
         <clipPath id="ogee-arch-mask" clipPathUnits="objectBoundingBox">
-          <path d="M0,1 L0,0.4 C0,0.18 0.2,0 0.5,0 C0.8,0 1,0.18 1,0.4 L1,1 Z" />
+          <path d="M0,1 L0,0.42 C0,0.32 0.08,0.28 0.18,0.28 C0.3,0.28 0.4,0.22 0.5,0 C0.6,0.22 0.7,0.28 0.82,0.28 C0.92,0.28 1,0.32 1,0.42 L1,1 Z" />
         </clipPath>
       </defs>
     </svg>
@@ -284,6 +284,64 @@ function HomePage() {
   );
 }
 
+function EventsDropdown() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    function onDoc(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+  const go = (id: string) => {
+    setOpen(false);
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  return (
+    <div
+      ref={ref}
+      className="relative py-1"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-haspopup="true"
+        className="hover:text-damascus-gold transition-colors duration-200 flex items-center gap-1 uppercase outline-none"
+      >
+        Events
+        <span
+          className={`material-symbols-outlined text-[16px] transition-transform duration-300 ${open ? "-rotate-180" : ""}`}
+        >
+          expand_more
+        </span>
+      </button>
+      {open && (
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-white border border-horizon-mist shadow-xl flex flex-col z-50 rounded-sm">
+          <button
+            type="button"
+            onClick={() => go("upcoming-events")}
+            className="text-left px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold border-b border-horizon-mist/50 transition-colors whitespace-nowrap"
+          >
+            Upcoming Events
+          </button>
+          <button
+            type="button"
+            onClick={() => go("ongoing-events")}
+            className="text-left px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold transition-colors whitespace-nowrap"
+          >
+            Ongoing Events
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /* Header                                                              */
 /* ------------------------------------------------------------------ */
@@ -309,28 +367,8 @@ function Header({ signedIn }: { signedIn: boolean }) {
             Our Team
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-damascus-gold transition-all duration-300 group-hover:w-full" />
           </Link>
-          <div className="relative group py-1">
-            <button className="hover:text-damascus-gold transition-colors duration-200 flex items-center gap-1 uppercase outline-none">
-              Events
-              <span className="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:-rotate-180">
-                expand_more
-              </span>
-            </button>
-            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-white border border-horizon-mist shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col z-50 rounded-sm">
-              <a
-                href="#upcoming-events"
-                className="px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold border-b border-horizon-mist/50 transition-colors whitespace-nowrap"
-              >
-                Upcoming Events
-              </a>
-              <a
-                href="#ongoing-events"
-                className="px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold transition-colors whitespace-nowrap"
-              >
-                Ongoing Events
-              </a>
-            </div>
-          </div>
+          <EventsDropdown />
+
           <a className="hover:text-damascus-gold transition-colors duration-200 relative py-1 group" href="#journal">
             The Press
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-damascus-gold transition-all duration-300 group-hover:w-full" />
