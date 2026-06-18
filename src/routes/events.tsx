@@ -137,11 +137,9 @@ function EventsPage() {
                     </div>
                   </div>
                   <div className="p-6 flex flex-col">
-                    {e.category_label && (
-                      <span className="text-[10px] uppercase tracking-[0.22em] text-deep-garnet font-bold mb-2">
-                        {e.category_label}
-                      </span>
-                    )}
+                    <span className="text-[10px] uppercase tracking-[0.22em] text-deep-garnet font-bold mb-2">
+                      Community Event
+                    </span>
                     <h2 className="font-headline text-xl text-persian-indigo leading-snug group-hover:text-damascus-gold transition-colors">
                       {e.title}
                     </h2>
