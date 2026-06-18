@@ -46,10 +46,9 @@ const DEFAULTS = {
     kicker: "Jaffari Islamic Youth",
     headline_line1: "Rooted in Heritage.",
     headline_line2_italic: "Built for the Future.",
-    body:
-      "Empowering Tomorrow's Leaders Through Faith, Friendship, and Purpose. Connecting young scholars, community members, and visionary thinkers through a modern platform built on timeless principles.",
+    body: "Empowering Tomorrow's Leaders Through Faith, Friendship, and Purpose. Connecting young scholars, community members, and visionary thinkers through a modern platform built on timeless principles.",
     photo_url: "https://youth.jaffari.org/wp-content/uploads/2025/04/Group-edited-1024x1024.jpg",
-    quote: "\"Faith, Friendship, and Purpose.\"",
+    quote: '"Faith, Friendship, and Purpose."',
     quote_attribution: "— JIY EXECUTIVE TEAM",
     cta_primary_label: "Upcoming Events",
     cta_primary_href: "#upcoming-events",
@@ -72,7 +71,7 @@ const DEFAULTS = {
     kicker: "❖ About Us ❖",
     headline: "Mission & Vision",
     mission_quote:
-      "\"The mission of the Jaffari Islamic Youth is to cultivate a vibrant community of Muslim youth committed to holistic growth and excellence.\"",
+      '"The mission of the Jaffari Islamic Youth is to cultivate a vibrant community of Muslim youth committed to holistic growth and excellence."',
     body_paragraph_1:
       "Inspired by the guidance of Marḥūm Syed Asad Jafri on youth engagement, we believe in connecting with our youth through a balanced approach of social, recreational, spiritual, and academic initiatives.",
     body_paragraph_2:
@@ -95,12 +94,19 @@ const DEFAULTS = {
       "Consistent events enable youth to build brotherhood/sisterhood amongst each other while building their knowledge and gaining strength. We hope to enhance and increase our regularly scheduled events to reach an even wider audience while keeping everyone connected.",
     cta_label: "Explore Schedule",
     cta_href: "https://youth.jaffari.org/events/",
-    photo_url:
-      "https://youth.jaffari.org/wp-content/uploads/2025/03/090ffa6f-cfea-48ae-b66d-0c3563c00803.png",
+    photo_url: "https://youth.jaffari.org/wp-content/uploads/2025/03/090ffa6f-cfea-48ae-b66d-0c3563c00803.png",
     initiatives: [
       { icon: "sports_soccer", title: "Fajr Football", description: "Brothers only football on Sunday mornings." },
-      { icon: "menu_book", title: "Monday Mubahatha", description: "Weekly book club based on A Treatise of Servitude." },
-      { icon: "forum", title: "WhatsApp Community", description: "Regular updates on upcoming JIY events and initiatives." },
+      {
+        icon: "menu_book",
+        title: "Monday Mubahatha",
+        description: "Weekly book club based on A Treatise of Servitude.",
+      },
+      {
+        icon: "forum",
+        title: "WhatsApp Community",
+        description: "Regular updates on upcoming JIY events and initiatives.",
+      },
     ],
   },
   values: {
@@ -253,7 +259,6 @@ function EventsDropdown() {
     </div>
   );
 }
-
 
 /* ------------------------------------------------------------------ */
 /* Social icon set (matches the brand colors in the HTML)              */
@@ -430,10 +435,8 @@ function Hero({ hero }: { hero?: Section }) {
         aria-hidden
         className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none z-0 opacity-[0.06]"
         style={{
-          maskImage:
-            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.2) 100%)",
-          WebkitMaskImage:
-            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.2) 100%)",
+          maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.2) 100%)",
+          WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.2) 100%)",
         }}
       />
 
@@ -451,9 +454,7 @@ function Hero({ hero }: { hero?: Section }) {
                 {str(hero, "headline_line2_italic", d.headline_line2_italic)}
               </span>
             </h1>
-            <p className="font-body text-lg text-ash-slate leading-relaxed max-w-xl">
-              {str(hero, "body", d.body)}
-            </p>
+            <p className="font-body text-lg text-ash-slate leading-relaxed max-w-xl">{str(hero, "body", d.body)}</p>
 
             <div className="h-px bg-horizon-mist w-full max-w-xl my-2" />
 
@@ -494,22 +495,19 @@ function Hero({ hero }: { hero?: Section }) {
             </div>
           </div>
 
-          <div className="absolute right-0 top-0 lg:relative lg:col-span-5 flex justify-end lg:justify-center items-start lg:items-center h-[70%] sm:h-[80%] lg:h-auto w-full max-w-[95%] md:max-w-[70%] lg:max-w-none pointer-events-none select-none z-0 opacity-[0.12] sm:opacity-20 lg:opacity-[0.85] overflow-hidden">
+          <div className="absolute right-0 top-0 lg:relative lg:col-span-5 flex justify-end lg:justify-center items-start lg:items-center h-[70%] sm:h-[80%] lg:h-auto w-full max-w-[95%] md:max-w-[70%] lg:max-w-none pointer-events-none select-none z-0 opacity-[0.12] sm:opacity-20 lg:opacity-[0.25] overflow-hidden">
             <img
               src="/__l5e/assets-v1/08a51463-76ec-4b12-9425-273130c7a4d7/ornament.svg"
               alt=""
               aria-hidden
               className="w-[110%] sm:w-[120%] lg:w-[120%] max-w-none h-auto animate-fade-in select-none pointer-events-none object-contain object-top lg:object-right"
               style={{
-                maskImage:
-                  "radial-gradient(ellipse at center, #000 55%, transparent 85%)",
-                WebkitMaskImage:
-                  "radial-gradient(ellipse at center, #000 55%, transparent 85%)",
+                maskImage: "radial-gradient(ellipse at center, #000 55%, transparent 85%)",
+                WebkitMaskImage: "radial-gradient(ellipse at center, #000 55%, transparent 85%)",
                 animationDuration: "1.4s",
               }}
             />
           </div>
-
         </div>
       </div>
     </section>
@@ -522,20 +520,16 @@ function Hero({ hero }: { hero?: Section }) {
 
 function Metrics({ metrics }: { metrics?: Section }) {
   // metrics row could be stored as either an array directly or { items: [...] }
-  const items =
-    Array.isArray(metrics)
-      ? (metrics as Array<{ value: string; label: string }>)
-      : arr<{ value: string; label: string }>(metrics, "items", DEFAULTS.metrics);
+  const items = Array.isArray(metrics)
+    ? (metrics as Array<{ value: string; label: string }>)
+    : arr<{ value: string; label: string }>(metrics, "items", DEFAULTS.metrics);
   return (
     <section className="bg-persian-indigo text-white py-12 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-deep-garnet/30 via-transparent to-transparent opacity-60" />
       <div className="max-w-max-width mx-auto px-margin-safe relative z-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
           {items.map((m, i) => (
-            <div
-              key={i}
-              className={`flex flex-col gap-1 ${i < items.length - 1 ? "border-r border-white/10" : ""}`}
-            >
+            <div key={i} className={`flex flex-col gap-1 ${i < items.length - 1 ? "border-r border-white/10" : ""}`}>
               <span className="font-headline text-4xl lg:text-5xl text-damascus-gold font-bold">{m.value}</span>
               <span className="font-body text-[11px] uppercase tracking-[0.15em] text-white/80">{m.label}</span>
             </div>
@@ -596,7 +590,11 @@ function About({ about }: { about?: Section }) {
                 <img src={str(about, "photo_top_url", d.photo_top_url)} className="w-full h-full object-cover" alt="" />
               </div>
               <div className="aspect-square bg-warm-silk-grey rounded-lg overflow-hidden border border-horizon-mist relative">
-                <img src={str(about, "photo_bottom_url", d.photo_bottom_url)} className="w-full h-full object-cover" alt="" />
+                <img
+                  src={str(about, "photo_bottom_url", d.photo_bottom_url)}
+                  className="w-full h-full object-cover"
+                  alt=""
+                />
               </div>
             </div>
             <div className="col-span-7 aspect-[3/4] bg-warm-silk-grey rounded-lg overflow-hidden border border-horizon-mist relative">
@@ -643,7 +641,10 @@ function UpcomingEvents({ events }: { events: HomepageEvent[] }) {
                 <div className="relative overflow-hidden aspect-[4/5] bg-warm-silk-grey border-b border-horizon-mist p-2">
                   <div className="w-full h-full overflow-hidden relative ogee-arch-portal">
                     <img
-                      src={ev.cover_image_url ?? "https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&q=80&w=800"}
+                      src={
+                        ev.cover_image_url ??
+                        "https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&q=80&w=800"
+                      }
                       className="w-full h-full object-cover transition-all duration-700 hover:scale-105"
                       alt={ev.title}
                     />
@@ -687,11 +688,7 @@ function UpcomingEvents({ events }: { events: HomepageEvent[] }) {
 
 function OngoingEvents({ ongoing }: { ongoing?: Section }) {
   const d = DEFAULTS.ongoing;
-  const initiatives = arr<{ icon: string; title: string; description: string }>(
-    ongoing,
-    "initiatives",
-    d.initiatives,
-  );
+  const initiatives = arr<{ icon: string; title: string; description: string }>(ongoing, "initiatives", d.initiatives);
   return (
     <section id="ongoing-events" className="py-24 border-b border-horizon-mist bg-white">
       <div className="max-w-max-width mx-auto px-margin-safe">
@@ -760,13 +757,23 @@ function OngoingEvents({ ongoing }: { ongoing?: Section }) {
 
 function CoreValues({ values }: { values?: Section }) {
   const d = DEFAULTS.values;
-  const items = arr<{ number: string; title: string; body: string; detail?: string; cta_label?: string; cta_href?: string }>(values, "items", d.items);
+  const items = arr<{
+    number: string;
+    title: string;
+    body: string;
+    detail?: string;
+    cta_label?: string;
+    cta_href?: string;
+  }>(values, "items", d.items);
   const [active, setActive] = useState(0);
   const [openDetail, setOpenDetail] = useState<number | null>(null);
   const detailItem = openDetail !== null ? items[openDetail] : null;
 
   return (
-    <section id="core-values" className="py-24 border-b border-horizon-mist bg-alabaster-parchment relative overflow-hidden">
+    <section
+      id="core-values"
+      className="py-24 border-b border-horizon-mist bg-alabaster-parchment relative overflow-hidden"
+    >
       <div className="max-w-max-width mx-auto px-margin-safe relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
           <div>
@@ -840,7 +847,9 @@ function CoreValues({ values }: { values?: Section }) {
             >
               ×
             </button>
-            <p className="font-body text-[10px] uppercase tracking-[0.25em] text-damascus-gold font-bold mb-2">OUR GOAL</p>
+            <p className="font-body text-[10px] uppercase tracking-[0.25em] text-damascus-gold font-bold mb-2">
+              OUR GOAL
+            </p>
             <h3 className="font-headline text-2xl text-persian-indigo mb-4">{detailItem.title}</h3>
             <p className="font-body text-sm text-ash-slate leading-relaxed text-left whitespace-pre-line">
               {detailItem.detail || detailItem.body}
@@ -929,11 +938,7 @@ function Press({ press, articles }: { press?: Section; articles: HomepageArticle
                 ? new Date(a.published_at).toLocaleDateString(undefined, { month: "long", year: "numeric" })
                 : "";
               return (
-                <a
-                  key={a.id}
-                  href={`/press/${a.slug}`}
-                  className="group cursor-pointer flex flex-col gap-4"
-                >
+                <a key={a.id} href={`/press/${a.slug}`} className="group cursor-pointer flex flex-col gap-4">
                   <span className="font-body text-[10px] uppercase tracking-[0.2em] text-damascus-gold font-bold">
                     {i === 0 ? "MONTHLY FEATURES" : "YOUTH CREATIVE WRITING"}
                   </span>
