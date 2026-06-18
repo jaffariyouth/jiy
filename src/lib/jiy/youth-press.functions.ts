@@ -44,6 +44,10 @@ const createDraftSchema = z.object({
   excerpt: z.string().max(500).optional(),
   body_md: z.string().min(1).max(200_000),
   cover_image_url: z.string().url().optional(),
+  audience_visibility: z.enum(["public", "members"]).optional(),
+  audience_gender: z.enum(["all", "male", "female"]).optional(),
+  audience_min_age: z.number().int().min(0).max(120).nullable().optional(),
+  audience_max_age: z.number().int().min(0).max(120).nullable().optional(),
 });
 
 export const createDraft = createServerFn({ method: "POST" })
