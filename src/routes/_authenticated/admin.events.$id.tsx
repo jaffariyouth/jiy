@@ -58,6 +58,8 @@ function EventEditPage() {
   const [requiresPayment, setRequiresPayment] = useState(false);
   const [featured, setFeatured] = useState(false);
   const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
+  const [categoryLabel, setCategoryLabel] = useState("");
+  const [speakers, setSpeakers] = useState<SpeakerInput[]>([]);
 
   useEffect(() => {
     const e = q.data?.event;
