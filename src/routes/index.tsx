@@ -725,6 +725,13 @@ function CoreValues({ values }: { values?: Section }) {
                 </span>
                 <h3 className="font-headline text-3xl md:text-4xl text-persian-indigo mb-4">{it.title}</h3>
                 <p className="font-body text-base text-ash-slate leading-relaxed mb-8">{it.body}</p>
+                <a
+                  href={it.cta_href || "#about-us"}
+                  className="interactive-btn inline-flex items-center gap-2 self-start font-body text-sm font-bold tracking-[0.2em] uppercase text-deep-garnet hover:text-persian-indigo transition-colors"
+                >
+                  {it.cta_label || "Read More"}
+                  <span aria-hidden="true">→</span>
+                </a>
               </div>
             ))}
           </div>
