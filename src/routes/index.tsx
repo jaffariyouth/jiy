@@ -423,17 +423,17 @@ function Hero({ hero }: { hero?: Section }) {
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-deep-garnet/10 via-transparent to-transparent opacity-60" />
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-damascus-gold/15 via-transparent to-transparent opacity-60" />
 
-      {/* Full-bleed background ornament, right-aligned, fades toward text */}
+      {/* Full-bleed background ornament, spanning left to right, very low opacity */}
       <img
         src="/__l5e/assets-v1/31e78581-68e7-47f5-a567-b8f54b63f0f7/ornament-back.svg"
         alt=""
         aria-hidden
-        className="absolute top-0 lg:inset-y-0 right-0 h-[70%] sm:h-[80%] lg:h-full w-auto max-w-[90%] lg:max-w-[70%] object-contain object-top lg:object-right pointer-events-none select-none z-0 opacity-25"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none z-0 opacity-[0.06]"
         style={{
           maskImage:
-            "radial-gradient(circle at 85% 0%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 80%)",
+            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.2) 100%)",
           WebkitMaskImage:
-            "radial-gradient(circle at 85% 0%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 80%)",
+            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.2) 100%)",
         }}
       />
 
@@ -494,12 +494,12 @@ function Hero({ hero }: { hero?: Section }) {
             </div>
           </div>
 
-          <div className="absolute right-0 top-0 lg:relative lg:col-span-5 flex justify-end lg:justify-center items-start lg:items-center h-[70%] sm:h-[80%] lg:h-auto w-full max-w-[95%] md:max-w-[70%] lg:max-w-none pointer-events-none select-none z-0 lg:z-10 opacity-35 sm:opacity-50 lg:opacity-100 overflow-hidden">
+          <div className="absolute right-0 top-0 lg:relative lg:col-span-5 flex justify-end lg:justify-center items-start lg:items-center h-[70%] sm:h-[80%] lg:h-auto w-full max-w-[95%] md:max-w-[70%] lg:max-w-none pointer-events-none select-none z-0 opacity-[0.12] sm:opacity-20 lg:opacity-[0.85] overflow-hidden">
             <img
               src="/__l5e/assets-v1/08a51463-76ec-4b12-9425-273130c7a4d7/ornament.svg"
               alt=""
               aria-hidden
-              className="w-[110%] sm:w-[120%] lg:w-[120%] max-w-none h-auto opacity-70 animate-fade-in select-none pointer-events-none object-contain object-top lg:object-right"
+              className="w-[110%] sm:w-[120%] lg:w-[120%] max-w-none h-auto animate-fade-in select-none pointer-events-none object-contain object-top lg:object-right"
               style={{
                 maskImage:
                   "radial-gradient(ellipse at center, #000 55%, transparent 85%)",
