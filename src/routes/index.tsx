@@ -480,12 +480,12 @@ function Hero({ hero }: { hero?: Section }) {
             </div>
           </div>
 
-          <div className="lg:col-span-5 relative flex justify-center items-center min-h-[420px] lg:min-h-[560px]">
+          <div className="lg:col-span-5 relative flex justify-center items-center min-h-[420px] lg:min-h-[560px] overflow-visible">
             <img
               src="/__l5e/assets-v1/08a51463-76ec-4b12-9425-273130c7a4d7/ornament.svg"
               alt=""
               aria-hidden
-              className="w-[120%] max-w-none h-auto opacity-70 animate-fade-in select-none pointer-events-none"
+              className="w-[160%] lg:w-[180%] max-w-none h-auto opacity-70 animate-fade-in select-none pointer-events-none"
               style={{
                 maskImage:
                   "radial-gradient(ellipse at center, #000 55%, transparent 85%)",
