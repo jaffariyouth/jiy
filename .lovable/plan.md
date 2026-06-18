@@ -1,108 +1,66 @@
 ## Goal
 
-Replace the placeholder `/` route with the full JIY homepage from the uploaded design (Hero, About, Upcoming Events, Ongoing Events, Strategic Values tabs, The Press, Footer), and make every text/image block editable from the admin panel. Logged-in users see the same page.
+Rebuild `/` as a faithful 1:1 port of `timeless_high_contrast_dashboard (3).html`. Every section, class, ornament, SVG, and interaction from the file is preserved. Admin can edit copy, images, and links for every section.
 
-## Architecture
+## What's wrong today
 
-### 1. New `site_content` table — keyed JSONB per homepage section
+- Current `src/routes/index.tsx` invented its own layout/components instead of replicating the HTML.
+- The bespoke design tokens (`alabaster-parchment`, `persian-indigo`, `deep-garnet`, `damascus-gold`, `warm-silk-grey`, `horizon-mist`, `ash-slate`, custom radius + `gap-section`/`margin-safe`/`max-width` spacing, `headline`/`body` font families) aren't registered in `src/styles.css`.
+- Custom CSS from the HTML's `<style>` block is missing: cardstock dotted background, `editorial-double-border`, `.ogee-arch-portal` clip mask + the inline SVG `<defs>` mask, `.studio-card`, `.value-tab` active/progress states, `.interactive-btn` hover, star ornament.
+- Fonts (Playfair Display + Hanken Grotesk + Material Symbols) aren't loaded in `__root.tsx`.
+- Admin sections store generic ad-hoc fields that don't map to the real content in the design (e.g. mission callout, term directives, stats row, ongoing-events 3 initiatives, 6 strategic values, press cover plate, footer columns).
 
-```sql
-CREATE TABLE public.site_content (
-  section_key text PRIMARY KEY,   -- 'hero' | 'about' | 'ongoing' | 'values' | 'footer'
-  content     jsonb NOT NULL DEFAULT '{}'::jsonb,
-  updated_at  timestamptz DEFAULT now(),
-  updated_by  uuid REFERENCES auth.users(id)
-);
-GRANT SELECT ON public.site_content TO anon, authenticated;
-GRANT ALL    ON public.site_content TO service_role;
-ALTER TABLE public.site_content ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "public read"   ON public.site_content FOR SELECT TO anon, authenticated USING (true);
-CREATE POLICY "admin write"   ON public.site_content FOR ALL TO authenticated
-  USING (public.has_role(auth.uid(),'admin')) WITH CHECK (public.has_role(auth.uid(),'admin'));
-```
+## Build approach
 
-Seed five rows with the exact copy + Unsplash image URLs from the design so the page works immediately.
+### 1. Design system (one-time setup)
 
-### 2. Featured-override columns on existing tables
+- `src/routes/__root.tsx`: add `<link>` tags for the two Google Fonts + Material Symbols stylesheet.
+- `src/styles.css`: register `@theme` tokens for the 7 brand colors, font families (`--font-headline`, `--font-body`), spacing (`--spacing-gap-section`, `--spacing-margin-safe`, `--spacing-max-width`, `--spacing-gap-element`), and radius scale. Port every rule from the HTML `<style>` block as `@utility` or global CSS: dotted cardstock body background, `.ogee-arch-portal`, `.studio-card`, `.value-tab` + `.progress-bg` + active state, `.interactive-btn`, `.editorial-double-border`, star ornament.
+- Inject the SVG `<defs>` containing `#ogee-arch-mask` once at the top of the homepage (and any other page that uses the clip-path) so the `clip-path: url(#ogee-arch-mask)` resolves.
 
-```sql
-ALTER TABLE public.events              ADD COLUMN featured_on_home boolean DEFAULT false;
-ALTER TABLE public.youth_press_articles ADD COLUMN featured_on_home boolean DEFAULT false;
-```
+### 2. Home page — `src/routes/index.tsx`
 
-Resolution rule (server function):
-- **Upcoming Events:** if any `events.featured_on_home = true` (published, future, fully public), use those (max 3). Otherwise the next 3 upcoming public events. Auto fallback when none exist.
-- **The Press:** same rule on `youth_press_articles` (latest 2).
+Rebuild as a single page that renders, in order, exact replicas of the HTML sections:
 
-### 3. Homepage route `src/routes/index.tsx`
+1. SVG defs (ogee mask)
+2. Header (sticky, brand, nav with Events hover dropdown, Login + Join JIY buttons → `/auth`)
+3. Hero (kicker, headline w/ italic span, paragraph, separator, Connect-With-Us social row with the 4 brand-colored SVGs, two CTAs, ogee-arch photo card with quote overlay, 8-point star medallion)
+4. Metrics strip (4 stats on persian-indigo)
+5. About Us (kicker, headline, mission callout box w/ background star, two body paragraphs, "Term Directives" callout, right-side 3-photo grid)
+6. Upcoming Events (header bar + 3 event cards with ogee-arch poster, date badge, kicker, title, blurb, Register button) — pulled from `getHomepageData().events`
+7. Ongoing Events (left narrative + CTA, center ogee-arch photo, right list of 3 initiatives with Material Symbols icons)
+8. Core Values — Strategic Foundations (6 tabs + 6 slide cards with the tab-progress active state and slide cross-fade, driven by `useState`)
+9. Star break ornament
+10. The Press (header, archival cover plate on the left, 2 featured articles on the right) — pulled from `getHomepageData().articles`
+11. Footer (3-column: brand, nav + 4 social icons, copyright)
 
-Replace placeholder. Loader uses `queryClient.ensureQueryData` to fetch via a new `getHomepageData` server fn that returns `{ sections, events, articles }`. Components render the uploaded HTML 1:1, ported to React + Tailwind tokens (`text-persian-indigo`, `bg-damascus-gold`, `font-headline`, etc. — already in `styles.css`). Wrap the page in `<div className="jiy-dashboard">` to inherit the parchment background and `studio-card` / `interactive-btn` styles already defined.
+Dynamic event/article data continues to use `getHomepageData` (already in place). Header auth buttons keep the existing `signedIn` check and route to `/auth` / `/dashboard`. Tab-switching for Strategic Foundations is local React state, no scripts.
 
-Header CTAs: `Login` → `/auth`, `Join JIY` → `/auth?mode=signup`. Logged-in detection via existing supabase client; show `Dashboard` instead of `Login` when a session exists (no redirect, per user choice).
+### 3. Admin editor — match every editable field
 
-Values tabs are client-state (`useState` for activeIndex). All images come from `site_content.*.image_url` (Unsplash URLs by default, replaceable with uploads).
+Update the existing `src/routes/_authenticated/admin.homepage.*.tsx` editors so each section's JSON shape matches the rendered fields exactly:
 
-SEO `head()`: title "JIY — Jaffari Islamic Youth", description from hero `subtitle`, og:image from hero image.
+- **hero**: kicker, headline_line1, headline_line2_italic, body, photo_url, quote, quote_attribution, cta_primary {label, href}, cta_secondary {label, href}, socials [{network, url}] (Instagram, LinkedIn, YouTube, Linktree).
+- **metrics** (new tab): array of 4 `{value, label}`.
+- **about**: kicker, headline, mission_quote, body_paragraph_1, body_paragraph_2, directives_label, directives_body_1, directives_body_2, photo_top_url, photo_bottom_url, photo_tall_url.
+- **ongoing**: kicker, headline, narrative_paragraph_1, narrative_paragraph_2, cta {label, href}, photo_url, initiatives [{icon (Material Symbols name), title, description}] (3 items).
+- **values**: section_kicker, section_headline, items [{number, title, kicker, body, cta_label, cta_href}] (6 items).
+- **press**: section_kicker, section_headline, section_subhead_italic, archive_link {label, href}, volume_label, journal_title, journal_subtitle, journal_footer.
+- **footer**: brand_tagline, nav_links [{label, href}], socials [{network, url}], copyright.
 
-### 4. Admin UI — split per section
+Wire all of these through the existing `SectionEditor` + `updateSectionContent` server fn (no DB changes — `site_content` already stores JSONB per section). The events/articles editors already have `featured_on_home` toggles; no change.
 
-New left-nav group "Homepage" under `/admin` with five routes:
+### 4. Defaults
 
-```
-/admin/homepage/hero      → hero eyebrow, headline, italic line, paragraph, image, social links
-/admin/homepage/about     → about copy + stats
-/admin/homepage/ongoing   → ongoing-events copy, image, 3 initiative cards
-/admin/homepage/values    → 6 strategic-foundation tabs (title + body)
-/admin/homepage/footer    → footer tagline + social URLs
-```
+`getHomepageData` already merges DB rows with empty defaults. Provide the HTML's literal copy as fallback defaults inside `src/routes/index.tsx` (string constants) so the page renders identically to the mockup before an admin overrides anything.
 
-Each route:
-- `useSuspenseQuery` loads its `site_content` row via `getSectionContent({ key })`.
-- Form (react-hook-form + zod) edits typed fields.
-- Image fields use existing `editorial-media` storage bucket; admin uploads → public URL → saved into `content.image_url`.
-- Save calls `updateSectionContent({ key, content })` (admin-only via `requireSupabaseAuth` + `has_role` check).
-- Built with existing `AdminPageHeader`, `MarkdownEditor` (for long copy), and standard shadcn inputs.
+## Out of scope
 
-Plus a checkbox **"Feature on homepage"** added to:
-- `admin.events.new.tsx` / `admin.events.$id.tsx`
-- `admin.press.new.tsx` / `admin.press.$id.tsx`
+- No DB migration. No new server functions. No changes to events/press article data flow.
+- Mobile menu drawer (the HTML hides nav on `md` and below; we keep the same behavior).
+- No `toast-portal` / `auth popup` JS — Join/Login go to existing `/auth` route.
 
-writing to `featured_on_home`.
+## Files touched
 
-### 5. Server functions (`src/lib/jiy/site-content.functions.ts`)
-
-```
-getHomepageData()            -- public, used by route loader
-getSectionContent({ key })   -- admin, for edit forms
-updateSectionContent({...})  -- admin, validates JSON shape per key
-```
-
-All extend the existing `requireSupabaseAuth` + `has_role('admin')` pattern. Public read uses the browser supabase client directly inside the loader's server fn (no auth required).
-
-## Files
-
-**New**
-- `supabase/migrations/<ts>_homepage_content.sql`
-- `src/lib/jiy/site-content.functions.ts`
-- `src/components/home/Hero.tsx`, `About.tsx`, `UpcomingEvents.tsx`, `OngoingEvents.tsx`, `StrategicValues.tsx`, `PressFeature.tsx`, `SiteFooter.tsx`, `SiteHeader.tsx`
-- `src/routes/_authenticated/admin.homepage.tsx` (layout)
-- `src/routes/_authenticated/admin.homepage.hero.tsx`
-- `src/routes/_authenticated/admin.homepage.about.tsx`
-- `src/routes/_authenticated/admin.homepage.ongoing.tsx`
-- `src/routes/_authenticated/admin.homepage.values.tsx`
-- `src/routes/_authenticated/admin.homepage.footer.tsx`
-
-**Edited**
-- `src/routes/index.tsx` — replace placeholder
-- `src/routes/__root.tsx` — add og:image meta hook from loader (optional)
-- `src/routes/_authenticated/admin.tsx` — add "Homepage" nav group
-- `src/routes/_authenticated/admin.events.new.tsx` + `admin.events.$id.tsx` — feature checkbox
-- `src/routes/_authenticated/admin.press.new.tsx` + `admin.press.$id.tsx` — feature checkbox
-- `src/integrations/supabase/types.ts` — auto-regenerated by migration
-
-## Out of scope (v1)
-
-- Editing the values tab count (fixed at 6); only their text is editable.
-- Multi-locale content.
-- Per-section publish/draft workflow (single live record per section).
-- The auth modal from the HTML (uses existing `/auth` route instead).
+- Edit: `src/styles.css`, `src/routes/__root.tsx`, `src/routes/index.tsx`, all `src/routes/_authenticated/admin.homepage.*.tsx`.
+- Possibly extract: `src/components/home/*` for each section to keep `index.tsx` readable, plus `src/components/home/OgeeArchDefs.tsx`.
