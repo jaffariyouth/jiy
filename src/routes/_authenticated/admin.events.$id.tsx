@@ -243,8 +243,16 @@ function EventEditPage() {
             </Button>
           </TabsContent>
 
+          <TabsContent value="speakers" className="mt-6">
+            <SpeakersEditor speakers={speakers} setSpeakers={setSpeakers} onSave={() => saveMut.mutate()} saving={saveMut.isPending} />
+          </TabsContent>
+
           <TabsContent value="roster" className="mt-6">
             <RosterTab eventId={id} />
+          </TabsContent>
+
+          <TabsContent value="public" className="mt-6">
+            <PublicRegistrationsTab eventId={id} />
           </TabsContent>
 
           <TabsContent value="submissions" className="mt-6">
