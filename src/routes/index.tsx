@@ -431,9 +431,9 @@ function Hero({ hero }: { hero?: Section }) {
         className="absolute inset-y-0 right-0 h-full w-auto max-w-[70%] object-contain object-right pointer-events-none select-none z-0 opacity-25"
         style={{
           maskImage:
-            "linear-gradient(to left, rgba(0,0,0,1) 35%, rgba(0,0,0,0.5) 65%, rgba(0,0,0,0) 95%)",
+            "radial-gradient(circle at 85% 0%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 80%)",
           WebkitMaskImage:
-            "linear-gradient(to left, rgba(0,0,0,1) 35%, rgba(0,0,0,0.5) 65%, rgba(0,0,0,0) 95%)",
+            "radial-gradient(circle at 85% 0%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 80%)",
         }}
       />
 
