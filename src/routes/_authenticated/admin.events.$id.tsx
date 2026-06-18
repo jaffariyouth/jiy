@@ -176,6 +176,15 @@ function EventEditPage() {
 
           <TabsContent value="details" className="mt-6 space-y-5">
             <div><Label>Title</Label><Input value={title} onChange={(e) => setTitle(e.target.value)} /></div>
+            <div>
+              <Label>Category label (shown above title)</Label>
+              <Input
+                value={categoryLabel}
+                onChange={(e) => setCategoryLabel(e.target.value)}
+                placeholder="e.g. Lectures & Seminars"
+                maxLength={120}
+              />
+            </div>
             <div><Label>Description (markdown)</Label><MarkdownEditor value={description} onChange={setDescription} rows={10} /></div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div><Label>Starts at</Label><Input type="datetime-local" value={startsAt} onChange={(e) => setStartsAt(e.target.value)} /></div>
