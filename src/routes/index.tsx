@@ -435,8 +435,8 @@ function Hero({ hero }: { hero?: Section }) {
         aria-hidden
         className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none z-0 opacity-[0.03]"
         style={{
-          maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.2) 100%)",
-          WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.2) 100%)",
+          maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 55%)",
+          WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 55%)",
         }}
       />
 
