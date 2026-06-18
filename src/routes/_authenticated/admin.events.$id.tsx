@@ -168,7 +168,9 @@ function EventEditPage() {
         <Tabs defaultValue="details">
           <TabsList>
             <TabsTrigger value="details">Details</TabsTrigger>
+            <TabsTrigger value="speakers">Speakers</TabsTrigger>
             <TabsTrigger value="roster">Roster</TabsTrigger>
+            <TabsTrigger value="public">Public sign-ups</TabsTrigger>
             <TabsTrigger value="submissions">Submissions</TabsTrigger>
           </TabsList>
 
