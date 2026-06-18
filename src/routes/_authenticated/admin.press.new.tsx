@@ -26,6 +26,7 @@ function NewPressPage() {
   const [excerpt, setExcerpt] = useState("");
   const [body, setBody] = useState("");
   const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
+  const [featured, setFeatured] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const submit = async () => {
