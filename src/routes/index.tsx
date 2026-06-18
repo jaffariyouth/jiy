@@ -438,8 +438,8 @@ function Hero({ hero }: { hero?: Section }) {
       />
 
       <div className="max-w-max-width mx-auto px-margin-safe relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-7 flex flex-col gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative">
+          <div className="lg:col-span-7 flex flex-col gap-6 relative z-10">
             <span className="font-headline italic text-2xl md:text-3xl text-deep-garnet flex items-center gap-3 tracking-wide">
               <span className="inline-block w-2 h-2 rounded-full bg-damascus-gold" />
               {str(hero, "kicker", d.kicker)}
@@ -494,12 +494,12 @@ function Hero({ hero }: { hero?: Section }) {
             </div>
           </div>
 
-          <div className="lg:col-span-5 relative flex justify-center items-center min-h-[420px] lg:min-h-[560px]">
+          <div className="absolute right-0 bottom-0 top-0 lg:relative lg:col-span-5 flex justify-end lg:justify-center items-center min-h-[300px] sm:min-h-[420px] lg:min-h-[560px] w-full max-w-[90%] md:max-w-[70%] lg:max-w-none pointer-events-none select-none z-0 lg:z-10 opacity-35 sm:opacity-50 lg:opacity-100 overflow-hidden">
             <img
               src="/__l5e/assets-v1/08a51463-76ec-4b12-9425-273130c7a4d7/ornament.svg"
               alt=""
               aria-hidden
-              className="w-[120%] max-w-none h-auto opacity-70 animate-fade-in select-none pointer-events-none"
+              className="w-[120%] lg:w-[120%] max-w-none h-auto opacity-70 animate-fade-in select-none pointer-events-none object-contain object-right"
               style={{
                 maskImage:
                   "radial-gradient(ellipse at center, #000 55%, transparent 85%)",
