@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { listPublicEvents } from "@/lib/jiy/events.functions";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { SiteFooter } from "@/components/site/SiteFooter";
 
 export const Route = createFileRoute("/events/")({
   head: () => ({
@@ -148,22 +149,7 @@ function EventsPage() {
         )}
       </section>
 
-      <footer className="border-t border-horizon-mist bg-alabaster-parchment">
-        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-10 text-center">
-          <p className="font-headline text-xl text-persian-indigo">JIY</p>
-          <div className="mt-3 flex flex-wrap justify-center gap-6 text-xs uppercase tracking-[0.2em] text-ash-slate">
-            <Link to="/team" className="hover:text-damascus-gold transition-colors">
-              Our team
-            </Link>
-            <Link to="/" className="hover:text-damascus-gold transition-colors">
-              Home
-            </Link>
-          </div>
-          <p className="mt-6 text-xs text-ash-slate">
-            © {new Date().getFullYear()} Jaffari Islamic Youth. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }
