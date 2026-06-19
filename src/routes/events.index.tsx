@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { listPublicEvents } from "@/lib/jiy/events.functions";
+import { SiteHeader } from "@/components/site/SiteHeader";
 
-export const Route = createFileRoute("/events")({
+export const Route = createFileRoute("/events/")({
   head: () => ({
     meta: [
       { title: "Events — JIY" },
