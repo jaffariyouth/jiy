@@ -3,6 +3,7 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { getHomepageData, type HomepageEvent, type HomepageArticle } from "@/lib/jiy/site-content.functions";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { SiteFooter } from "@/components/site/SiteFooter";
 
 const homepageQueryOptions = queryOptions({
   queryKey: ["homepage"],
@@ -280,7 +281,7 @@ function HomePage() {
       <CoreValues values={sections.values} />
       <StarBreak />
       <Press press={sections.press} articles={data.articles} />
-      <Footer footer={sections.footer} />
+      <SiteFooter footer={sections.footer} />
     </div>
   );
 }
