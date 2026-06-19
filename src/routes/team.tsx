@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getTeamPageData } from "@/lib/jiy/site-content.functions";
-import { supabase } from "@/integrations/supabase/client";
+import { SiteHeader } from "@/components/site/SiteHeader";
 
 const teamQueryOptions = queryOptions({
   queryKey: ["team-page"],
@@ -121,18 +121,11 @@ export const TEAM_DEFAULTS = {
 function TeamPage() {
   const { data } = useSuspenseQuery(teamQueryOptions);
   const sections = (data.sections ?? {}) as Record<string, Section>;
-  const [signedIn, setSignedIn] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSignedIn(!!s));
-    return () => sub.subscription.unsubscribe();
-  }, []);
 
   return (
     <div className="jiy-dashboard min-h-screen">
       <OgeeArchDefs />
-      <Header signedIn={signedIn} />
+      <SiteHeader />
       <TeamHero hero={sections.team_hero} />
       <TeamIntro intro={sections.team_intro} />
       <Leadership leadership={sections.team_leadership} />
