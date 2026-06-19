@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { getTeamPageData } from "@/lib/jiy/site-content.functions";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { SiteFooter } from "@/components/site/SiteFooter";
 
 const teamQueryOptions = queryOptions({
   queryKey: ["team-page"],
@@ -130,7 +131,7 @@ function TeamPage() {
       <Leadership leadership={sections.team_leadership} />
       <Members members={sections.team_members} />
       <TeamCTA cta={sections.team_cta} />
-      <Footer footer={sections.footer} />
+      <SiteFooter footer={sections.footer} />
     </div>
   );
 }
@@ -423,24 +424,3 @@ function TeamCTA({ cta }: { cta?: Section }) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Footer (minimal, reused style)                                      */
-/* ------------------------------------------------------------------ */
-
-function Footer({ footer }: { footer?: Section }) {
-  const tagline = str(footer, "brand_tagline", "Jaffari Islamic Youth");
-  const copyright = str(footer, "copyright", "© 2026 Jaffari Islamic Youth. All rights reserved.");
-  return (
-    <footer className="bg-white border-t border-horizon-mist py-12 px-margin-safe w-full">
-      <div className="max-w-max-width mx-auto text-center">
-        <span className="font-headline text-2xl font-black tracking-tight text-persian-indigo">JIY</span>
-        <p className="font-body text-[10px] uppercase tracking-[0.2em] text-ash-slate mt-1 font-semibold">
-          {tagline}
-        </p>
-        <p className="font-body text-[10px] uppercase tracking-[0.2em] text-ash-slate mt-6 font-semibold">
-          {copyright}
-        </p>
-      </div>
-    </footer>
-  );
-}
