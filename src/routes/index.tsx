@@ -3,6 +3,7 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { getHomepageData, type HomepageEvent, type HomepageArticle } from "@/lib/jiy/site-content.functions";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { SiteFooter } from "@/components/site/SiteFooter";
 
 const homepageQueryOptions = queryOptions({
   queryKey: ["homepage"],
@@ -280,7 +281,7 @@ function HomePage() {
       <CoreValues values={sections.values} />
       <StarBreak />
       <Press press={sections.press} articles={data.articles} />
-      <Footer footer={sections.footer} />
+      <SiteFooter footer={sections.footer} />
     </div>
   );
 }
@@ -843,60 +844,3 @@ function Press({ press, articles }: { press?: Section; articles: HomepageArticle
 /* Footer                                                              */
 /* ------------------------------------------------------------------ */
 
-function Footer({ footer }: { footer?: Section }) {
-  const d = DEFAULTS.footer;
-  const navLinks = arr<{ label: string; href: string }>(footer, "nav_links", d.nav_links);
-  const socials = arr<{ network: string; url: string }>(footer, "socials", d.socials);
-  return (
-    <footer className="bg-white border-t border-horizon-mist py-12 px-margin-safe w-full relative z-30">
-      <div className="max-w-max-width mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 items-center justify-between gap-8 w-full border-b border-horizon-mist/60 pb-8 mb-8">
-          <div className="flex flex-col items-center md:items-start text-center md:text-left">
-            <span className="font-headline text-2xl font-black tracking-tight text-persian-indigo">JIY</span>
-            <p className="font-body text-[10px] uppercase tracking-[0.2em] text-ash-slate mt-1 font-semibold">
-              {str(footer, "brand_tagline", d.brand_tagline)}
-            </p>
-          </div>
-
-          <div className="flex flex-col items-center justify-center gap-6">
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 font-body text-[11px] uppercase tracking-[0.15em] text-ash-slate font-bold">
-              {navLinks.map((l, i) => (
-                <a key={i} className="hover:text-damascus-gold transition-colors" href={l.href}>
-                  {l.label}
-                </a>
-              ))}
-            </div>
-            <div className="flex items-center justify-center gap-5">
-              {socials.map((s) => (
-                <a
-                  key={s.network}
-                  className="hover:scale-110 hover:-translate-y-1 transition-all duration-300 drop-shadow-sm"
-                  style={{ color: SOCIAL_COLORS[s.network] ?? "#14243b" }}
-                  href={s.url}
-                  target="_blank"
-                  rel="noopener"
-                  aria-label={s.network}
-                >
-                  <SocialSvg network={s.network} />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex justify-center md:justify-end">
-            <Link
-              to="/auth"
-              className="interactive-btn border border-persian-indigo bg-persian-indigo text-white hover:bg-damascus-gold hover:border-damascus-gold hover:text-persian-indigo font-body text-[10px] font-bold tracking-[0.2em] py-2.5 px-5 uppercase transition-all duration-300"
-            >
-              Join JIY
-            </Link>
-          </div>
-        </div>
-
-        <p className="font-body text-[10px] uppercase tracking-[0.2em] text-ash-slate text-center font-semibold">
-          {str(footer, "copyright", d.copyright)}
-        </p>
-      </div>
-    </footer>
-  );
-}
