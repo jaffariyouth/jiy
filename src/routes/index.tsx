@@ -417,7 +417,7 @@ function Hero({ hero }: { hero?: Section }) {
   const d = DEFAULTS.hero;
   const socials = arr<{ network: string; url: string }>(hero, "socials", d.socials);
   return (
-    <section className="relative overflow-hidden py-12 lg:py-20 border-b border-horizon-mist bg-white">
+    <section className="relative overflow-hidden pt-6 sm:pt-8 lg:pt-12 pb-12 lg:pb-20 border-b border-horizon-mist bg-white">
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
@@ -494,7 +494,7 @@ function Hero({ hero }: { hero?: Section }) {
             </div>
           </div>
 
-          <div className="absolute right-0 -top-10 sm:-top-16 md:-top-20 lg:top-0 lg:relative lg:col-span-5 flex justify-end items-start lg:items-center h-[75%] sm:h-[85%] lg:h-auto w-full max-w-[95%] md:max-w-[70%] lg:max-w-none pointer-events-none select-none z-0 opacity-25 sm:opacity-45 md:opacity-55 lg:opacity-[0.85] overflow-hidden">
+          <div className="absolute right-0 -top-10 sm:-top-16 md:-top-20 lg:top-0 lg:relative lg:col-span-5 flex justify-end items-start lg:items-center h-[75%] sm:h-[85%] lg:h-auto w-full max-w-[95%] md:max-w-[70%] lg:max-w-none pointer-events-none select-none z-0 opacity-25 sm:opacity-45 md:opacity-55 lg:opacity-[0.85] overflow-hidden lg:overflow-visible">
             <img
               src="/__l5e/assets-v1/08a51463-76ec-4b12-9425-273130c7a4d7/ornament.svg"
               alt=""
