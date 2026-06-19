@@ -417,7 +417,7 @@ function Hero({ hero }: { hero?: Section }) {
   const d = DEFAULTS.hero;
   const socials = arr<{ network: string; url: string }>(hero, "socials", d.socials);
   return (
-    <section className="relative overflow-hidden py-12 lg:py-20 border-b border-horizon-mist bg-white">
+    <section className="relative overflow-hidden pt-6 sm:pt-8 lg:pt-12 pb-12 lg:pb-20 border-b border-horizon-mist bg-white">
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
