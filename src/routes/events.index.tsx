@@ -46,14 +46,15 @@ export const Route = createFileRoute("/events/")({
   component: EventsPage,
 });
 
+const TZ = "America/Toronto";
 function fmtDay(iso: string) {
-  return new Date(iso).toLocaleDateString(undefined, { day: "2-digit" });
+  return new Date(iso).toLocaleDateString("en-US", { day: "2-digit", timeZone: TZ });
 }
 function fmtMonth(iso: string) {
-  return new Date(iso).toLocaleDateString(undefined, { month: "short" }).toUpperCase();
+  return new Date(iso).toLocaleDateString("en-US", { month: "short", timeZone: TZ }).toUpperCase();
 }
 function fmtTime(iso: string) {
-  return new Date(iso).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: TZ });
 }
 
 function EventsPage() {
