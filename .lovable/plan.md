@@ -1,51 +1,29 @@
-# Events: list + detail polish
+## Three fixes
 
-## 1. `/events` list page (`src/routes/events.tsx`)
+### 1. Add "All Events" to the homepage Events dropdown
+In `src/routes/index.tsx`, the `EventsDropdown` (around line 207) currently has only two items: "Upcoming Events" and "Ongoing Events" — both scroll to homepage hashes. Add a third item **"All Events"** at the top that uses TanStack `<Link to="/events">` so users can jump to the full events list page.
 
-Rebuild in JIY editorial style, matching homepage/UpcomingEvents aesthetic:
+### 2. Use the homepage header on all non-logged-in pages
+The homepage has a polished `<Header />` (logo, About Us, Our Team, Events dropdown, The Press, Login / Join JIY buttons). The `/events` list and `/events/$eventId` detail pages currently have their own slim ad‑hoc top bar with just "Home / Our Team / Events" + "Join JIY".
 
-- Use the same `jiy-dashboard` top bar + footer as `events.$eventId.tsx` (consistent chrome).
-- Editorial header:
-  - Eyebrow: `COMMUNITY EVENTS` (deep-garnet, tracked uppercase).
-  - H1 (Playfair) "Upcoming Gatherings".
-  - Sub: "Community gatherings open to everyone."
-  - Hairline divider in `border-horizon-mist`.
-- Grid of event cards (1 col mobile, 2 col md, 3 col lg):
-  - Cover image with `ogee-arch-portal` or rounded frame, fallback to ornament/gradient.
-  - Floating date badge (day + month) overlaid top-left.
-  - Category eyebrow (deep-garnet uppercase).
-  - Title in Playfair, hover → damascus-gold.
-  - Time + venue meta line.
-  - Description line-clamp-2.
-  - "View details →" link to `/events/$eventId`.
-- Empty state in editorial card style.
+- Extract the homepage `Header` and `EventsDropdown` into a shared file: `src/components/site/SiteHeader.tsx`.
+- Update `src/routes/index.tsx` to import + use it (no visual change to homepage).
+- Replace the local `<header>` in `src/routes/events.tsx` and `src/routes/events.$eventId.tsx` with `<SiteHeader />`.
+- `signedIn` state: read the Supabase session the same way the homepage does (inside `SiteHeader` itself, via the same `supabase.auth.getSession()` + `onAuthStateChange` effect used in `HomePage`), so the header works on every public route without prop wiring.
+- Apply the same to other public pages that ship their own header (`/team`) if they exist — check and swap.
 
-## 2. `/events/$eventId` detail polish (`src/routes/events.$eventId.tsx`)
+### 3. Fix "click event → nothing happens" (event detail page is glitched)
+Root cause: file-routing collision. We have both `src/routes/events.tsx` (the list page, route id `/events`) and `src/routes/events.$eventId.tsx` (detail, route id `/events/$eventId`). TanStack treats `events.tsx` as a **parent layout** of `events.$eventId.tsx`, but `events.tsx`'s component renders the list directly with **no `<Outlet />`**. Result: navigating to `/events/{id}` matches the child route, but the parent never gives it a place to render → blank screen / "nothing happens".
 
-Tighten to better match the reference HTML:
+Fix: rename `src/routes/events.tsx` → `src/routes/events.index.tsx` and update its `createFileRoute("/events")` to `createFileRoute("/events/")`. Now `events.index.tsx` is the leaf for `/events`, `events.$eventId.tsx` is a sibling leaf, and there is no broken parent layout. (Alternative — keep `events.tsx` as a layout that returns `<Outlet />` and move the list into `events.index.tsx` — same end result, more files.) Going with the simple rename.
 
-- Header nav: add "Community" link and "Contact Us" between Home/Events for parity.
-- Breadcrumbs: keep slash separators, ensure spacing matches reference.
-- Hero:
-  - Confirm category eyebrow → big Playfair title → meta row (Date / Time / Venue) separated by vertical bars — already close, tweak typography weight and spacing to match.
-  - Right image: keep `ogee-arch-portal`, ensure max-width and right-alignment.
-- Body section background: switch to alabaster/beige tint (`bg-alabaster-parchment` or warm-silk) matching reference's warm panel.
-- Speakers cards: tighter padding, larger round photo with subtle border, name in Playfair, role eyebrow in deep-garnet, bio in ash-slate. Match reference card chrome (white, soft border, rounded-md, light shadow).
-- Registration card (right sidebar):
-  - Title "Public Registration" (already there).
-  - Price row + qty stepper polished (rounded, hairline border).
-  - Inputs: label above, hairline border, focus damascus-gold.
-  - CTA: dark persian-indigo bg, white text, arrow, full width.
-  - Footnote text in ash-slate small.
-- Footer: keep, ensure links match reference (Archives, Submission Guidelines, Membership, Privacy Policy) — but since this is JIY (not a publishing house), keep current JIY footer links (All events / Our team / Home) — reference is a layout cue, not literal copy.
-
-## 3. Out of scope
-
-- No backend / server fn changes — `getPublicEvent`, `listPublicEvents`, and `registerPublicForEvent` stay as-is.
-- No DB migrations.
-- No new routes.
+## Out of scope
+- No backend / data changes.
+- No new copy or design changes to the homepage header itself — it's lifted as‑is.
 
 ## Files touched
-
-- `src/routes/events.tsx` — full rewrite of the page component.
-- `src/routes/events.$eventId.tsx` — refinements to hero, speakers, registration card spacing/typography; add Community nav link.
+- `src/components/site/SiteHeader.tsx` *(new — extracted header + dropdown)*
+- `src/routes/index.tsx` *(use `SiteHeader`, add "All Events" link in dropdown)*
+- `src/routes/events.tsx` → **rename** to `src/routes/events.index.tsx`, swap local header for `SiteHeader`, update `createFileRoute` path
+- `src/routes/events.$eventId.tsx` *(swap local header for `SiteHeader`)*
+- `src/routes/team.tsx` *(swap to `SiteHeader` if it has a custom header)*
