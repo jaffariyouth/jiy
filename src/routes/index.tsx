@@ -499,7 +499,7 @@ function Hero({ hero }: { hero?: Section }) {
               src="/__l5e/assets-v1/08a51463-76ec-4b12-9425-273130c7a4d7/ornament.svg"
               alt=""
               aria-hidden
-              className="w-[110%] sm:w-[120%] lg:w-[120%] xl:w-[135%] 2xl:w-[150%] max-w-none h-auto animate-fade-in select-none pointer-events-none object-contain object-top lg:object-right lg:origin-right lg:scale-100 xl:scale-105 2xl:scale-110 transition-transform duration-300"
+              className="w-[90%] sm:w-[80%] md:w-[70%] lg:w-[115%] xl:w-[130%] 2xl:w-[145%] max-w-full lg:max-w-none h-auto animate-fade-in select-none pointer-events-none object-contain object-top lg:object-right lg:origin-right lg:scale-100 xl:scale-105 2xl:scale-110 transition-transform duration-300"
               style={{
                 maskImage: "radial-gradient(ellipse at center, #000 55%, transparent 85%)",
                 WebkitMaskImage: "radial-gradient(ellipse at center, #000 55%, transparent 85%)",
