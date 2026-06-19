@@ -268,18 +268,11 @@ function PersianStar({ className = "w-6 h-6" }: { className?: string }) {
 function HomePage() {
   const { data } = useSuspenseQuery(homepageQueryOptions);
   const sections = (data.sections ?? {}) as Record<string, Section>;
-  const [signedIn, setSignedIn] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => setSignedIn(!!session));
-    return () => sub.subscription.unsubscribe();
-  }, []);
 
   return (
     <div className="jiy-dashboard min-h-screen">
       <OgeeArchDefs />
-      <Header signedIn={signedIn} />
+      <SiteHeader />
       <Hero hero={sections.hero} />
       <Metrics metrics={sections.metrics} />
       <About about={sections.about} />
@@ -290,69 +283,6 @@ function HomePage() {
       <Press press={sections.press} articles={data.articles} />
       <Footer footer={sections.footer} />
     </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Header                                                              */
-/* ------------------------------------------------------------------ */
-
-function Header({ signedIn }: { signedIn: boolean }) {
-  return (
-    <header className="bg-white/95 backdrop-blur-md border-b border-horizon-mist sticky top-0 z-50 transition-all duration-300">
-      <div className="max-w-max-width mx-auto px-margin-safe h-20 flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <Link to="/" className="flex flex-col group">
-            <span className="font-headline text-3xl font-extrabold tracking-tight text-persian-indigo leading-none group-hover:text-damascus-gold transition-colors duration-200">
-              JIY
-            </span>
-          </Link>
-        </div>
-
-        <nav className="hidden md:flex gap-8 font-body text-xs uppercase tracking-[0.2em] font-semibold text-ash-slate items-center">
-          <a className="hover:text-damascus-gold transition-colors duration-200 relative py-1 group" href="#about-us">
-            About Us
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-damascus-gold transition-all duration-300 group-hover:w-full" />
-          </a>
-          <Link to="/team" className="hover:text-damascus-gold transition-colors duration-200 relative py-1 group">
-            Our Team
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-damascus-gold transition-all duration-300 group-hover:w-full" />
-          </Link>
-          <EventsDropdown />
-
-          <a className="hover:text-damascus-gold transition-colors duration-200 relative py-1 group" href="#journal">
-            The Press
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-damascus-gold transition-all duration-300 group-hover:w-full" />
-          </a>
-        </nav>
-
-        <div className="flex items-center gap-3">
-          {signedIn ? (
-            <Link
-              to="/dashboard"
-              className="interactive-btn border border-persian-indigo bg-persian-indigo text-white hover:bg-damascus-gold hover:border-damascus-gold hover:text-persian-indigo font-body text-[10px] font-bold tracking-[0.2em] py-2.5 px-5 uppercase transition-all duration-300"
-            >
-              Dashboard
-            </Link>
-          ) : (
-            <>
-              <Link
-                to="/auth"
-                className="font-body text-[10px] font-bold tracking-[0.2em] uppercase text-persian-indigo hover:text-damascus-gold transition-colors py-2 px-3"
-              >
-                Login
-              </Link>
-              <Link
-                to="/auth"
-                className="interactive-btn border border-persian-indigo bg-persian-indigo text-white hover:bg-damascus-gold hover:border-damascus-gold hover:text-persian-indigo font-body text-[10px] font-bold tracking-[0.2em] py-2.5 px-5 uppercase transition-all duration-300"
-              >
-                Join JIY
-              </Link>
-            </>
-          )}
-        </div>
-      </div>
-    </header>
   );
 }
 
