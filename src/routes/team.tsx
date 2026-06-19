@@ -1,8 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 import { getTeamPageData } from "@/lib/jiy/site-content.functions";
-import { supabase } from "@/integrations/supabase/client";
+import { SiteHeader } from "@/components/site/SiteHeader";
 
 const teamQueryOptions = queryOptions({
   queryKey: ["team-page"],
@@ -121,18 +120,11 @@ export const TEAM_DEFAULTS = {
 function TeamPage() {
   const { data } = useSuspenseQuery(teamQueryOptions);
   const sections = (data.sections ?? {}) as Record<string, Section>;
-  const [signedIn, setSignedIn] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSignedIn(!!s));
-    return () => sub.subscription.unsubscribe();
-  }, []);
 
   return (
     <div className="jiy-dashboard min-h-screen">
       <OgeeArchDefs />
-      <Header signedIn={signedIn} />
+      <SiteHeader />
       <TeamHero hero={sections.team_hero} />
       <TeamIntro intro={sections.team_intro} />
       <Leadership leadership={sections.team_leadership} />
@@ -159,78 +151,6 @@ function OgeeArchDefs() {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Header (mirrors homepage)                                           */
-/* ------------------------------------------------------------------ */
-
-function Header({ signedIn }: { signedIn: boolean }) {
-  return (
-    <header className="bg-white/95 backdrop-blur-md border-b border-horizon-mist sticky top-0 z-50 transition-all duration-300">
-      <div className="max-w-max-width mx-auto px-margin-safe h-20 flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <Link to="/" className="flex flex-col group">
-            <span className="font-headline text-3xl font-extrabold tracking-tight text-persian-indigo leading-none group-hover:text-damascus-gold transition-colors duration-200">
-              JIY
-            </span>
-          </Link>
-        </div>
-
-        <nav className="hidden md:flex gap-8 font-body text-xs uppercase tracking-[0.2em] font-semibold text-ash-slate items-center">
-          <Link
-            to="/"
-            className="hover:text-damascus-gold transition-colors duration-200 relative py-1 group"
-          >
-            Home
-          </Link>
-          <Link
-            to="/team"
-            className="text-damascus-gold transition-colors duration-200 relative py-1 group"
-          >
-            Our Team
-          </Link>
-          <a
-            className="hover:text-damascus-gold transition-colors duration-200 relative py-1 group"
-            href="/#about-us"
-          >
-            About Us
-          </a>
-          <a
-            className="hover:text-damascus-gold transition-colors duration-200 relative py-1 group"
-            href="/#journal"
-          >
-            The Press
-          </a>
-        </nav>
-
-        <div className="flex items-center gap-3">
-          {signedIn ? (
-            <Link
-              to="/dashboard"
-              className="interactive-btn border border-persian-indigo bg-persian-indigo text-white hover:bg-damascus-gold hover:border-damascus-gold hover:text-persian-indigo font-body text-[10px] font-bold tracking-[0.2em] py-2.5 px-5 uppercase transition-all duration-300"
-            >
-              Dashboard
-            </Link>
-          ) : (
-            <>
-              <Link
-                to="/auth"
-                className="font-body text-[10px] font-bold tracking-[0.2em] uppercase text-persian-indigo hover:text-damascus-gold transition-colors py-2 px-3"
-              >
-                Login
-              </Link>
-              <Link
-                to="/auth"
-                className="interactive-btn border border-persian-indigo bg-persian-indigo text-white hover:bg-damascus-gold hover:border-damascus-gold hover:text-persian-indigo font-body text-[10px] font-bold tracking-[0.2em] py-2.5 px-5 uppercase transition-all duration-300"
-              >
-                Join JIY
-              </Link>
-            </>
-          )}
-        </div>
-      </div>
-    </header>
-  );
-}
 
 /* ------------------------------------------------------------------ */
 /* Hero                                                                */
