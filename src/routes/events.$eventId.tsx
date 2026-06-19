@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { queryOptions, useSuspenseQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { getPublicEvent, registerPublicForEvent } from "@/lib/jiy/events.functions";
+import { SiteHeader } from "@/components/site/SiteHeader";
 
 const eventQuery = (id: string) =>
   queryOptions({
@@ -100,31 +101,7 @@ function EventDetailPage() {
   return (
     <main className="jiy-dashboard min-h-screen bg-alabaster-parchment font-body text-persian-indigo">
       {/* Slim top bar */}
-      <header className="border-b border-horizon-mist bg-alabaster-parchment">
-        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 h-16 flex items-center justify-between">
-          <Link to="/" className="font-headline text-2xl font-extrabold text-persian-indigo">
-            JIY
-          </Link>
-          <nav className="hidden md:flex gap-8 text-xs uppercase tracking-[0.22em] font-semibold text-ash-slate">
-            <Link to="/" className="hover:text-damascus-gold transition-colors">
-              Home
-            </Link>
-            <Link to="/team" className="hover:text-damascus-gold transition-colors">
-              Our Team
-            </Link>
-            <Link to="/events" className="text-damascus-gold border-b border-damascus-gold pb-0.5">
-              Events
-            </Link>
-          </nav>
-          <Link
-            to="/"
-            hash="join"
-            className="interactive-btn border border-persian-indigo bg-persian-indigo text-white hover:bg-damascus-gold hover:border-damascus-gold hover:text-persian-indigo text-[10px] font-bold tracking-[0.22em] py-2.5 px-5 uppercase transition-all"
-          >
-            Join JIY
-          </Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       {registrationStatus === "success" && (
         <div className="bg-damascus-gold/20 border-b border-damascus-gold/40">
