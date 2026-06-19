@@ -75,15 +75,21 @@ export const Route = createFileRoute("/events/$eventId")({
   component: EventDetailPage,
 });
 
+const TZ = "America/Toronto";
 function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString(undefined, {
+  return new Date(iso).toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
     year: "numeric",
+    timeZone: TZ,
   });
 }
 function fmtTime(iso: string) {
-  return new Date(iso).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: TZ,
+  });
 }
 
 type Speaker = { name: string; role?: string; bio?: string; photo_url?: string };
