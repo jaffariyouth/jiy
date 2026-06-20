@@ -1,89 +1,63 @@
+# Stage A2 — Opportunities & Shop Waitlist
 
-# Member dashboard + emails — multi-stage plan
+Build out the two remaining public/member content surfaces from the original plan. No email work in this stage.
 
-Two parallel tracks. Each stage is shippable on its own; do not combine.
+## 1. Opportunities
 
----
+A curated board of external scholarships, fellowships, jobs, and calls-for-papers that the JIY team posts for members.
 
-## Track A — Member dashboard & member pages
+**New table `opportunities`:**
+- `title`, `slug`, `summary`, `body` (markdown), `category` (enum: scholarship | fellowship | job | cfp | other), `organization`, `location`, `url` (external apply link), `deadline` (timestamptz, nullable), `cover_image_url`, `status` (draft | published | archived), `published_at`, `created_by`.
+- Standard `created_at` / `updated_at` + trigger.
+- GRANTs: `authenticated` full; `service_role` all; `anon` SELECT (board is public-readable when published).
+- RLS:
+  - Anyone (anon + authenticated) can read rows where `status='published'`.
+  - Admins (`has_role(auth.uid(),'admin')`) can do everything.
 
-Today `/dashboard` renders a beautifully designed shell, but the widgets use placeholder data and the top-nav links (`Events`, `Scholar Q&A`, `The Press`, `Opportunity Board`, `Merch Shop`) all point to `#`. The user (`"Ali R."`) is hardcoded. None of the member-facing pages behind those nav links exist yet.
+**Server functions** in `src/lib/jiy/opportunities.functions.ts`:
+- `listPublishedOpportunities({ category?, limit?, offset? })` — public.
+- `getOpportunityBySlug(slug)` — public, published only.
+- `listAllOpportunitiesAdmin()` — admin-only via `requireSupabaseAuth` + role check.
+- `upsertOpportunity(input)` — admin.
+- `deleteOpportunity(id)` — admin.
 
-### Stage A1 — Make the dashboard real
-Wire the existing shell to live data with no visual redesign.
-- Replace hardcoded `Ali R.` / `Member` with the signed-in profile (`getMyProfile`).
-- `WelcomeBlock`, `UpcomingEvents`, `RegistrationTicket` → pull from `events` + `event_registrations` (server fns already exist).
-- `AnnouncementsWidget` → `announcements` (server fn exists).
-- `EditorialJournalFeed` → latest published `youth_press_articles`.
-- `VolunteerCorpWidget` / `AssociationLinks` → static for now, content sourced from a new `site_content` section `dashboard.sidebar` so admin can edit copy.
-- `TopNavBar` links become real `<Link>`s to the routes built in A2/A3.
+**Routes:**
+- Replace placeholder `src/routes/opportunities.tsx` with real listing (filter chips by category, deadline sort, card grid using JIY editorial tokens).
+- `src/routes/opportunities.$slug.tsx` — detail page with cover, summary, body, deadline, "Apply" CTA opening `url` in new tab. Head metadata derived from row (title, description, og:image = cover).
+- `src/routes/admin/opportunities.tsx` — admin list + create/edit drawer mirroring the existing `admin/announcements` pattern (table, status badges, publish toggle, slug auto-gen).
 
-### Stage A2 — Public/member content pages (read-only)
-Create the routes the nav promises. Public reads, but signed-in users see "save / RSVP / ask" CTAs.
-- `/press` — index of published `youth_press_articles`, with `/press/$slug` detail.
-- `/scholar-qa` — list answered `scholar_questions`, with `/scholar-qa/ask` form (auth required) that uses the existing `askQuestion` server fn.
-- `/opportunities` — read-only board backed by a new `opportunities` table (admin-managed). One migration: table + RLS + grants + admin CRUD route under `_authenticated/admin.opportunities.*`.
-- `/shop` — placeholder route only (no commerce yet); shows "coming soon" + email-me-when-live opt-in writing to a new `shop_waitlist` table. Keep scope tight; full Stripe is out of scope here.
+**Navigation:** add "Opportunities" link in admin sidebar (where Announcements/Events live).
 
-### Stage A3 — Member self-service area
-Routes under `_authenticated/` so they're gated automatically.
-- `/account` — view/edit profile (calls existing `updateMyProfile`), change password, manage notification preferences (see B3).
-- `/account/registrations` — list of the member's event registrations with cancel button.
-- `/account/submissions` — their scholar questions + press article drafts.
+## 2. Shop — Coming Soon + Waitlist
 
-### Stage A4 — Notifications inbox
-- `notifications` rows already exist. Add an in-app bell in `TopNavBar` with unread count + dropdown listing recent rows. Mark-as-read writes back via a new `markNotificationRead` server fn.
+No commerce yet. A teaser page that collects emails for launch notification.
 
----
+**New table `shop_waitlist`:**
+- `email` (citext, unique), `user_id` (nullable fk to auth.users), `source` (text, default 'shop_page'), `created_at`.
+- GRANTs: `anon` + `authenticated` INSERT; `service_role` all. No SELECT for anon/authenticated (admin-only via service_role / admin policy).
+- RLS:
+  - Insert allowed for anyone (anon + authenticated) with a valid email.
+  - Select restricted to admins.
 
-## Track B — Email + notification delivery
+**Server fn** `src/lib/jiy/shop.functions.ts`:
+- `joinShopWaitlist({ email })` — public, zod-validates email, inserts with `on conflict do nothing`, attaches `user_id` when session present.
+- `listShopWaitlistAdmin()` — admin only.
 
-Today `enqueue_notification` writes rows to `public.notifications`, but nothing drains the queue or sends email. The user has Supabase but Lovable Emails infra isn't set up yet on this stack.
+**Route:** replace placeholder `src/routes/shop.tsx` with editorial "Coming Soon" hero + waitlist form (email field, submit, success state). Optional admin view at `src/routes/admin/shop-waitlist.tsx` (simple table + CSV export button using client-side blob).
 
-### Stage B1 — Email infrastructure
-- Verify/create an email domain via the Lovable Emails setup flow (one-time DNS step by the user).
-- Run `email_domain--setup_email_infra` (creates pgmq queues, cron, vault secret).
-- Run `email_domain--scaffold_auth_email_templates` — brand the six auth templates (signup confirm, magic link, recovery, invite, email change, reauth) with JIY colors/fonts.
-- Run `email_domain--scaffold_transactional_email` — gets us `/lovable/email/transactional/send`, preview, unsubscribe, suppression.
+## 3. Out of scope (intentionally deferred)
 
-### Stage B2 — Bridge existing `notifications` queue → email sender
-- New TanStack server route (cron-triggered) `/api/public/notifications/drain` that:
-  1. Selects pending `notifications` rows where `channel='email'` and `scheduled_for <= now()`.
-  2. Resolves recipient email from `auth.users` via admin client.
-  3. Calls `sendTransactionalEmail({ templateName, recipientEmail, idempotencyKey: notification.id, templateData: payload })`.
-  4. Updates the row's status (`sent` / `failed`) + writes `notification_deliveries`.
-- pg_cron schedule: every minute. Idempotent via the notification id.
+- All Track B email work (pgmq drain worker, React Email templates, transactional sends, auth email templates, notification prefs). Stays paused until DNS is ready.
+- Real Stripe checkout for the shop.
+- Saving/bookmarking opportunities per member (can add later if requested).
 
-### Stage B3 — Email templates for each event
-Create React Email templates in `src/lib/email-templates/`:
-- `event-registration-confirmation` — already enqueued by `event-registrations.functions.ts`.
-- `scholar-question-received` (admin broadcast) + `scholar-question-answered` (asker) — already enqueued.
-- `event-reminder-24h` — new cron-enqueued reminder.
-- `announcement-published` — fanned out to opted-in members when admin publishes.
-- `welcome` — on signup (hook into `handle_new_user`).
-- `password-changed`, `email-changed` — wired via auth templates in B1.
+## Technical notes
 
-### Stage B4 — Member preferences
-- Add `notification_prefs` jsonb to `profiles` (per-template-key opt in/out).
-- `/account` UI to toggle.
-- Drain worker (B2) skips emails when prefs say off.
-- Unsubscribe link in every email already handled by Lovable Emails infra; we just persist the unsubscribe token mapping to the right `template_key`.
+- Migration runs first (single call) creating both tables with GRANTs + RLS + admin policies using existing `has_role` security-definer.
+- Server fns follow existing `src/lib/jiy/*.functions.ts` patterns (`createServerFn`, zod `inputValidator`, `requireSupabaseAuth` middleware for admin/mutation fns).
+- UI reuses JIY tokens (`headline-*`, `form-title`, `margin-safe`, `gap-section`, midnight-sapphire / damascus-gold) and shadcn primitives already in the project. Responsive header rows use the `grid-cols-[minmax(0,1fr)_auto] sm:flex` pattern per project memory.
+- Admin opportunity editor uses the same markdown textarea + cover image upload helper as announcements.
 
----
+## Open question
 
-## Suggested shipping order
-
-1. **B1** (email infra & domain) — depends on user doing DNS, so start early in parallel.
-2. **A1** (live dashboard data) — small, immediately visible.
-3. **A2** (Press + Scholar Q&A + Opportunities public pages).
-4. **B2 + B3** (drain worker + first 3 templates) — once B1 is verified.
-5. **A3** (account self-service) + **B4** (prefs).
-6. **A4** (in-app inbox) + remaining templates.
-7. **A2/shop** waitlist last; full commerce is its own future plan.
-
----
-
-## Open questions before build
-- For `/opportunities`: should members be able to submit opportunities, or admin-only?
-- For `/shop`: confirm "coming soon + waitlist" is enough for now vs. full Stripe storefront.
-- For emails: do you already own a sender domain (e.g. `notify.jiy.org`) or do you want to buy one through Lovable?
+For `opportunities.cover_image_url`: reuse the existing `site-content` storage bucket pattern (admin upload + signed/public URL), or skip cover images for v1 and ship text-only cards? Default if you don't answer: reuse existing bucket, cover image optional.
