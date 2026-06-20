@@ -728,6 +728,63 @@ export type Database = {
         }
         Relationships: []
       }
+      opportunities: {
+        Row: {
+          body_md: string
+          category: Database["public"]["Enums"]["opportunity_category"]
+          cover_image_url: string | null
+          created_at: string
+          created_by: string | null
+          deadline: string | null
+          id: string
+          location: string | null
+          organization: string | null
+          published_at: string | null
+          slug: string
+          status: Database["public"]["Enums"]["opportunity_status"]
+          summary: string
+          title: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          body_md?: string
+          category?: Database["public"]["Enums"]["opportunity_category"]
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          deadline?: string | null
+          id?: string
+          location?: string | null
+          organization?: string | null
+          published_at?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["opportunity_status"]
+          summary?: string
+          title: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          body_md?: string
+          category?: Database["public"]["Enums"]["opportunity_category"]
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          deadline?: string | null
+          id?: string
+          location?: string | null
+          organization?: string | null
+          published_at?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["opportunity_status"]
+          summary?: string
+          title?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age_demographic: string | null
@@ -886,6 +943,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      shop_waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          source: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          source?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          source?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       site_content: {
         Row: {
@@ -1135,6 +1216,13 @@ export type Database = {
       event_status: "draft" | "published" | "completed" | "cancelled"
       notification_channel: "email" | "push" | "sms" | "in_app"
       notification_status: "pending" | "sent" | "failed" | "cancelled"
+      opportunity_category:
+        | "scholarship"
+        | "fellowship"
+        | "job"
+        | "cfp"
+        | "other"
+      opportunity_status: "draft" | "published" | "archived"
       question_status: "pending_triage" | "assigned" | "answered" | "rejected"
       subscription_plan: "monthly_10" | "yearly_100"
       subscription_status:
@@ -1284,6 +1372,14 @@ export const Constants = {
       event_status: ["draft", "published", "completed", "cancelled"],
       notification_channel: ["email", "push", "sms", "in_app"],
       notification_status: ["pending", "sent", "failed", "cancelled"],
+      opportunity_category: [
+        "scholarship",
+        "fellowship",
+        "job",
+        "cfp",
+        "other",
+      ],
+      opportunity_status: ["draft", "published", "archived"],
       question_status: ["pending_triage", "assigned", "answered", "rejected"],
       subscription_plan: ["monthly_10", "yearly_100"],
       subscription_status: [

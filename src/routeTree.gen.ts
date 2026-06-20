@@ -20,6 +20,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EventsIndexRouteImport } from './routes/events.index'
 import { Route as PressSlugRouteImport } from './routes/press.$slug'
+import { Route as OpportunitiesSlugRouteImport } from './routes/opportunities.$slug'
 import { Route as FormsTemplateIdRouteImport } from './routes/forms.$templateId'
 import { Route as EventsEventIdRouteImport } from './routes/events.$eventId'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
@@ -33,7 +34,9 @@ import { Route as AuthenticatedOnboardingStep2RouteImport } from './routes/_auth
 import { Route as AuthenticatedOnboardingStep1RouteImport } from './routes/_authenticated/onboarding.step-1'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
+import { Route as AuthenticatedAdminShopWaitlistRouteImport } from './routes/_authenticated/admin.shop-waitlist'
 import { Route as AuthenticatedAdminRecurringRouteImport } from './routes/_authenticated/admin.recurring'
+import { Route as AuthenticatedAdminOpportunitiesRouteImport } from './routes/_authenticated/admin.opportunities'
 import { Route as AuthenticatedAdminHomepageRouteImport } from './routes/_authenticated/admin.homepage'
 import { Route as AuthenticatedAdminFormsRouteImport } from './routes/_authenticated/admin.forms'
 import { Route as AuthenticatedAdminFlagsRouteImport } from './routes/_authenticated/admin.flags'
@@ -121,6 +124,11 @@ const PressSlugRoute = PressSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => PressRoute,
 } as any)
+const OpportunitiesSlugRoute = OpportunitiesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => OpportunitiesRoute,
+} as any)
 const FormsTemplateIdRoute = FormsTemplateIdRouteImport.update({
   id: '/forms/$templateId',
   path: '/forms/$templateId',
@@ -190,10 +198,22 @@ const AuthenticatedAdminTeamRoute = AuthenticatedAdminTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminShopWaitlistRoute =
+  AuthenticatedAdminShopWaitlistRouteImport.update({
+    id: '/shop-waitlist',
+    path: '/shop-waitlist',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminRecurringRoute =
   AuthenticatedAdminRecurringRouteImport.update({
     id: '/recurring',
     path: '/recurring',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminOpportunitiesRoute =
+  AuthenticatedAdminOpportunitiesRouteImport.update({
+    id: '/opportunities',
+    path: '/opportunities',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminHomepageRoute =
@@ -388,7 +408,7 @@ const AuthenticatedAdminEventsIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/opportunities': typeof OpportunitiesRoute
+  '/opportunities': typeof OpportunitiesRouteWithChildren
   '/press': typeof PressRouteWithChildren
   '/register': typeof RegisterRoute
   '/scholar-qa': typeof ScholarQaRoute
@@ -400,6 +420,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
+  '/opportunities/$slug': typeof OpportunitiesSlugRoute
   '/press/$slug': typeof PressSlugRoute
   '/events/': typeof EventsIndexRoute
   '/account/registrations': typeof AuthenticatedAccountRegistrationsRoute
@@ -410,7 +431,9 @@ export interface FileRoutesByFullPath {
   '/admin/flags': typeof AuthenticatedAdminFlagsRoute
   '/admin/forms': typeof AuthenticatedAdminFormsRouteWithChildren
   '/admin/homepage': typeof AuthenticatedAdminHomepageRouteWithChildren
+  '/admin/opportunities': typeof AuthenticatedAdminOpportunitiesRoute
   '/admin/recurring': typeof AuthenticatedAdminRecurringRoute
+  '/admin/shop-waitlist': typeof AuthenticatedAdminShopWaitlistRoute
   '/admin/team': typeof AuthenticatedAdminTeamRouteWithChildren
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
@@ -446,7 +469,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/opportunities': typeof OpportunitiesRoute
+  '/opportunities': typeof OpportunitiesRouteWithChildren
   '/press': typeof PressRouteWithChildren
   '/register': typeof RegisterRoute
   '/scholar-qa': typeof ScholarQaRoute
@@ -456,6 +479,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
+  '/opportunities/$slug': typeof OpportunitiesSlugRoute
   '/press/$slug': typeof PressSlugRoute
   '/events': typeof EventsIndexRoute
   '/account/registrations': typeof AuthenticatedAccountRegistrationsRoute
@@ -463,7 +487,9 @@ export interface FileRoutesByTo {
   '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/flags': typeof AuthenticatedAdminFlagsRoute
+  '/admin/opportunities': typeof AuthenticatedAdminOpportunitiesRoute
   '/admin/recurring': typeof AuthenticatedAdminRecurringRoute
+  '/admin/shop-waitlist': typeof AuthenticatedAdminShopWaitlistRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
   '/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
@@ -500,7 +526,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/opportunities': typeof OpportunitiesRoute
+  '/opportunities': typeof OpportunitiesRouteWithChildren
   '/press': typeof PressRouteWithChildren
   '/register': typeof RegisterRoute
   '/scholar-qa': typeof ScholarQaRoute
@@ -512,6 +538,7 @@ export interface FileRoutesById {
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
+  '/opportunities/$slug': typeof OpportunitiesSlugRoute
   '/press/$slug': typeof PressSlugRoute
   '/events/': typeof EventsIndexRoute
   '/_authenticated/account/registrations': typeof AuthenticatedAccountRegistrationsRoute
@@ -522,7 +549,9 @@ export interface FileRoutesById {
   '/_authenticated/admin/flags': typeof AuthenticatedAdminFlagsRoute
   '/_authenticated/admin/forms': typeof AuthenticatedAdminFormsRouteWithChildren
   '/_authenticated/admin/homepage': typeof AuthenticatedAdminHomepageRouteWithChildren
+  '/_authenticated/admin/opportunities': typeof AuthenticatedAdminOpportunitiesRoute
   '/_authenticated/admin/recurring': typeof AuthenticatedAdminRecurringRoute
+  '/_authenticated/admin/shop-waitlist': typeof AuthenticatedAdminShopWaitlistRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRouteWithChildren
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
@@ -572,6 +601,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/events/$eventId'
     | '/forms/$templateId'
+    | '/opportunities/$slug'
     | '/press/$slug'
     | '/events/'
     | '/account/registrations'
@@ -582,7 +612,9 @@ export interface FileRouteTypes {
     | '/admin/flags'
     | '/admin/forms'
     | '/admin/homepage'
+    | '/admin/opportunities'
     | '/admin/recurring'
+    | '/admin/shop-waitlist'
     | '/admin/team'
     | '/admin/users'
     | '/onboarding/step-1'
@@ -628,6 +660,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/events/$eventId'
     | '/forms/$templateId'
+    | '/opportunities/$slug'
     | '/press/$slug'
     | '/events'
     | '/account/registrations'
@@ -635,7 +668,9 @@ export interface FileRouteTypes {
     | '/admin/announcements'
     | '/admin/audit'
     | '/admin/flags'
+    | '/admin/opportunities'
     | '/admin/recurring'
+    | '/admin/shop-waitlist'
     | '/admin/users'
     | '/onboarding/step-1'
     | '/onboarding/step-2'
@@ -683,6 +718,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/events/$eventId'
     | '/forms/$templateId'
+    | '/opportunities/$slug'
     | '/press/$slug'
     | '/events/'
     | '/_authenticated/account/registrations'
@@ -693,7 +729,9 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/flags'
     | '/_authenticated/admin/forms'
     | '/_authenticated/admin/homepage'
+    | '/_authenticated/admin/opportunities'
     | '/_authenticated/admin/recurring'
+    | '/_authenticated/admin/shop-waitlist'
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/users'
     | '/_authenticated/onboarding/step-1'
@@ -731,7 +769,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
-  OpportunitiesRoute: typeof OpportunitiesRoute
+  OpportunitiesRoute: typeof OpportunitiesRouteWithChildren
   PressRoute: typeof PressRouteWithChildren
   RegisterRoute: typeof RegisterRoute
   ScholarQaRoute: typeof ScholarQaRoute
@@ -822,6 +860,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/press/$slug'
       preLoaderRoute: typeof PressSlugRouteImport
       parentRoute: typeof PressRoute
+    }
+    '/opportunities/$slug': {
+      id: '/opportunities/$slug'
+      path: '/$slug'
+      fullPath: '/opportunities/$slug'
+      preLoaderRoute: typeof OpportunitiesSlugRouteImport
+      parentRoute: typeof OpportunitiesRoute
     }
     '/forms/$templateId': {
       id: '/forms/$templateId'
@@ -914,11 +959,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminTeamRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/shop-waitlist': {
+      id: '/_authenticated/admin/shop-waitlist'
+      path: '/shop-waitlist'
+      fullPath: '/admin/shop-waitlist'
+      preLoaderRoute: typeof AuthenticatedAdminShopWaitlistRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/recurring': {
       id: '/_authenticated/admin/recurring'
       path: '/recurring'
       fullPath: '/admin/recurring'
       preLoaderRoute: typeof AuthenticatedAdminRecurringRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/opportunities': {
+      id: '/_authenticated/admin/opportunities'
+      path: '/opportunities'
+      fullPath: '/admin/opportunities'
+      preLoaderRoute: typeof AuthenticatedAdminOpportunitiesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/homepage': {
@@ -1262,7 +1321,9 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminFlagsRoute: typeof AuthenticatedAdminFlagsRoute
   AuthenticatedAdminFormsRoute: typeof AuthenticatedAdminFormsRouteWithChildren
   AuthenticatedAdminHomepageRoute: typeof AuthenticatedAdminHomepageRouteWithChildren
+  AuthenticatedAdminOpportunitiesRoute: typeof AuthenticatedAdminOpportunitiesRoute
   AuthenticatedAdminRecurringRoute: typeof AuthenticatedAdminRecurringRoute
+  AuthenticatedAdminShopWaitlistRoute: typeof AuthenticatedAdminShopWaitlistRoute
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRouteWithChildren
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -1278,7 +1339,9 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminFlagsRoute: AuthenticatedAdminFlagsRoute,
   AuthenticatedAdminFormsRoute: AuthenticatedAdminFormsRouteWithChildren,
   AuthenticatedAdminHomepageRoute: AuthenticatedAdminHomepageRouteWithChildren,
+  AuthenticatedAdminOpportunitiesRoute: AuthenticatedAdminOpportunitiesRoute,
   AuthenticatedAdminRecurringRoute: AuthenticatedAdminRecurringRoute,
+  AuthenticatedAdminShopWaitlistRoute: AuthenticatedAdminShopWaitlistRoute,
   AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRouteWithChildren,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
@@ -1325,6 +1388,18 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface OpportunitiesRouteChildren {
+  OpportunitiesSlugRoute: typeof OpportunitiesSlugRoute
+}
+
+const OpportunitiesRouteChildren: OpportunitiesRouteChildren = {
+  OpportunitiesSlugRoute: OpportunitiesSlugRoute,
+}
+
+const OpportunitiesRouteWithChildren = OpportunitiesRoute._addFileChildren(
+  OpportunitiesRouteChildren,
+)
+
 interface PressRouteChildren {
   PressSlugRoute: typeof PressSlugRoute
 }
@@ -1339,7 +1414,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
-  OpportunitiesRoute: OpportunitiesRoute,
+  OpportunitiesRoute: OpportunitiesRouteWithChildren,
   PressRoute: PressRouteWithChildren,
   RegisterRoute: RegisterRoute,
   ScholarQaRoute: ScholarQaRoute,
