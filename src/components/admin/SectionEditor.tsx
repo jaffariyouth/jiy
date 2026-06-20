@@ -43,6 +43,7 @@ export function SectionEditor<T extends Content>({
       toast.success("Saved");
       qc.invalidateQueries({ queryKey: ["site_content", sectionKey] });
       qc.invalidateQueries({ queryKey: ["homepage"] });
+      qc.invalidateQueries({ queryKey: ["team-page"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });

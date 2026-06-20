@@ -1,29 +1,47 @@
-## Three fixes
+## Scan results — admin editing of public pages
 
-### 1. Add "All Events" to the homepage Events dropdown
-In `src/routes/index.tsx`, the `EventsDropdown` (around line 207) currently has only two items: "Upcoming Events" and "Ongoing Events" — both scroll to homepage hashes. Add a third item **"All Events"** at the top that uses TanStack `<Link to="/events">` so users can jump to the full events list page.
+Reviewed every public-page editor, the shared `SectionEditor`, the `site_content` server functions, and the storage flow. Coverage is comprehensive and correct, with one small gap worth fixing.
 
-### 2. Use the homepage header on all non-logged-in pages
-The homepage has a polished `<Header />` (logo, About Us, Our Team, Events dropdown, The Press, Login / Join JIY buttons). The `/events` list and `/events/$eventId` detail pages currently have their own slim ad‑hoc top bar with just "Home / Our Team / Events" + "Join JIY".
+### What works (no change needed)
 
-- Extract the homepage `Header` and `EventsDropdown` into a shared file: `src/components/site/SiteHeader.tsx`.
-- Update `src/routes/index.tsx` to import + use it (no visual change to homepage).
-- Replace the local `<header>` in `src/routes/events.tsx` and `src/routes/events.$eventId.tsx` with `<SiteHeader />`.
-- `signedIn` state: read the Supabase session the same way the homepage does (inside `SiteHeader` itself, via the same `supabase.auth.getSession()` + `onAuthStateChange` effect used in `HomePage`), so the header works on every public route without prop wiring.
-- Apply the same to other public pages that ship their own header (`/team`) if they exist — check and swap.
+**Homepage (`/`)** — every section on the public page has a matching editor at `/admin/homepage/*`:
 
-### 3. Fix "click event → nothing happens" (event detail page is glitched)
-Root cause: file-routing collision. We have both `src/routes/events.tsx` (the list page, route id `/events`) and `src/routes/events.$eventId.tsx` (detail, route id `/events/$eventId`). TanStack treats `events.tsx` as a **parent layout** of `events.$eventId.tsx`, but `events.tsx`'s component renders the list directly with **no `<Outlet />`**. Result: navigating to `/events/{id}` matches the child route, but the parent never gives it a place to render → blank screen / "nothing happens".
+| Public section   | Editor route                | Text / paragraphs | Images                |
+| ---------------- | --------------------------- | ----------------- | --------------------- |
+| Hero             | `/admin/homepage/hero`      | ✓ kicker, headlines, body, quote, CTAs, socials | ✓ hero photo |
+| Metrics          | `/admin/homepage/metrics`   | ✓ value/label, add/remove | — |
+| About            | `/admin/homepage/about`     | ✓ all paragraphs, directives | ✓ 3 photos |
+| Ongoing          | `/admin/homepage/ongoing`   | ✓ narrative, CTA, initiatives | ✓ center photo |
+| Strategic Values | `/admin/homepage/values`    | ✓ items add/remove | — |
+| Press            | `/admin/homepage/press`     | ✓ kickers/labels  | — (uses Press articles) |
+| Footer           | `/admin/homepage/footer`    | ✓ tagline, nav, socials, copyright | — |
 
-Fix: rename `src/routes/events.tsx` → `src/routes/events.index.tsx` and update its `createFileRoute("/events")` to `createFileRoute("/events/")`. Now `events.index.tsx` is the leaf for `/events`, `events.$eventId.tsx` is a sibling leaf, and there is no broken parent layout. (Alternative — keep `events.tsx` as a layout that returns `<Outlet />` and move the list into `events.index.tsx` — same end result, more files.) Going with the simple rename.
+**Team (`/team`)** — full coverage at `/admin/team/*`: hero (with arch photo), intro, leadership (bio + photo + email + linkedin, reorder/remove), members (photo + name + role + region, reorder/remove), join CTA.
 
-## Out of scope
-- No backend / data changes.
-- No new copy or design changes to the homepage header itself — it's lifted as‑is.
+**Press articles** — `/admin/press` list + `/admin/press/new` + `/admin/press/$id` cover full markdown body, excerpt, cover image upload, audience targeting, featured-on-home toggle, publish/unpublish/delete.
 
-## Files touched
-- `src/components/site/SiteHeader.tsx` *(new — extracted header + dropdown)*
-- `src/routes/index.tsx` *(use `SiteHeader`, add "All Events" link in dropdown)*
-- `src/routes/events.tsx` → **rename** to `src/routes/events.index.tsx`, swap local header for `SiteHeader`, update `createFileRoute` path
-- `src/routes/events.$eventId.tsx` *(swap local header for `SiteHeader`)*
-- `src/routes/team.tsx` *(swap to `SiteHeader` if it has a custom header)*
+**Events** — `/admin/events/new` and `/admin/events/$id` support cover image upload + all event fields.
+
+**Infrastructure that's already correct:**
+- All uploads go to the `editorial-media` Supabase Storage bucket (already public).
+- `SectionEditor` is gated by `requireSupabaseAuth` + `assertAdmin` on the server.
+- `updateSectionContent` writes to `site_content` and audit-logs the change.
+- The `ImageField` supports both file upload and pasting a URL, with a remove button.
+- Saves invalidate React Query caches so the editor reflects the new state immediately.
+
+### One gap to fix
+
+`SectionEditor` invalidates `["site_content", key]` and `["homepage"]` after a save, but **not** `["team-page"]`. That means after an admin saves a Team Hero / Intro / Leadership / Members / CTA / Footer section, the public `/team` page still shows the old content until a hard refresh.
+
+**Fix:** in `src/components/admin/SectionEditor.tsx` `onSuccess`, also invalidate `["team-page"]`. One-line change.
+
+### Technical detail
+
+```ts
+// src/components/admin/SectionEditor.tsx, inside mutation onSuccess
+qc.invalidateQueries({ queryKey: ["site_content", sectionKey] });
+qc.invalidateQueries({ queryKey: ["homepage"] });
+qc.invalidateQueries({ queryKey: ["team-page"] }); // add this
+```
+
+No schema, RLS, or storage changes required. After this fix, every public-page text/image/paragraph an admin edits will appear on the live site on the next navigation without a manual reload.
