@@ -133,15 +133,6 @@ function AdminOpportunities() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  // Auto-slug while typing a new entry
-  useEffect(() => {
-    if (form.id) return;
-    setForm((f) =>
-      f.slug
-        ? f
-        : { ...f },
-    );
-  }, [form.title, form.id]);
 
   return (
     <div>
