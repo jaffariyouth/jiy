@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Trash2, X } from "lucide-react";
 
-type GalleryItem = { name: string; path: string; url: string; created_at?: string };
+type GalleryItem = { name: string; path: string; url: string; created_at?: string | null };
 
 const BUCKET = "editorial-media";
 
