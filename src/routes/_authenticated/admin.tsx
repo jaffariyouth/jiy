@@ -12,6 +12,8 @@ import {
   Flag,
   ScrollText,
   Home,
+  Briefcase,
+  ShoppingBag,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({

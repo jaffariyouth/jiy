@@ -34,6 +34,7 @@ import { Route as AuthenticatedOnboardingStep2RouteImport } from './routes/_auth
 import { Route as AuthenticatedOnboardingStep1RouteImport } from './routes/_authenticated/onboarding.step-1'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
+import { Route as AuthenticatedAdminShopWaitlistRouteImport } from './routes/_authenticated/admin.shop-waitlist'
 import { Route as AuthenticatedAdminRecurringRouteImport } from './routes/_authenticated/admin.recurring'
 import { Route as AuthenticatedAdminOpportunitiesRouteImport } from './routes/_authenticated/admin.opportunities'
 import { Route as AuthenticatedAdminHomepageRouteImport } from './routes/_authenticated/admin.homepage'
@@ -197,6 +198,12 @@ const AuthenticatedAdminTeamRoute = AuthenticatedAdminTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminShopWaitlistRoute =
+  AuthenticatedAdminShopWaitlistRouteImport.update({
+    id: '/shop-waitlist',
+    path: '/shop-waitlist',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminRecurringRoute =
   AuthenticatedAdminRecurringRouteImport.update({
     id: '/recurring',
@@ -426,6 +433,7 @@ export interface FileRoutesByFullPath {
   '/admin/homepage': typeof AuthenticatedAdminHomepageRouteWithChildren
   '/admin/opportunities': typeof AuthenticatedAdminOpportunitiesRoute
   '/admin/recurring': typeof AuthenticatedAdminRecurringRoute
+  '/admin/shop-waitlist': typeof AuthenticatedAdminShopWaitlistRoute
   '/admin/team': typeof AuthenticatedAdminTeamRouteWithChildren
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
@@ -481,6 +489,7 @@ export interface FileRoutesByTo {
   '/admin/flags': typeof AuthenticatedAdminFlagsRoute
   '/admin/opportunities': typeof AuthenticatedAdminOpportunitiesRoute
   '/admin/recurring': typeof AuthenticatedAdminRecurringRoute
+  '/admin/shop-waitlist': typeof AuthenticatedAdminShopWaitlistRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
   '/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
@@ -542,6 +551,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/homepage': typeof AuthenticatedAdminHomepageRouteWithChildren
   '/_authenticated/admin/opportunities': typeof AuthenticatedAdminOpportunitiesRoute
   '/_authenticated/admin/recurring': typeof AuthenticatedAdminRecurringRoute
+  '/_authenticated/admin/shop-waitlist': typeof AuthenticatedAdminShopWaitlistRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRouteWithChildren
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
@@ -604,6 +614,7 @@ export interface FileRouteTypes {
     | '/admin/homepage'
     | '/admin/opportunities'
     | '/admin/recurring'
+    | '/admin/shop-waitlist'
     | '/admin/team'
     | '/admin/users'
     | '/onboarding/step-1'
@@ -659,6 +670,7 @@ export interface FileRouteTypes {
     | '/admin/flags'
     | '/admin/opportunities'
     | '/admin/recurring'
+    | '/admin/shop-waitlist'
     | '/admin/users'
     | '/onboarding/step-1'
     | '/onboarding/step-2'
@@ -719,6 +731,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/homepage'
     | '/_authenticated/admin/opportunities'
     | '/_authenticated/admin/recurring'
+    | '/_authenticated/admin/shop-waitlist'
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/users'
     | '/_authenticated/onboarding/step-1'
@@ -944,6 +957,13 @@ declare module '@tanstack/react-router' {
       path: '/team'
       fullPath: '/admin/team'
       preLoaderRoute: typeof AuthenticatedAdminTeamRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/shop-waitlist': {
+      id: '/_authenticated/admin/shop-waitlist'
+      path: '/shop-waitlist'
+      fullPath: '/admin/shop-waitlist'
+      preLoaderRoute: typeof AuthenticatedAdminShopWaitlistRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/recurring': {
@@ -1303,6 +1323,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminHomepageRoute: typeof AuthenticatedAdminHomepageRouteWithChildren
   AuthenticatedAdminOpportunitiesRoute: typeof AuthenticatedAdminOpportunitiesRoute
   AuthenticatedAdminRecurringRoute: typeof AuthenticatedAdminRecurringRoute
+  AuthenticatedAdminShopWaitlistRoute: typeof AuthenticatedAdminShopWaitlistRoute
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRouteWithChildren
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -1320,6 +1341,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminHomepageRoute: AuthenticatedAdminHomepageRouteWithChildren,
   AuthenticatedAdminOpportunitiesRoute: AuthenticatedAdminOpportunitiesRoute,
   AuthenticatedAdminRecurringRoute: AuthenticatedAdminRecurringRoute,
+  AuthenticatedAdminShopWaitlistRoute: AuthenticatedAdminShopWaitlistRoute,
   AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRouteWithChildren,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
