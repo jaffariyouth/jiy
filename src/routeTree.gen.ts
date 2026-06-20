@@ -20,6 +20,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EventsIndexRouteImport } from './routes/events.index'
 import { Route as PressSlugRouteImport } from './routes/press.$slug'
+import { Route as OpportunitiesSlugRouteImport } from './routes/opportunities.$slug'
 import { Route as FormsTemplateIdRouteImport } from './routes/forms.$templateId'
 import { Route as EventsEventIdRouteImport } from './routes/events.$eventId'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
@@ -120,6 +121,11 @@ const PressSlugRoute = PressSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => PressRoute,
+} as any)
+const OpportunitiesSlugRoute = OpportunitiesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => OpportunitiesRoute,
 } as any)
 const FormsTemplateIdRoute = FormsTemplateIdRouteImport.update({
   id: '/forms/$templateId',
@@ -388,7 +394,7 @@ const AuthenticatedAdminEventsIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/opportunities': typeof OpportunitiesRoute
+  '/opportunities': typeof OpportunitiesRouteWithChildren
   '/press': typeof PressRouteWithChildren
   '/register': typeof RegisterRoute
   '/scholar-qa': typeof ScholarQaRoute
@@ -400,6 +406,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
+  '/opportunities/$slug': typeof OpportunitiesSlugRoute
   '/press/$slug': typeof PressSlugRoute
   '/events/': typeof EventsIndexRoute
   '/account/registrations': typeof AuthenticatedAccountRegistrationsRoute
@@ -446,7 +453,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/opportunities': typeof OpportunitiesRoute
+  '/opportunities': typeof OpportunitiesRouteWithChildren
   '/press': typeof PressRouteWithChildren
   '/register': typeof RegisterRoute
   '/scholar-qa': typeof ScholarQaRoute
@@ -456,6 +463,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
+  '/opportunities/$slug': typeof OpportunitiesSlugRoute
   '/press/$slug': typeof PressSlugRoute
   '/events': typeof EventsIndexRoute
   '/account/registrations': typeof AuthenticatedAccountRegistrationsRoute
@@ -500,7 +508,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/opportunities': typeof OpportunitiesRoute
+  '/opportunities': typeof OpportunitiesRouteWithChildren
   '/press': typeof PressRouteWithChildren
   '/register': typeof RegisterRoute
   '/scholar-qa': typeof ScholarQaRoute
@@ -512,6 +520,7 @@ export interface FileRoutesById {
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
+  '/opportunities/$slug': typeof OpportunitiesSlugRoute
   '/press/$slug': typeof PressSlugRoute
   '/events/': typeof EventsIndexRoute
   '/_authenticated/account/registrations': typeof AuthenticatedAccountRegistrationsRoute
@@ -572,6 +581,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/events/$eventId'
     | '/forms/$templateId'
+    | '/opportunities/$slug'
     | '/press/$slug'
     | '/events/'
     | '/account/registrations'
@@ -628,6 +638,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/events/$eventId'
     | '/forms/$templateId'
+    | '/opportunities/$slug'
     | '/press/$slug'
     | '/events'
     | '/account/registrations'
@@ -683,6 +694,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/events/$eventId'
     | '/forms/$templateId'
+    | '/opportunities/$slug'
     | '/press/$slug'
     | '/events/'
     | '/_authenticated/account/registrations'
@@ -731,7 +743,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
-  OpportunitiesRoute: typeof OpportunitiesRoute
+  OpportunitiesRoute: typeof OpportunitiesRouteWithChildren
   PressRoute: typeof PressRouteWithChildren
   RegisterRoute: typeof RegisterRoute
   ScholarQaRoute: typeof ScholarQaRoute
@@ -822,6 +834,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/press/$slug'
       preLoaderRoute: typeof PressSlugRouteImport
       parentRoute: typeof PressRoute
+    }
+    '/opportunities/$slug': {
+      id: '/opportunities/$slug'
+      path: '/$slug'
+      fullPath: '/opportunities/$slug'
+      preLoaderRoute: typeof OpportunitiesSlugRouteImport
+      parentRoute: typeof OpportunitiesRoute
     }
     '/forms/$templateId': {
       id: '/forms/$templateId'
@@ -1325,6 +1344,18 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface OpportunitiesRouteChildren {
+  OpportunitiesSlugRoute: typeof OpportunitiesSlugRoute
+}
+
+const OpportunitiesRouteChildren: OpportunitiesRouteChildren = {
+  OpportunitiesSlugRoute: OpportunitiesSlugRoute,
+}
+
+const OpportunitiesRouteWithChildren = OpportunitiesRoute._addFileChildren(
+  OpportunitiesRouteChildren,
+)
+
 interface PressRouteChildren {
   PressSlugRoute: typeof PressSlugRoute
 }
@@ -1339,7 +1370,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
-  OpportunitiesRoute: OpportunitiesRoute,
+  OpportunitiesRoute: OpportunitiesRouteWithChildren,
   PressRoute: PressRouteWithChildren,
   RegisterRoute: RegisterRoute,
   ScholarQaRoute: ScholarQaRoute,
