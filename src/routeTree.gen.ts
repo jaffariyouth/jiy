@@ -27,7 +27,6 @@ import { Route as AuthenticatedOnboardingStep1RouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
 import { Route as AuthenticatedAdminRecurringRouteImport } from './routes/_authenticated/admin.recurring'
-import { Route as AuthenticatedAdminPressRouteImport } from './routes/_authenticated/admin.press'
 import { Route as AuthenticatedAdminHomepageRouteImport } from './routes/_authenticated/admin.homepage'
 import { Route as AuthenticatedAdminFormsRouteImport } from './routes/_authenticated/admin.forms'
 import { Route as AuthenticatedAdminFlagsRouteImport } from './routes/_authenticated/admin.flags'
@@ -35,6 +34,7 @@ import { Route as AuthenticatedAdminEventsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin.audit'
 import { Route as AuthenticatedAdminAnnouncementsRouteImport } from './routes/_authenticated/admin.announcements'
 import { Route as AuthenticatedAdminTeamIndexRouteImport } from './routes/_authenticated/admin.team.index'
+import { Route as AuthenticatedAdminPressIndexRouteImport } from './routes/_authenticated/admin.press.index'
 import { Route as AuthenticatedAdminHomepageIndexRouteImport } from './routes/_authenticated/admin.homepage.index'
 import { Route as AuthenticatedAdminFormsIndexRouteImport } from './routes/_authenticated/admin.forms.index'
 import { Route as AuthenticatedAdminEventsIndexRouteImport } from './routes/_authenticated/admin.events.index'
@@ -151,11 +151,6 @@ const AuthenticatedAdminRecurringRoute =
     path: '/recurring',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminPressRoute = AuthenticatedAdminPressRouteImport.update({
-  id: '/press',
-  path: '/press',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
 const AuthenticatedAdminHomepageRoute =
   AuthenticatedAdminHomepageRouteImport.update({
     id: '/homepage',
@@ -194,6 +189,12 @@ const AuthenticatedAdminTeamIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedAdminTeamRoute,
+  } as any)
+const AuthenticatedAdminPressIndexRoute =
+  AuthenticatedAdminPressIndexRouteImport.update({
+    id: '/press/',
+    path: '/press/',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminHomepageIndexRoute =
   AuthenticatedAdminHomepageIndexRouteImport.update({
@@ -256,15 +257,15 @@ const AuthenticatedAdminTeamCtaRoute =
   } as any)
 const AuthenticatedAdminPressNewRoute =
   AuthenticatedAdminPressNewRouteImport.update({
-    id: '/new',
-    path: '/new',
-    getParentRoute: () => AuthenticatedAdminPressRoute,
+    id: '/press/new',
+    path: '/press/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminPressIdRoute =
   AuthenticatedAdminPressIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedAdminPressRoute,
+    id: '/press/$id',
+    path: '/press/$id',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminHomepageValuesRoute =
   AuthenticatedAdminHomepageValuesRouteImport.update({
@@ -344,7 +345,6 @@ export interface FileRoutesByFullPath {
   '/admin/flags': typeof AuthenticatedAdminFlagsRoute
   '/admin/forms': typeof AuthenticatedAdminFormsRouteWithChildren
   '/admin/homepage': typeof AuthenticatedAdminHomepageRouteWithChildren
-  '/admin/press': typeof AuthenticatedAdminPressRouteWithChildren
   '/admin/recurring': typeof AuthenticatedAdminRecurringRoute
   '/admin/team': typeof AuthenticatedAdminTeamRouteWithChildren
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -374,6 +374,7 @@ export interface FileRoutesByFullPath {
   '/admin/events/': typeof AuthenticatedAdminEventsIndexRoute
   '/admin/forms/': typeof AuthenticatedAdminFormsIndexRoute
   '/admin/homepage/': typeof AuthenticatedAdminHomepageIndexRoute
+  '/admin/press/': typeof AuthenticatedAdminPressIndexRoute
   '/admin/team/': typeof AuthenticatedAdminTeamIndexRoute
 }
 export interface FileRoutesByTo {
@@ -389,7 +390,6 @@ export interface FileRoutesByTo {
   '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/flags': typeof AuthenticatedAdminFlagsRoute
-  '/admin/press': typeof AuthenticatedAdminPressRouteWithChildren
   '/admin/recurring': typeof AuthenticatedAdminRecurringRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
@@ -418,6 +418,7 @@ export interface FileRoutesByTo {
   '/admin/events': typeof AuthenticatedAdminEventsIndexRoute
   '/admin/forms': typeof AuthenticatedAdminFormsIndexRoute
   '/admin/homepage': typeof AuthenticatedAdminHomepageIndexRoute
+  '/admin/press': typeof AuthenticatedAdminPressIndexRoute
   '/admin/team': typeof AuthenticatedAdminTeamIndexRoute
 }
 export interface FileRoutesById {
@@ -439,7 +440,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/flags': typeof AuthenticatedAdminFlagsRoute
   '/_authenticated/admin/forms': typeof AuthenticatedAdminFormsRouteWithChildren
   '/_authenticated/admin/homepage': typeof AuthenticatedAdminHomepageRouteWithChildren
-  '/_authenticated/admin/press': typeof AuthenticatedAdminPressRouteWithChildren
   '/_authenticated/admin/recurring': typeof AuthenticatedAdminRecurringRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRouteWithChildren
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -469,6 +469,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/events/': typeof AuthenticatedAdminEventsIndexRoute
   '/_authenticated/admin/forms/': typeof AuthenticatedAdminFormsIndexRoute
   '/_authenticated/admin/homepage/': typeof AuthenticatedAdminHomepageIndexRoute
+  '/_authenticated/admin/press/': typeof AuthenticatedAdminPressIndexRoute
   '/_authenticated/admin/team/': typeof AuthenticatedAdminTeamIndexRoute
 }
 export interface FileRouteTypes {
@@ -490,7 +491,6 @@ export interface FileRouteTypes {
     | '/admin/flags'
     | '/admin/forms'
     | '/admin/homepage'
-    | '/admin/press'
     | '/admin/recurring'
     | '/admin/team'
     | '/admin/users'
@@ -520,6 +520,7 @@ export interface FileRouteTypes {
     | '/admin/events/'
     | '/admin/forms/'
     | '/admin/homepage/'
+    | '/admin/press/'
     | '/admin/team/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -535,7 +536,6 @@ export interface FileRouteTypes {
     | '/admin/announcements'
     | '/admin/audit'
     | '/admin/flags'
-    | '/admin/press'
     | '/admin/recurring'
     | '/admin/users'
     | '/onboarding/step-1'
@@ -564,6 +564,7 @@ export interface FileRouteTypes {
     | '/admin/events'
     | '/admin/forms'
     | '/admin/homepage'
+    | '/admin/press'
     | '/admin/team'
   id:
     | '__root__'
@@ -584,7 +585,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/flags'
     | '/_authenticated/admin/forms'
     | '/_authenticated/admin/homepage'
-    | '/_authenticated/admin/press'
     | '/_authenticated/admin/recurring'
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/users'
@@ -614,6 +614,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/events/'
     | '/_authenticated/admin/forms/'
     | '/_authenticated/admin/homepage/'
+    | '/_authenticated/admin/press/'
     | '/_authenticated/admin/team/'
   fileRoutesById: FileRoutesById
 }
@@ -758,13 +759,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRecurringRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/press': {
-      id: '/_authenticated/admin/press'
-      path: '/press'
-      fullPath: '/admin/press'
-      preLoaderRoute: typeof AuthenticatedAdminPressRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/homepage': {
       id: '/_authenticated/admin/homepage'
       path: '/homepage'
@@ -813,6 +807,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/team/'
       preLoaderRoute: typeof AuthenticatedAdminTeamIndexRouteImport
       parentRoute: typeof AuthenticatedAdminTeamRoute
+    }
+    '/_authenticated/admin/press/': {
+      id: '/_authenticated/admin/press/'
+      path: '/press'
+      fullPath: '/admin/press/'
+      preLoaderRoute: typeof AuthenticatedAdminPressIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/homepage/': {
       id: '/_authenticated/admin/homepage/'
@@ -886,17 +887,17 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/admin/press/new': {
       id: '/_authenticated/admin/press/new'
-      path: '/new'
+      path: '/press/new'
       fullPath: '/admin/press/new'
       preLoaderRoute: typeof AuthenticatedAdminPressNewRouteImport
-      parentRoute: typeof AuthenticatedAdminPressRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/press/$id': {
       id: '/_authenticated/admin/press/$id'
-      path: '/$id'
+      path: '/press/$id'
       fullPath: '/admin/press/$id'
       preLoaderRoute: typeof AuthenticatedAdminPressIdRouteImport
-      parentRoute: typeof AuthenticatedAdminPressRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/homepage/values': {
       id: '/_authenticated/admin/homepage/values'
@@ -1037,22 +1038,6 @@ const AuthenticatedAdminHomepageRouteWithChildren =
     AuthenticatedAdminHomepageRouteChildren,
   )
 
-interface AuthenticatedAdminPressRouteChildren {
-  AuthenticatedAdminPressIdRoute: typeof AuthenticatedAdminPressIdRoute
-  AuthenticatedAdminPressNewRoute: typeof AuthenticatedAdminPressNewRoute
-}
-
-const AuthenticatedAdminPressRouteChildren: AuthenticatedAdminPressRouteChildren =
-  {
-    AuthenticatedAdminPressIdRoute: AuthenticatedAdminPressIdRoute,
-    AuthenticatedAdminPressNewRoute: AuthenticatedAdminPressNewRoute,
-  }
-
-const AuthenticatedAdminPressRouteWithChildren =
-  AuthenticatedAdminPressRoute._addFileChildren(
-    AuthenticatedAdminPressRouteChildren,
-  )
-
 interface AuthenticatedAdminTeamRouteChildren {
   AuthenticatedAdminTeamCtaRoute: typeof AuthenticatedAdminTeamCtaRoute
   AuthenticatedAdminTeamHeroRoute: typeof AuthenticatedAdminTeamHeroRoute
@@ -1085,11 +1070,13 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminFlagsRoute: typeof AuthenticatedAdminFlagsRoute
   AuthenticatedAdminFormsRoute: typeof AuthenticatedAdminFormsRouteWithChildren
   AuthenticatedAdminHomepageRoute: typeof AuthenticatedAdminHomepageRouteWithChildren
-  AuthenticatedAdminPressRoute: typeof AuthenticatedAdminPressRouteWithChildren
   AuthenticatedAdminRecurringRoute: typeof AuthenticatedAdminRecurringRoute
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRouteWithChildren
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminPressIdRoute: typeof AuthenticatedAdminPressIdRoute
+  AuthenticatedAdminPressNewRoute: typeof AuthenticatedAdminPressNewRoute
+  AuthenticatedAdminPressIndexRoute: typeof AuthenticatedAdminPressIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -1099,11 +1086,13 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminFlagsRoute: AuthenticatedAdminFlagsRoute,
   AuthenticatedAdminFormsRoute: AuthenticatedAdminFormsRouteWithChildren,
   AuthenticatedAdminHomepageRoute: AuthenticatedAdminHomepageRouteWithChildren,
-  AuthenticatedAdminPressRoute: AuthenticatedAdminPressRouteWithChildren,
   AuthenticatedAdminRecurringRoute: AuthenticatedAdminRecurringRoute,
   AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRouteWithChildren,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminPressIdRoute: AuthenticatedAdminPressIdRoute,
+  AuthenticatedAdminPressNewRoute: AuthenticatedAdminPressNewRoute,
+  AuthenticatedAdminPressIndexRoute: AuthenticatedAdminPressIndexRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =

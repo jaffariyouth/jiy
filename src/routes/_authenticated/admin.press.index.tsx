@@ -8,7 +8,7 @@ import {
 } from "@/lib/jiy/youth-press.functions";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/admin/press")({
+export const Route = createFileRoute("/_authenticated/admin/press/")({
   component: PressListPage,
 });
 
