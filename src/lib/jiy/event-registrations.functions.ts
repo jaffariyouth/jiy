@@ -174,3 +174,37 @@ export const listMyNotifications = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return { notifications: data ?? [] };
   });
+
+// For in-app notifications, we treat status='sent' + sent_at as the "read"
+// marker. Email/SMS rows are managed by the send worker, so this fn only
+// touches in_app channel rows owned by the caller.
+const markReadSchema = z.object({ id: z.string().uuid() });
+
+export const markNotificationRead = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => markReadSchema.parse(i))
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("notifications")
+      .update({ status: "sent", sent_at: new Date().toISOString() })
+      .eq("id", data.id)
+      .eq("recipient_id", context.userId)
+      .eq("channel", "in_app");
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+export const markAllNotificationsRead = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("notifications")
+      .update({ status: "sent", sent_at: new Date().toISOString() })
+      .eq("recipient_id", context.userId)
+      .eq("channel", "in_app")
+      .eq("status", "pending");
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
