@@ -35,6 +35,7 @@ import { Route as AuthenticatedOnboardingStep1RouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
 import { Route as AuthenticatedAdminRecurringRouteImport } from './routes/_authenticated/admin.recurring'
+import { Route as AuthenticatedAdminOpportunitiesRouteImport } from './routes/_authenticated/admin.opportunities'
 import { Route as AuthenticatedAdminHomepageRouteImport } from './routes/_authenticated/admin.homepage'
 import { Route as AuthenticatedAdminFormsRouteImport } from './routes/_authenticated/admin.forms'
 import { Route as AuthenticatedAdminFlagsRouteImport } from './routes/_authenticated/admin.flags'
@@ -200,6 +201,12 @@ const AuthenticatedAdminRecurringRoute =
   AuthenticatedAdminRecurringRouteImport.update({
     id: '/recurring',
     path: '/recurring',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminOpportunitiesRoute =
+  AuthenticatedAdminOpportunitiesRouteImport.update({
+    id: '/opportunities',
+    path: '/opportunities',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminHomepageRoute =
@@ -417,6 +424,7 @@ export interface FileRoutesByFullPath {
   '/admin/flags': typeof AuthenticatedAdminFlagsRoute
   '/admin/forms': typeof AuthenticatedAdminFormsRouteWithChildren
   '/admin/homepage': typeof AuthenticatedAdminHomepageRouteWithChildren
+  '/admin/opportunities': typeof AuthenticatedAdminOpportunitiesRoute
   '/admin/recurring': typeof AuthenticatedAdminRecurringRoute
   '/admin/team': typeof AuthenticatedAdminTeamRouteWithChildren
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -471,6 +479,7 @@ export interface FileRoutesByTo {
   '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/flags': typeof AuthenticatedAdminFlagsRoute
+  '/admin/opportunities': typeof AuthenticatedAdminOpportunitiesRoute
   '/admin/recurring': typeof AuthenticatedAdminRecurringRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
@@ -531,6 +540,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/flags': typeof AuthenticatedAdminFlagsRoute
   '/_authenticated/admin/forms': typeof AuthenticatedAdminFormsRouteWithChildren
   '/_authenticated/admin/homepage': typeof AuthenticatedAdminHomepageRouteWithChildren
+  '/_authenticated/admin/opportunities': typeof AuthenticatedAdminOpportunitiesRoute
   '/_authenticated/admin/recurring': typeof AuthenticatedAdminRecurringRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRouteWithChildren
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -592,6 +602,7 @@ export interface FileRouteTypes {
     | '/admin/flags'
     | '/admin/forms'
     | '/admin/homepage'
+    | '/admin/opportunities'
     | '/admin/recurring'
     | '/admin/team'
     | '/admin/users'
@@ -646,6 +657,7 @@ export interface FileRouteTypes {
     | '/admin/announcements'
     | '/admin/audit'
     | '/admin/flags'
+    | '/admin/opportunities'
     | '/admin/recurring'
     | '/admin/users'
     | '/onboarding/step-1'
@@ -705,6 +717,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/flags'
     | '/_authenticated/admin/forms'
     | '/_authenticated/admin/homepage'
+    | '/_authenticated/admin/opportunities'
     | '/_authenticated/admin/recurring'
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/users'
@@ -938,6 +951,13 @@ declare module '@tanstack/react-router' {
       path: '/recurring'
       fullPath: '/admin/recurring'
       preLoaderRoute: typeof AuthenticatedAdminRecurringRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/opportunities': {
+      id: '/_authenticated/admin/opportunities'
+      path: '/opportunities'
+      fullPath: '/admin/opportunities'
+      preLoaderRoute: typeof AuthenticatedAdminOpportunitiesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/homepage': {
@@ -1281,6 +1301,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminFlagsRoute: typeof AuthenticatedAdminFlagsRoute
   AuthenticatedAdminFormsRoute: typeof AuthenticatedAdminFormsRouteWithChildren
   AuthenticatedAdminHomepageRoute: typeof AuthenticatedAdminHomepageRouteWithChildren
+  AuthenticatedAdminOpportunitiesRoute: typeof AuthenticatedAdminOpportunitiesRoute
   AuthenticatedAdminRecurringRoute: typeof AuthenticatedAdminRecurringRoute
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRouteWithChildren
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
@@ -1297,6 +1318,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminFlagsRoute: AuthenticatedAdminFlagsRoute,
   AuthenticatedAdminFormsRoute: AuthenticatedAdminFormsRouteWithChildren,
   AuthenticatedAdminHomepageRoute: AuthenticatedAdminHomepageRouteWithChildren,
+  AuthenticatedAdminOpportunitiesRoute: AuthenticatedAdminOpportunitiesRoute,
   AuthenticatedAdminRecurringRoute: AuthenticatedAdminRecurringRoute,
   AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRouteWithChildren,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
