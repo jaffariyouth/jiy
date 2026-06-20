@@ -128,7 +128,7 @@ export const getTeamPageData = createServerFn({ method: "GET" }).handler(async (
   return { sections };
 });
 
-// Admin reads (single section)
+// Admin reads (single section) — returns both draft and published.
 export const getSectionContent = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({ key: z.enum(SECTION_KEYS) }).parse(i))
@@ -137,15 +137,27 @@ export const getSectionContent = createServerFn({ method: "GET" })
     await assertAdmin(context.supabase, context.userId);
     const { data: row, error } = await context.supabase
       .from("site_content")
-      .select("section_key, content, updated_at")
+      .select("section_key, draft_content, published_content, draft_updated_at, published_at, published_by")
       .eq("section_key", data.key)
       .maybeSingle();
     if (error) throw new Error(error.message);
+    const draft = (row?.draft_content as Json) ?? {};
+    const published = (row?.published_content as Json) ?? {};
+    const hasUnpublishedChanges = JSON.stringify(draft) !== JSON.stringify(published);
     return {
-      section: row ?? { section_key: data.key, content: {} as Json, updated_at: null },
+      section: {
+        section_key: data.key,
+        draft_content: draft,
+        published_content: published,
+        draft_updated_at: row?.draft_updated_at ?? null,
+        published_at: row?.published_at ?? null,
+        published_by: row?.published_by ?? null,
+        has_unpublished_changes: hasUnpublishedChanges,
+      },
     };
   });
 
+// Save draft only — never affects public page.
 export const updateSectionContent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
@@ -154,18 +166,54 @@ export const updateSectionContent = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { assertAdmin, writeAudit } = await import("./idempotency.server");
     await assertAdmin(context.supabase, context.userId);
+    const nowIso = new Date().toISOString();
     const { error } = await context.supabase.from("site_content").upsert({
       section_key: data.key,
-      content: data.content as Json,
+      draft_content: data.content as Json,
+      draft_updated_at: nowIso,
       updated_by: context.userId,
-      updated_at: new Date().toISOString(),
+      updated_at: nowIso,
     });
     if (error) throw new Error(error.message);
     await writeAudit(context.supabase, {
       actorId: context.userId,
-      action: "site_content.updated",
+      action: "site_content.draft_saved",
       entity: "site_content",
       metadata: { key: data.key },
     });
     return { ok: true as const };
+  });
+
+// Publish: copy current draft to published.
+export const publishSectionContent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ key: z.enum(SECTION_KEYS) }).parse(i))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin, writeAudit } = await import("./idempotency.server");
+    await assertAdmin(context.supabase, context.userId);
+    const { data: row, error: readErr } = await context.supabase
+      .from("site_content")
+      .select("draft_content")
+      .eq("section_key", data.key)
+      .maybeSingle();
+    if (readErr) throw new Error(readErr.message);
+    const draft = (row?.draft_content as Json) ?? {};
+    const nowIso = new Date().toISOString();
+    const { error } = await context.supabase.from("site_content").upsert({
+      section_key: data.key,
+      draft_content: draft,
+      published_content: draft,
+      published_at: nowIso,
+      published_by: context.userId,
+      updated_by: context.userId,
+      updated_at: nowIso,
+    });
+    if (error) throw new Error(error.message);
+    await writeAudit(context.supabase, {
+      actorId: context.userId,
+      action: "site_content.published",
+      entity: "site_content",
+      metadata: { key: data.key },
+    });
+    return { ok: true as const, published_at: nowIso };
   });
