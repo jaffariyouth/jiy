@@ -889,19 +889,31 @@ export type Database = {
       }
       site_content: {
         Row: {
-          content: Json
+          draft_content: Json
+          draft_updated_at: string | null
+          published_at: string | null
+          published_by: string | null
+          published_content: Json
           section_key: string
           updated_at: string
           updated_by: string | null
         }
         Insert: {
-          content?: Json
+          draft_content?: Json
+          draft_updated_at?: string | null
+          published_at?: string | null
+          published_by?: string | null
+          published_content?: Json
           section_key: string
           updated_at?: string
           updated_by?: string | null
         }
         Update: {
-          content?: Json
+          draft_content?: Json
+          draft_updated_at?: string | null
+          published_at?: string | null
+          published_by?: string | null
+          published_content?: Json
           section_key?: string
           updated_at?: string
           updated_by?: string | null
