@@ -1,47 +1,62 @@
-## Scan results — admin editing of public pages
+## Draft/Publish for public pages + reliable image uploads with gallery
 
-Reviewed every public-page editor, the shared `SectionEditor`, the `site_content` server functions, and the storage flow. Coverage is comprehensive and correct, with one small gap worth fixing.
+Three changes, all scoped to the admin side. Public pages keep using `getHomepageData` / `getTeamPageData` — they'll just read from a "published" column instead of the live one.
 
-### What works (no change needed)
+### 1. Draft + Publish workflow for site content
 
-**Homepage (`/`)** — every section on the public page has a matching editor at `/admin/homepage/*`:
+Today `site_content.content` is what `/` and `/team` render. Saving in admin overwrites it immediately. Split that into two states so admin work stays private until explicitly published.
 
-| Public section   | Editor route                | Text / paragraphs | Images                |
-| ---------------- | --------------------------- | ----------------- | --------------------- |
-| Hero             | `/admin/homepage/hero`      | ✓ kicker, headlines, body, quote, CTAs, socials | ✓ hero photo |
-| Metrics          | `/admin/homepage/metrics`   | ✓ value/label, add/remove | — |
-| About            | `/admin/homepage/about`     | ✓ all paragraphs, directives | ✓ 3 photos |
-| Ongoing          | `/admin/homepage/ongoing`   | ✓ narrative, CTA, initiatives | ✓ center photo |
-| Strategic Values | `/admin/homepage/values`    | ✓ items add/remove | — |
-| Press            | `/admin/homepage/press`     | ✓ kickers/labels  | — (uses Press articles) |
-| Footer           | `/admin/homepage/footer`    | ✓ tagline, nav, socials, copyright | — |
+**Schema (migration on `public.site_content`)**:
+- Add `draft_content jsonb default '{}'::jsonb not null`
+- Add `published_content jsonb default '{}'::jsonb not null`
+- Add `draft_updated_at timestamptz`, `published_at timestamptz`, `published_by uuid`
+- Backfill: `update site_content set published_content = content, draft_content = content`
+- Drop the old `content` column once backfilled
 
-**Team (`/team`)** — full coverage at `/admin/team/*`: hero (with arch photo), intro, leadership (bio + photo + email + linkedin, reorder/remove), members (photo + name + role + region, reorder/remove), join CTA.
+**Server functions (`site-content.functions.ts`)**:
+- `getHomepageData` / `getTeamPageData` → read `published_content` (public never sees drafts)
+- `getSectionContent` (admin) → return both `draft_content` and `published_content` plus a `has_unpublished_changes` flag
+- `updateSectionContent` (admin) → writes to `draft_content` only; no public impact
+- New `publishSectionContent` (admin) → copies `draft_content` → `published_content`, sets `published_at` / `published_by`, audit-logs `site_content.published`
 
-**Press articles** — `/admin/press` list + `/admin/press/new` + `/admin/press/$id` cover full markdown body, excerpt, cover image upload, audience targeting, featured-on-home toggle, publish/unpublish/delete.
+**Admin UI (`SectionEditor`)**:
+- Keep "Save changes" button (saves draft).
+- Add "Publish" button next to it. Disabled when draft matches published.
+- Status pill: "Draft" / "Published" / "Unpublished changes" with the last-published timestamp.
+- Invalidate `["site_content", key]` after save, plus `["homepage"]` / `["team-page"]` only after publish.
 
-**Events** — `/admin/events/new` and `/admin/events/$id` support cover image upload + all event fields.
+### 2. Storage RLS for `editorial-media`
 
-**Infrastructure that's already correct:**
-- All uploads go to the `editorial-media` Supabase Storage bucket (already public).
-- `SectionEditor` is gated by `requireSupabaseAuth` + `assertAdmin` on the server.
-- `updateSectionContent` writes to `site_content` and audit-logs the change.
-- The `ImageField` supports both file upload and pasting a URL, with a remove button.
-- Saves invalidate React Query caches so the editor reflects the new state immediately.
+`storage.objects` has RLS enabled but **zero policies** for this bucket, which is why uploads silently fail in some browser sessions (the dashboard works because it uses service role). Add policies via migration:
 
-### One gap to fix
+- `SELECT` to `anon, authenticated` for any object in `editorial-media` (bucket is public).
+- `INSERT / UPDATE / DELETE` to `authenticated` where `public.has_role(auth.uid(), 'admin')`.
 
-`SectionEditor` invalidates `["site_content", key]` and `["homepage"]` after a save, but **not** `["team-page"]`. That means after an admin saves a Team Hero / Intro / Leadership / Members / CTA / Footer section, the public `/team` page still shows the old content until a hard refresh.
+This makes admin uploads work consistently and keeps non-admins out.
 
-**Fix:** in `src/components/admin/SectionEditor.tsx` `onSuccess`, also invalidate `["team-page"]`. One-line change.
+### 3. Image gallery picker
 
-### Technical detail
+New component `MediaGalleryPicker` (modal) used by `ImageField`:
+- "Choose from gallery" button next to the file input.
+- Lists objects from `supabase.storage.from("editorial-media").list(folder, { limit: 200, sortBy: { column: "created_at", order: "desc" } })`.
+- Grid of thumbnails (using `getPublicUrl`), filename and date underneath.
+- Click thumbnail → calls `onChange(url)` and closes.
+- Optional search box and "All folders / this folder only" toggle (defaults to the editor's folder so e.g. team editors see team images first).
+- A small delete (trash) button per image with confirm, calling `storage.remove([path])`. Gated by the same admin storage policy from §2.
 
-```ts
-// src/components/admin/SectionEditor.tsx, inside mutation onSuccess
-qc.invalidateQueries({ queryKey: ["site_content", sectionKey] });
-qc.invalidateQueries({ queryKey: ["homepage"] });
-qc.invalidateQueries({ queryKey: ["team-page"] }); // add this
-```
+`ImageField` keeps file upload, URL paste, and remove; gallery is the new third option.
 
-No schema, RLS, or storage changes required. After this fix, every public-page text/image/paragraph an admin edits will appear on the live site on the next navigation without a manual reload.
+### Technical notes
+
+- Public loaders are unchanged in shape — just the column they project from changes. No public route needs to opt into "drafts".
+- `SectionEditor`'s mutation invalidates the section query on save; publishing additionally invalidates `["homepage"]` and `["team-page"]` so the public page picks it up on next nav.
+- Press articles and events already have their own draft/publish flow — no changes needed there.
+- The `has_unpublished_changes` flag is computed server-side via `draft_content <> published_content` so we don't need to ship two payloads to compare on the client beyond what the editor already loads.
+
+### Files touched
+
+- `supabase/migrations/*` — schema + storage policies
+- `src/lib/jiy/site-content.functions.ts` — column rename, new `publishSectionContent`, return shape
+- `src/components/admin/SectionEditor.tsx` — Save/Publish buttons, status pill, smarter invalidation
+- `src/components/admin/MediaGalleryPicker.tsx` — new modal component
+- `src/components/admin/SectionEditor.tsx` (`ImageField`) — wire up gallery button
