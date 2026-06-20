@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyProfile } from "@/lib/jiy/profiles.functions";
+import { NotificationBell } from "./NotificationBell";
 
 const NAV = [
   { label: "Events", to: "/events" },
@@ -51,7 +52,9 @@ export function TopNavBar() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-5">
+          <NotificationBell />
+          <div className="h-6 w-px bg-horizon-mist hidden sm:block" />
           <Link
             to="/account"
             className="flex items-center gap-3 cursor-pointer group"
