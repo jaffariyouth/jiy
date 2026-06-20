@@ -1,6 +1,8 @@
+import { Link } from "@tanstack/react-router";
 import { useDashboard } from "./DashboardContext";
 
 type Props = {
+  id?: string;
   image: string;
   alt: string;
   day: string;
@@ -10,8 +12,9 @@ type Props = {
   description: string;
 };
 
-export function EventCard({ image, alt, day, month, eyebrow, title, description }: Props) {
+export function EventCard({ id, image, alt, day, month, eyebrow, title, description }: Props) {
   const { dispatchToast } = useDashboard();
+  const detailHref = id ? `/events/${id}` : null;
   return (
     <div className="studio-card rounded-xl flex flex-col h-full overflow-hidden group">
       <div className="relative overflow-hidden aspect-[16/10] bg-warm-silk-grey border-b border-horizon-mist">
@@ -34,14 +37,26 @@ export function EventCard({ image, alt, day, month, eyebrow, title, description 
         <h3 className="font-headline text-xl text-primary-dark leading-snug mb-3 group-hover:text-damascus-gold transition-colors duration-200">
           {title}
         </h3>
-        <p className="font-body text-xs text-ash-slate leading-relaxed grow mb-5">{description}</p>
+        <p className="font-body text-xs text-ash-slate leading-relaxed grow mb-5 line-clamp-3">
+          {description}
+        </p>
         <div className="pt-4 border-t border-horizon-mist/60 flex justify-between items-center">
-          <button
-            onClick={() => dispatchToast(`RSVP verified: "${title}" secured.`)}
-            className="font-body text-[10px] uppercase tracking-[0.2em] text-damascus-gold hover:text-primary-dark font-black transition-colors duration-200"
-          >
-            View Details →
-          </button>
+          {detailHref ? (
+            <Link
+              to="/events/$eventId"
+              params={{ eventId: id! }}
+              className="font-body text-[10px] uppercase tracking-[0.2em] text-damascus-gold hover:text-primary-dark font-black transition-colors duration-200"
+            >
+              View Details →
+            </Link>
+          ) : (
+            <button
+              onClick={() => dispatchToast(`RSVP verified: "${title}" secured.`)}
+              className="font-body text-[10px] uppercase tracking-[0.2em] text-damascus-gold hover:text-primary-dark font-black transition-colors duration-200"
+            >
+              View Details →
+            </button>
+          )}
           <span
             className="material-symbols-outlined text-horizon-mist group-hover:translate-x-1 transition-transform"
             style={{ fontVariationSettings: "'wght' 300" }}
