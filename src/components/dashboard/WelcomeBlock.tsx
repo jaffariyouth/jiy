@@ -1,26 +1,58 @@
 import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { useDashboard } from "./DashboardContext";
+import { getMyProfile } from "@/lib/jiy/profiles.functions";
+import { submitQuestion } from "@/lib/jiy/scholar-questions.functions";
 
 export function WelcomeBlock() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const { dispatchToast } = useDashboard();
+  const qc = useQueryClient();
+
+  const fetchProfile = useServerFn(getMyProfile);
+  const { data: profile } = useQuery({
+    queryKey: ["my-profile"],
+    queryFn: () => fetchProfile(),
+    staleTime: 60_000,
+  });
+
+  const ask = useServerFn(submitQuestion);
+  const submitMut = useMutation({
+    mutationFn: (question_text: string) =>
+      ask({
+        data: {
+          idempotencyKey: `dashboard-q-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+          question_text,
+          is_anonymous: true,
+        },
+      }),
+    onSuccess: () => {
+      setValue("");
+      setOpen(false);
+      dispatchToast("Your question was submitted anonymously.");
+      qc.invalidateQueries({ queryKey: ["my-questions"] });
+    },
+    onError: (err) => dispatchToast(err instanceof Error ? err.message : "Submission failed.", false),
+  });
+
+  const firstName = (profile?.displayName ?? "").split(/\s+/)[0] || "friend";
 
   const submit = () => {
-    if (!value.trim()) {
-      dispatchToast("Question cannot be blank.", false);
+    const trimmed = value.trim();
+    if (trimmed.length < 5) {
+      dispatchToast("Question must be at least 5 characters.", false);
       return;
     }
-    setValue("");
-    setOpen(false);
-    dispatchToast("Your question was submitted anonymously.");
+    submitMut.mutate(trimmed);
   };
 
   return (
     <section className="mb-12">
       <div className="flex flex-col sm:flex-row justify-between items-baseline gap-2 mb-6">
         <h1 className="font-headline text-3xl md:text-4xl text-primary-dark tracking-tight">
-          Salaam, Ali.{" "}
+          Salaam, {firstName}.{" "}
           <span className="font-light italic text-2xl text-ash-slate block sm:inline">
             Welcome back to the Hub
           </span>
@@ -84,9 +116,10 @@ export function WelcomeBlock() {
                 </p>
                 <button
                   onClick={submit}
-                  className="interactive-btn bg-midnight-sapphire text-white hover:bg-damascus-gold hover:text-primary-dark font-body text-[10px] font-bold tracking-[0.2em] py-3.5 px-7 rounded-[4px] uppercase transition-all duration-300"
+                  disabled={submitMut.isPending}
+                  className="interactive-btn bg-midnight-sapphire text-white hover:bg-damascus-gold hover:text-primary-dark font-body text-[10px] font-bold tracking-[0.2em] py-3.5 px-7 rounded-[4px] uppercase transition-all duration-300 disabled:opacity-60"
                 >
-                  Submit to Scholar Board
+                  {submitMut.isPending ? "Submitting…" : "Submit to Scholar Board"}
                 </button>
               </div>
             </div>
