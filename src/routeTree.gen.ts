@@ -27,6 +27,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
 import { Route as AuthenticatedOnboardingStep3RouteImport } from './routes/_authenticated/onboarding.step-3'
 import { Route as AuthenticatedOnboardingStep2RouteImport } from './routes/_authenticated/onboarding.step-2'
 import { Route as AuthenticatedOnboardingStep1RouteImport } from './routes/_authenticated/onboarding.step-1'
@@ -39,6 +40,8 @@ import { Route as AuthenticatedAdminFlagsRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminEventsRouteImport } from './routes/_authenticated/admin.events'
 import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin.audit'
 import { Route as AuthenticatedAdminAnnouncementsRouteImport } from './routes/_authenticated/admin.announcements'
+import { Route as AuthenticatedAccountSubmissionsRouteImport } from './routes/_authenticated/account.submissions'
+import { Route as AuthenticatedAccountRegistrationsRouteImport } from './routes/_authenticated/account.registrations'
 import { Route as AuthenticatedAdminTeamIndexRouteImport } from './routes/_authenticated/admin.team.index'
 import { Route as AuthenticatedAdminPressIndexRouteImport } from './routes/_authenticated/admin.press.index'
 import { Route as AuthenticatedAdminHomepageIndexRouteImport } from './routes/_authenticated/admin.homepage.index'
@@ -153,6 +156,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAccountIndexRoute =
+  AuthenticatedAccountIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAccountRoute,
+  } as any)
 const AuthenticatedOnboardingStep3Route =
   AuthenticatedOnboardingStep3RouteImport.update({
     id: '/step-3',
@@ -219,6 +228,18 @@ const AuthenticatedAdminAnnouncementsRoute =
     id: '/announcements',
     path: '/announcements',
     getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAccountSubmissionsRoute =
+  AuthenticatedAccountSubmissionsRouteImport.update({
+    id: '/submissions',
+    path: '/submissions',
+    getParentRoute: () => AuthenticatedAccountRoute,
+  } as any)
+const AuthenticatedAccountRegistrationsRoute =
+  AuthenticatedAccountRegistrationsRouteImport.update({
+    id: '/registrations',
+    path: '/registrations',
+    getParentRoute: () => AuthenticatedAccountRoute,
   } as any)
 const AuthenticatedAdminTeamIndexRoute =
   AuthenticatedAdminTeamIndexRouteImport.update({
@@ -373,7 +394,7 @@ export interface FileRoutesByFullPath {
   '/scholar-qa': typeof ScholarQaRoute
   '/shop': typeof ShopRoute
   '/team': typeof TeamRoute
-  '/account': typeof AuthenticatedAccountRoute
+  '/account': typeof AuthenticatedAccountRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
@@ -381,6 +402,8 @@ export interface FileRoutesByFullPath {
   '/forms/$templateId': typeof FormsTemplateIdRoute
   '/press/$slug': typeof PressSlugRoute
   '/events/': typeof EventsIndexRoute
+  '/account/registrations': typeof AuthenticatedAccountRegistrationsRoute
+  '/account/submissions': typeof AuthenticatedAccountSubmissionsRoute
   '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/events': typeof AuthenticatedAdminEventsRouteWithChildren
@@ -393,6 +416,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
   '/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
+  '/account/': typeof AuthenticatedAccountIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/events/$id': typeof AuthenticatedAdminEventsIdRoute
   '/admin/events/new': typeof AuthenticatedAdminEventsNewRoute
@@ -428,13 +452,14 @@ export interface FileRoutesByTo {
   '/scholar-qa': typeof ScholarQaRoute
   '/shop': typeof ShopRoute
   '/team': typeof TeamRoute
-  '/account': typeof AuthenticatedAccountRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
   '/press/$slug': typeof PressSlugRoute
   '/events': typeof EventsIndexRoute
+  '/account/registrations': typeof AuthenticatedAccountRegistrationsRoute
+  '/account/submissions': typeof AuthenticatedAccountSubmissionsRoute
   '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/flags': typeof AuthenticatedAdminFlagsRoute
@@ -443,6 +468,7 @@ export interface FileRoutesByTo {
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
   '/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
+  '/account': typeof AuthenticatedAccountIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/events/$id': typeof AuthenticatedAdminEventsIdRoute
   '/admin/events/new': typeof AuthenticatedAdminEventsNewRoute
@@ -480,7 +506,7 @@ export interface FileRoutesById {
   '/scholar-qa': typeof ScholarQaRoute
   '/shop': typeof ShopRoute
   '/team': typeof TeamRoute
-  '/_authenticated/account': typeof AuthenticatedAccountRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
@@ -488,6 +514,8 @@ export interface FileRoutesById {
   '/forms/$templateId': typeof FormsTemplateIdRoute
   '/press/$slug': typeof PressSlugRoute
   '/events/': typeof EventsIndexRoute
+  '/_authenticated/account/registrations': typeof AuthenticatedAccountRegistrationsRoute
+  '/_authenticated/account/submissions': typeof AuthenticatedAccountSubmissionsRoute
   '/_authenticated/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/_authenticated/admin/events': typeof AuthenticatedAdminEventsRouteWithChildren
@@ -500,6 +528,7 @@ export interface FileRoutesById {
   '/_authenticated/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
   '/_authenticated/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/_authenticated/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
+  '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/events/$id': typeof AuthenticatedAdminEventsIdRoute
   '/_authenticated/admin/events/new': typeof AuthenticatedAdminEventsNewRoute
@@ -545,6 +574,8 @@ export interface FileRouteTypes {
     | '/forms/$templateId'
     | '/press/$slug'
     | '/events/'
+    | '/account/registrations'
+    | '/account/submissions'
     | '/admin/announcements'
     | '/admin/audit'
     | '/admin/events'
@@ -557,6 +588,7 @@ export interface FileRouteTypes {
     | '/onboarding/step-1'
     | '/onboarding/step-2'
     | '/onboarding/step-3'
+    | '/account/'
     | '/admin/'
     | '/admin/events/$id'
     | '/admin/events/new'
@@ -592,13 +624,14 @@ export interface FileRouteTypes {
     | '/scholar-qa'
     | '/shop'
     | '/team'
-    | '/account'
     | '/dashboard'
     | '/onboarding'
     | '/events/$eventId'
     | '/forms/$templateId'
     | '/press/$slug'
     | '/events'
+    | '/account/registrations'
+    | '/account/submissions'
     | '/admin/announcements'
     | '/admin/audit'
     | '/admin/flags'
@@ -607,6 +640,7 @@ export interface FileRouteTypes {
     | '/onboarding/step-1'
     | '/onboarding/step-2'
     | '/onboarding/step-3'
+    | '/account'
     | '/admin'
     | '/admin/events/$id'
     | '/admin/events/new'
@@ -651,6 +685,8 @@ export interface FileRouteTypes {
     | '/forms/$templateId'
     | '/press/$slug'
     | '/events/'
+    | '/_authenticated/account/registrations'
+    | '/_authenticated/account/submissions'
     | '/_authenticated/admin/announcements'
     | '/_authenticated/admin/audit'
     | '/_authenticated/admin/events'
@@ -663,6 +699,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding/step-1'
     | '/_authenticated/onboarding/step-2'
     | '/_authenticated/onboarding/step-3'
+    | '/_authenticated/account/'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/events/$id'
     | '/_authenticated/admin/events/new'
@@ -835,6 +872,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/account/': {
+      id: '/_authenticated/account/'
+      path: '/'
+      fullPath: '/account/'
+      preLoaderRoute: typeof AuthenticatedAccountIndexRouteImport
+      parentRoute: typeof AuthenticatedAccountRoute
+    }
     '/_authenticated/onboarding/step-3': {
       id: '/_authenticated/onboarding/step-3'
       path: '/step-3'
@@ -918,6 +962,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/announcements'
       preLoaderRoute: typeof AuthenticatedAdminAnnouncementsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/account/submissions': {
+      id: '/_authenticated/account/submissions'
+      path: '/submissions'
+      fullPath: '/account/submissions'
+      preLoaderRoute: typeof AuthenticatedAccountSubmissionsRouteImport
+      parentRoute: typeof AuthenticatedAccountRoute
+    }
+    '/_authenticated/account/registrations': {
+      id: '/_authenticated/account/registrations'
+      path: '/registrations'
+      fullPath: '/account/registrations'
+      preLoaderRoute: typeof AuthenticatedAccountRegistrationsRouteImport
+      parentRoute: typeof AuthenticatedAccountRoute
     }
     '/_authenticated/admin/team/': {
       id: '/_authenticated/admin/team/'
@@ -1090,6 +1148,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAccountRouteChildren {
+  AuthenticatedAccountRegistrationsRoute: typeof AuthenticatedAccountRegistrationsRoute
+  AuthenticatedAccountSubmissionsRoute: typeof AuthenticatedAccountSubmissionsRoute
+  AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
+}
+
+const AuthenticatedAccountRouteChildren: AuthenticatedAccountRouteChildren = {
+  AuthenticatedAccountRegistrationsRoute:
+    AuthenticatedAccountRegistrationsRoute,
+  AuthenticatedAccountSubmissionsRoute: AuthenticatedAccountSubmissionsRoute,
+  AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
+}
+
+const AuthenticatedAccountRouteWithChildren =
+  AuthenticatedAccountRoute._addFileChildren(AuthenticatedAccountRouteChildren)
+
 interface AuthenticatedAdminEventsRouteChildren {
   AuthenticatedAdminEventsIdRoute: typeof AuthenticatedAdminEventsIdRoute
   AuthenticatedAdminEventsNewRoute: typeof AuthenticatedAdminEventsNewRoute
@@ -1235,14 +1309,14 @@ const AuthenticatedOnboardingRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRouteWithChildren
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
+  AuthenticatedAccountRoute: AuthenticatedAccountRouteWithChildren,
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRouteWithChildren,
