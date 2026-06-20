@@ -41,8 +41,8 @@ export function WelcomeBlock() {
 
   const submit = () => {
     const trimmed = value.trim();
-    if (trimmed.length < 5) {
-      dispatchToast("Question must be at least 5 characters.", false);
+    if (trimmed.length < 10) {
+      dispatchToast("Question must be at least 10 characters.", false);
       return;
     }
     submitMut.mutate(trimmed);
