@@ -10,16 +10,22 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamRouteImport } from './routes/team'
+import { Route as ShopRouteImport } from './routes/shop'
+import { Route as ScholarQaRouteImport } from './routes/scholar-qa'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as PressRouteImport } from './routes/press'
+import { Route as OpportunitiesRouteImport } from './routes/opportunities'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EventsIndexRouteImport } from './routes/events.index'
+import { Route as PressSlugRouteImport } from './routes/press.$slug'
 import { Route as FormsTemplateIdRouteImport } from './routes/forms.$templateId'
 import { Route as EventsEventIdRouteImport } from './routes/events.$eventId'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedOnboardingStep3RouteImport } from './routes/_authenticated/onboarding.step-3'
 import { Route as AuthenticatedOnboardingStep2RouteImport } from './routes/_authenticated/onboarding.step-2'
@@ -63,9 +69,29 @@ const TeamRoute = TeamRouteImport.update({
   path: '/team',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScholarQaRoute = ScholarQaRouteImport.update({
+  id: '/scholar-qa',
+  path: '/scholar-qa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PressRoute = PressRouteImport.update({
+  id: '/press',
+  path: '/press',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OpportunitiesRoute = OpportunitiesRouteImport.update({
+  id: '/opportunities',
+  path: '/opportunities',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -86,6 +112,11 @@ const EventsIndexRoute = EventsIndexRouteImport.update({
   id: '/events/',
   path: '/events/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PressSlugRoute = PressSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => PressRoute,
 } as any)
 const FormsTemplateIdRoute = FormsTemplateIdRouteImport.update({
   id: '/forms/$templateId',
@@ -110,6 +141,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
@@ -331,13 +367,19 @@ const AuthenticatedAdminEventsIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/opportunities': typeof OpportunitiesRoute
+  '/press': typeof PressRouteWithChildren
   '/register': typeof RegisterRoute
+  '/scholar-qa': typeof ScholarQaRoute
+  '/shop': typeof ShopRoute
   '/team': typeof TeamRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
+  '/press/$slug': typeof PressSlugRoute
   '/events/': typeof EventsIndexRoute
   '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
@@ -380,12 +422,18 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/opportunities': typeof OpportunitiesRoute
+  '/press': typeof PressRouteWithChildren
   '/register': typeof RegisterRoute
+  '/scholar-qa': typeof ScholarQaRoute
+  '/shop': typeof ShopRoute
   '/team': typeof TeamRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
+  '/press/$slug': typeof PressSlugRoute
   '/events': typeof EventsIndexRoute
   '/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/admin/audit': typeof AuthenticatedAdminAuditRoute
@@ -426,13 +474,19 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/opportunities': typeof OpportunitiesRoute
+  '/press': typeof PressRouteWithChildren
   '/register': typeof RegisterRoute
+  '/scholar-qa': typeof ScholarQaRoute
+  '/shop': typeof ShopRoute
   '/team': typeof TeamRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
+  '/press/$slug': typeof PressSlugRoute
   '/events/': typeof EventsIndexRoute
   '/_authenticated/admin/announcements': typeof AuthenticatedAdminAnnouncementsRoute
   '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
@@ -477,13 +531,19 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/opportunities'
+    | '/press'
     | '/register'
+    | '/scholar-qa'
+    | '/shop'
     | '/team'
+    | '/account'
     | '/admin'
     | '/dashboard'
     | '/onboarding'
     | '/events/$eventId'
     | '/forms/$templateId'
+    | '/press/$slug'
     | '/events/'
     | '/admin/announcements'
     | '/admin/audit'
@@ -526,12 +586,18 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/opportunities'
+    | '/press'
     | '/register'
+    | '/scholar-qa'
+    | '/shop'
     | '/team'
+    | '/account'
     | '/dashboard'
     | '/onboarding'
     | '/events/$eventId'
     | '/forms/$templateId'
+    | '/press/$slug'
     | '/events'
     | '/admin/announcements'
     | '/admin/audit'
@@ -571,13 +637,19 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/opportunities'
+    | '/press'
     | '/register'
+    | '/scholar-qa'
+    | '/shop'
     | '/team'
+    | '/_authenticated/account'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
     | '/events/$eventId'
     | '/forms/$templateId'
+    | '/press/$slug'
     | '/events/'
     | '/_authenticated/admin/announcements'
     | '/_authenticated/admin/audit'
@@ -622,7 +694,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  OpportunitiesRoute: typeof OpportunitiesRoute
+  PressRoute: typeof PressRouteWithChildren
   RegisterRoute: typeof RegisterRoute
+  ScholarQaRoute: typeof ScholarQaRoute
+  ShopRoute: typeof ShopRoute
   TeamRoute: typeof TeamRoute
   EventsEventIdRoute: typeof EventsEventIdRoute
   FormsTemplateIdRoute: typeof FormsTemplateIdRoute
@@ -640,11 +716,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeamRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scholar-qa': {
+      id: '/scholar-qa'
+      path: '/scholar-qa'
+      fullPath: '/scholar-qa'
+      preLoaderRoute: typeof ScholarQaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register': {
       id: '/register'
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/press': {
+      id: '/press'
+      path: '/press'
+      fullPath: '/press'
+      preLoaderRoute: typeof PressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/opportunities': {
+      id: '/opportunities'
+      path: '/opportunities'
+      fullPath: '/opportunities'
+      preLoaderRoute: typeof OpportunitiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -674,6 +778,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/events/'
       preLoaderRoute: typeof EventsIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/press/$slug': {
+      id: '/press/$slug'
+      path: '/$slug'
+      fullPath: '/press/$slug'
+      preLoaderRoute: typeof PressSlugRouteImport
+      parentRoute: typeof PressRoute
     }
     '/forms/$templateId': {
       id: '/forms/$templateId'
@@ -708,6 +819,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/': {
@@ -1117,12 +1235,14 @@ const AuthenticatedOnboardingRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRouteWithChildren,
@@ -1131,11 +1251,25 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface PressRouteChildren {
+  PressSlugRoute: typeof PressSlugRoute
+}
+
+const PressRouteChildren: PressRouteChildren = {
+  PressSlugRoute: PressSlugRoute,
+}
+
+const PressRouteWithChildren = PressRoute._addFileChildren(PressRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  OpportunitiesRoute: OpportunitiesRoute,
+  PressRoute: PressRouteWithChildren,
   RegisterRoute: RegisterRoute,
+  ScholarQaRoute: ScholarQaRoute,
+  ShopRoute: ShopRoute,
   TeamRoute: TeamRoute,
   EventsEventIdRoute: EventsEventIdRoute,
   FormsTemplateIdRoute: FormsTemplateIdRoute,

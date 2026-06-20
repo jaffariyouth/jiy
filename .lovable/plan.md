@@ -1,62 +1,89 @@
-## Draft/Publish for public pages + reliable image uploads with gallery
 
-Three changes, all scoped to the admin side. Public pages keep using `getHomepageData` / `getTeamPageData` — they'll just read from a "published" column instead of the live one.
+# Member dashboard + emails — multi-stage plan
 
-### 1. Draft + Publish workflow for site content
+Two parallel tracks. Each stage is shippable on its own; do not combine.
 
-Today `site_content.content` is what `/` and `/team` render. Saving in admin overwrites it immediately. Split that into two states so admin work stays private until explicitly published.
+---
 
-**Schema (migration on `public.site_content`)**:
-- Add `draft_content jsonb default '{}'::jsonb not null`
-- Add `published_content jsonb default '{}'::jsonb not null`
-- Add `draft_updated_at timestamptz`, `published_at timestamptz`, `published_by uuid`
-- Backfill: `update site_content set published_content = content, draft_content = content`
-- Drop the old `content` column once backfilled
+## Track A — Member dashboard & member pages
 
-**Server functions (`site-content.functions.ts`)**:
-- `getHomepageData` / `getTeamPageData` → read `published_content` (public never sees drafts)
-- `getSectionContent` (admin) → return both `draft_content` and `published_content` plus a `has_unpublished_changes` flag
-- `updateSectionContent` (admin) → writes to `draft_content` only; no public impact
-- New `publishSectionContent` (admin) → copies `draft_content` → `published_content`, sets `published_at` / `published_by`, audit-logs `site_content.published`
+Today `/dashboard` renders a beautifully designed shell, but the widgets use placeholder data and the top-nav links (`Events`, `Scholar Q&A`, `The Press`, `Opportunity Board`, `Merch Shop`) all point to `#`. The user (`"Ali R."`) is hardcoded. None of the member-facing pages behind those nav links exist yet.
 
-**Admin UI (`SectionEditor`)**:
-- Keep "Save changes" button (saves draft).
-- Add "Publish" button next to it. Disabled when draft matches published.
-- Status pill: "Draft" / "Published" / "Unpublished changes" with the last-published timestamp.
-- Invalidate `["site_content", key]` after save, plus `["homepage"]` / `["team-page"]` only after publish.
+### Stage A1 — Make the dashboard real
+Wire the existing shell to live data with no visual redesign.
+- Replace hardcoded `Ali R.` / `Member` with the signed-in profile (`getMyProfile`).
+- `WelcomeBlock`, `UpcomingEvents`, `RegistrationTicket` → pull from `events` + `event_registrations` (server fns already exist).
+- `AnnouncementsWidget` → `announcements` (server fn exists).
+- `EditorialJournalFeed` → latest published `youth_press_articles`.
+- `VolunteerCorpWidget` / `AssociationLinks` → static for now, content sourced from a new `site_content` section `dashboard.sidebar` so admin can edit copy.
+- `TopNavBar` links become real `<Link>`s to the routes built in A2/A3.
 
-### 2. Storage RLS for `editorial-media`
+### Stage A2 — Public/member content pages (read-only)
+Create the routes the nav promises. Public reads, but signed-in users see "save / RSVP / ask" CTAs.
+- `/press` — index of published `youth_press_articles`, with `/press/$slug` detail.
+- `/scholar-qa` — list answered `scholar_questions`, with `/scholar-qa/ask` form (auth required) that uses the existing `askQuestion` server fn.
+- `/opportunities` — read-only board backed by a new `opportunities` table (admin-managed). One migration: table + RLS + grants + admin CRUD route under `_authenticated/admin.opportunities.*`.
+- `/shop` — placeholder route only (no commerce yet); shows "coming soon" + email-me-when-live opt-in writing to a new `shop_waitlist` table. Keep scope tight; full Stripe is out of scope here.
 
-`storage.objects` has RLS enabled but **zero policies** for this bucket, which is why uploads silently fail in some browser sessions (the dashboard works because it uses service role). Add policies via migration:
+### Stage A3 — Member self-service area
+Routes under `_authenticated/` so they're gated automatically.
+- `/account` — view/edit profile (calls existing `updateMyProfile`), change password, manage notification preferences (see B3).
+- `/account/registrations` — list of the member's event registrations with cancel button.
+- `/account/submissions` — their scholar questions + press article drafts.
 
-- `SELECT` to `anon, authenticated` for any object in `editorial-media` (bucket is public).
-- `INSERT / UPDATE / DELETE` to `authenticated` where `public.has_role(auth.uid(), 'admin')`.
+### Stage A4 — Notifications inbox
+- `notifications` rows already exist. Add an in-app bell in `TopNavBar` with unread count + dropdown listing recent rows. Mark-as-read writes back via a new `markNotificationRead` server fn.
 
-This makes admin uploads work consistently and keeps non-admins out.
+---
 
-### 3. Image gallery picker
+## Track B — Email + notification delivery
 
-New component `MediaGalleryPicker` (modal) used by `ImageField`:
-- "Choose from gallery" button next to the file input.
-- Lists objects from `supabase.storage.from("editorial-media").list(folder, { limit: 200, sortBy: { column: "created_at", order: "desc" } })`.
-- Grid of thumbnails (using `getPublicUrl`), filename and date underneath.
-- Click thumbnail → calls `onChange(url)` and closes.
-- Optional search box and "All folders / this folder only" toggle (defaults to the editor's folder so e.g. team editors see team images first).
-- A small delete (trash) button per image with confirm, calling `storage.remove([path])`. Gated by the same admin storage policy from §2.
+Today `enqueue_notification` writes rows to `public.notifications`, but nothing drains the queue or sends email. The user has Supabase but Lovable Emails infra isn't set up yet on this stack.
 
-`ImageField` keeps file upload, URL paste, and remove; gallery is the new third option.
+### Stage B1 — Email infrastructure
+- Verify/create an email domain via the Lovable Emails setup flow (one-time DNS step by the user).
+- Run `email_domain--setup_email_infra` (creates pgmq queues, cron, vault secret).
+- Run `email_domain--scaffold_auth_email_templates` — brand the six auth templates (signup confirm, magic link, recovery, invite, email change, reauth) with JIY colors/fonts.
+- Run `email_domain--scaffold_transactional_email` — gets us `/lovable/email/transactional/send`, preview, unsubscribe, suppression.
 
-### Technical notes
+### Stage B2 — Bridge existing `notifications` queue → email sender
+- New TanStack server route (cron-triggered) `/api/public/notifications/drain` that:
+  1. Selects pending `notifications` rows where `channel='email'` and `scheduled_for <= now()`.
+  2. Resolves recipient email from `auth.users` via admin client.
+  3. Calls `sendTransactionalEmail({ templateName, recipientEmail, idempotencyKey: notification.id, templateData: payload })`.
+  4. Updates the row's status (`sent` / `failed`) + writes `notification_deliveries`.
+- pg_cron schedule: every minute. Idempotent via the notification id.
 
-- Public loaders are unchanged in shape — just the column they project from changes. No public route needs to opt into "drafts".
-- `SectionEditor`'s mutation invalidates the section query on save; publishing additionally invalidates `["homepage"]` and `["team-page"]` so the public page picks it up on next nav.
-- Press articles and events already have their own draft/publish flow — no changes needed there.
-- The `has_unpublished_changes` flag is computed server-side via `draft_content <> published_content` so we don't need to ship two payloads to compare on the client beyond what the editor already loads.
+### Stage B3 — Email templates for each event
+Create React Email templates in `src/lib/email-templates/`:
+- `event-registration-confirmation` — already enqueued by `event-registrations.functions.ts`.
+- `scholar-question-received` (admin broadcast) + `scholar-question-answered` (asker) — already enqueued.
+- `event-reminder-24h` — new cron-enqueued reminder.
+- `announcement-published` — fanned out to opted-in members when admin publishes.
+- `welcome` — on signup (hook into `handle_new_user`).
+- `password-changed`, `email-changed` — wired via auth templates in B1.
 
-### Files touched
+### Stage B4 — Member preferences
+- Add `notification_prefs` jsonb to `profiles` (per-template-key opt in/out).
+- `/account` UI to toggle.
+- Drain worker (B2) skips emails when prefs say off.
+- Unsubscribe link in every email already handled by Lovable Emails infra; we just persist the unsubscribe token mapping to the right `template_key`.
 
-- `supabase/migrations/*` — schema + storage policies
-- `src/lib/jiy/site-content.functions.ts` — column rename, new `publishSectionContent`, return shape
-- `src/components/admin/SectionEditor.tsx` — Save/Publish buttons, status pill, smarter invalidation
-- `src/components/admin/MediaGalleryPicker.tsx` — new modal component
-- `src/components/admin/SectionEditor.tsx` (`ImageField`) — wire up gallery button
+---
+
+## Suggested shipping order
+
+1. **B1** (email infra & domain) — depends on user doing DNS, so start early in parallel.
+2. **A1** (live dashboard data) — small, immediately visible.
+3. **A2** (Press + Scholar Q&A + Opportunities public pages).
+4. **B2 + B3** (drain worker + first 3 templates) — once B1 is verified.
+5. **A3** (account self-service) + **B4** (prefs).
+6. **A4** (in-app inbox) + remaining templates.
+7. **A2/shop** waitlist last; full commerce is its own future plan.
+
+---
+
+## Open questions before build
+- For `/opportunities`: should members be able to submit opportunities, or admin-only?
+- For `/shop`: confirm "coming soon + waitlist" is enough for now vs. full Stripe storefront.
+- For emails: do you already own a sender domain (e.g. `notify.jiy.org`) or do you want to buy one through Lovable?
