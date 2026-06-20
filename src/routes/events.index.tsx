@@ -86,7 +86,7 @@ function EventsPage() {
             <p className="mt-2 text-sm text-ash-slate">Check back soon for our upcoming programs.</p>
           </div>
         ) : (
-          <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {events.map((e: (typeof events)[number]) => (
               <li key={e.id}>
                 <Link
