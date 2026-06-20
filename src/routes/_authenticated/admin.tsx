@@ -37,6 +37,8 @@ const NAV: NavItem[] = [
   { to: "/admin/forms", label: "Forms", icon: FormInput },
   { to: "/admin/press", label: "Press", icon: Newspaper },
   { to: "/admin/announcements", label: "Announcements", icon: Megaphone },
+  { to: "/admin/opportunities", label: "Opportunities", icon: Briefcase },
+  { to: "/admin/shop-waitlist", label: "Shop waitlist", icon: ShoppingBag },
   { to: "/admin/recurring", label: "Recurring", icon: Repeat },
   { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/flags", label: "Feature Flags", icon: Flag },
