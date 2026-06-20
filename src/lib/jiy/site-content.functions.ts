@@ -57,7 +57,7 @@ export const getHomepageData = createServerFn({ method: "GET" }).handler(async (
   const nowIso = new Date().toISOString();
 
   const [sectionsRes, eventsRes, articlesFeaturedRes, articlesLatestRes] = await Promise.all([
-    sb.from("site_content").select("section_key, content"),
+    sb.from("site_content").select("section_key, published_content"),
     sb
       .from("events")
       .select("id, title, description, location, starts_at, ends_at, cover_image_url, featured_on_home")
@@ -95,7 +95,7 @@ export const getHomepageData = createServerFn({ method: "GET" }).handler(async (
 
   const sections: Record<string, Json> = {};
   for (const row of sectionsRes.data ?? []) {
-    sections[row.section_key] = (row.content as Json) ?? {};
+    sections[row.section_key] = (row.published_content as Json) ?? {};
   }
 
   const allEvents = (eventsRes.data ?? []) as Array<HomepageEvent & { featured_on_home: boolean }>;
@@ -119,9 +119,12 @@ export const getTeamPageData = createServerFn({ method: "GET" }).handler(async (
     { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
   );
   const teamKeys = ["team_hero", "team_intro", "team_leadership", "team_members", "team_cta", "footer", "hero"];
-  const { data } = await sb.from("site_content").select("section_key, content").in("section_key", teamKeys);
+  const { data } = await sb
+    .from("site_content")
+    .select("section_key, published_content")
+    .in("section_key", teamKeys);
   const sections: Record<string, Json> = {};
-  for (const row of data ?? []) sections[row.section_key] = (row.content as Json) ?? {};
+  for (const row of data ?? []) sections[row.section_key] = (row.published_content as Json) ?? {};
   return { sections };
 });
 
