@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, redirect, Link, useRouterState } from "@tanstack/react-router";
 import { getMyRoles } from "@/lib/jiy/admin.functions";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   Calendar,
@@ -14,6 +15,8 @@ import {
   Home,
   Briefcase,
   ShoppingBag,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -47,16 +50,47 @@ const NAV: NavItem[] = [
 
 function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("admin-sidebar-collapsed");
+      return saved === "true";
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("admin-sidebar-collapsed", String(isCollapsed));
+  }, [isCollapsed]);
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-[#FAF8F5]">
-      <aside className="md:w-64 md:min-h-screen border-r border-[#e5dec9] bg-white md:sticky md:top-0">
-        <div className="px-5 py-5 border-b border-[#e5dec9]">
-          <Link to="/dashboard" className="block">
-            <div className="font-serif text-lg tracking-tight text-[#010b21]">JIY Admin</div>
-            <div className="text-xs uppercase tracking-[0.18em] text-[#6b6453] mt-1">Console</div>
-          </Link>
+      <aside
+        className={cn(
+          "border-r border-[#e5dec9] bg-white md:sticky md:top-0 transition-all duration-300 md:min-h-screen flex flex-col shrink-0",
+          isCollapsed ? "md:w-20" : "md:w-64"
+        )}
+      >
+        <div className="px-5 py-5 border-b border-[#e5dec9] flex items-center justify-between min-h-[73px]">
+          {!isCollapsed && (
+            <Link to="/dashboard" className="block truncate">
+              <div className="font-serif text-lg tracking-tight text-[#010b21]">JIY Admin</div>
+              <div className="text-xs uppercase tracking-[0.18em] text-[#6b6453] mt-1">Console</div>
+            </Link>
+          )}
+          {isCollapsed && (
+            <Link to="/dashboard" className="mx-auto font-serif text-xl font-bold tracking-tight text-[#010b21]">
+              JIY
+            </Link>
+          )}
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="hidden md:flex p-1.5 rounded-md hover:bg-[#f3eedc] text-[#6b6453] transition-colors cursor-pointer ml-auto"
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          </button>
         </div>
-        <nav className="p-3 flex md:flex-col gap-1 overflow-x-auto md:overflow-visible">
+        <nav className="p-3 flex md:flex-col gap-1 overflow-x-auto md:overflow-visible flex-1">
           {NAV.map((item) => {
             const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
             const Icon = item.icon;
@@ -64,15 +98,17 @@ function AdminLayout() {
               <Link
                 key={item.to}
                 to={item.to}
+                title={isCollapsed ? item.label : undefined}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-sm text-sm transition-colors shrink-0",
+                  "flex items-center gap-3 px-3 py-2 rounded-sm text-sm transition-all duration-200 shrink-0",
+                  isCollapsed ? "md:justify-center md:px-0 md:h-10 md:w-10 md:mx-auto" : "",
                   active
                     ? "bg-[#010b21] text-[#FAF8F5]"
                     : "text-[#2b2a26] hover:bg-[#f3eedc]",
                 )}
               >
                 <Icon className="h-4 w-4 shrink-0" />
-                <span className="whitespace-nowrap">{item.label}</span>
+                {!isCollapsed && <span className="whitespace-nowrap">{item.label}</span>}
               </Link>
             );
           })}
