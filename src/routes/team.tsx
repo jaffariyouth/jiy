@@ -175,7 +175,6 @@ function TeamHero({ hero }: { hero?: Section }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7 flex flex-col gap-6">
             <span className="font-body text-xs uppercase tracking-[0.3em] text-deep-garnet font-black flex items-center gap-2">
-              <span className="inline-block w-2 h-2 rounded-full bg-damascus-gold" />
               {str(hero, "kicker", d.kicker)}
             </span>
             <h1 className="font-headline text-5xl md:text-6xl lg:text-7xl text-persian-indigo leading-[1.05] tracking-tight">
