@@ -254,7 +254,8 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
           </Link>
         </div>
       </aside>
-    </>
+    </>,
+    document.body,
   );
 }
 
