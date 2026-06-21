@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { getMyProfile } from "@/lib/jiy/profiles.functions";
 import { NotificationBell } from "./NotificationBell";
@@ -177,7 +178,8 @@ export function TopNavBar() {
 }
 
 function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
-  return (
+  if (typeof document === "undefined") return null;
+  return createPortal(
     <>
       {/* Backdrop */}
       <div
@@ -252,7 +254,8 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
           </Link>
         </div>
       </aside>
-    </>
+    </>,
+    document.body,
   );
 }
 
