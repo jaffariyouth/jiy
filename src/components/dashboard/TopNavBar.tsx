@@ -15,7 +15,7 @@ const NAV: NavItem[] = [
   { label: "Scholar Q&A", to: "/scholar-qa" },
   { label: "The Press", to: "/press" },
   {
-    label: "Resources",
+    label: "RESOURCES",
     children: [
       { label: "Opportunity Board", to: "/opportunities" },
     ],
@@ -80,7 +80,7 @@ export function TopNavBar() {
         {/* Desktop nav — fluid sizing */}
         <nav
           ref={dropdownRef}
-          className="hidden lg:flex items-center gap-4 xl:gap-7 font-body uppercase tracking-[0.16em] xl:tracking-[0.2em] font-semibold text-ash-slate text-[10px] xl:text-xs min-w-0"
+          className="hidden lg:flex items-center gap-4 xl:gap-7 font-body uppercase tracking-[0.16em] xl:tracking-[0.2em] font-semibold text-ash-slate text-xs xl:text-sm min-w-0"
         >
           {NAV.map((item) => {
             if (isGroup(item)) {
@@ -89,7 +89,7 @@ export function TopNavBar() {
                 <div key={item.label} className="relative">
                   <button
                     onClick={() => setOpenDropdown(open ? null : item.label)}
-                    className="flex items-center gap-1 hover:text-damascus-gold transition-colors duration-200 py-1 group whitespace-nowrap"
+                    className="flex items-center gap-1 hover:text-damascus-gold transition-colors duration-200 py-1 group whitespace-nowrap uppercase"
                     aria-haspopup="menu"
                     aria-expanded={open}
                   >
