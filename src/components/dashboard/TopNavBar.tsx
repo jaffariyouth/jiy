@@ -178,7 +178,8 @@ export function TopNavBar() {
 }
 
 function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
-  return (
+  if (typeof document === "undefined") return null;
+  return createPortal(
     <>
       {/* Backdrop */}
       <div
