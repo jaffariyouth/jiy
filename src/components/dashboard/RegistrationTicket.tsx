@@ -80,7 +80,7 @@ export function RegistrationTicket() {
               You haven't signed up for any upcoming events yet.
             </p>
             <Link
-              to="/events"
+              to="/dashboard/events"
               className="font-body text-[10px] uppercase tracking-[0.2em] text-damascus-gold hover:text-primary-dark font-black"
             >
               Browse events →

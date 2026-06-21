@@ -34,7 +34,7 @@ export function UpcomingEvents() {
       <div className="flex justify-between items-end border-b border-horizon-mist pb-3 mb-6">
         <h2 className="font-headline text-2xl text-primary-dark font-normal">Upcoming Events</h2>
         <Link
-          to="/events"
+          to="/dashboard/events"
           className="font-body text-[10px] uppercase tracking-[0.15em] text-damascus-gold font-bold hover:text-primary-dark transition-colors"
         >
           View all →

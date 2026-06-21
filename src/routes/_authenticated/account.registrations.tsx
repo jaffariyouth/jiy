@@ -69,7 +69,7 @@ function RegistrationsPage() {
               You haven't registered for any upcoming events.
             </p>
             <Link
-              to="/events"
+              to="/dashboard/events"
               className="mt-4 inline-block font-body text-[10px] uppercase tracking-[0.2em] text-damascus-gold hover:text-primary-dark font-black"
             >
               Browse events →
@@ -94,7 +94,7 @@ function RegistrationsPage() {
                 <div className="flex items-center gap-3 shrink-0">
                   {r.events ? (
                     <Link
-                      to="/events/$eventId"
+                      to="/dashboard/events/$eventId"
                       params={{ eventId: r.events.id }}
                       className="font-body text-[10px] uppercase tracking-[0.2em] text-damascus-gold hover:text-primary-dark font-bold"
                     >
