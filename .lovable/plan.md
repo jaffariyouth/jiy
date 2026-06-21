@@ -1,63 +1,85 @@
-# Stage A2 — Opportunities & Shop Waitlist
+## Goal
 
-Build out the two remaining public/member content surfaces from the original plan. No email work in this stage.
+- Split press and events into **public** (`/press`, `/events`) and **member** (`/dashboard/press`, `/dashboard/events`) views. Members see public + member-only content; public visitors see only public.
+- Gate scholar-qa, opportunities, shop (and future resource pages) behind auth and move them under `/dashboard/*` with the member TopNavBar.
+- When a signed-in user hits a member-only URL's old public path, redirect to the `/dashboard/*` equivalent.
 
-## 1. Opportunities
+## Route changes
 
-A curated board of external scholarships, fellowships, jobs, and calls-for-papers that the JIY team posts for members.
+New member routes (all wrapped by existing `_authenticated` gate, render `TopNavBar` + content):
 
-**New table `opportunities`:**
-- `title`, `slug`, `summary`, `body` (markdown), `category` (enum: scholarship | fellowship | job | cfp | other), `organization`, `location`, `url` (external apply link), `deadline` (timestamptz, nullable), `cover_image_url`, `status` (draft | published | archived), `published_at`, `created_by`.
-- Standard `created_at` / `updated_at` + trigger.
-- GRANTs: `authenticated` full; `service_role` all; `anon` SELECT (board is public-readable when published).
-- RLS:
-  - Anyone (anon + authenticated) can read rows where `status='published'`.
-  - Admins (`has_role(auth.uid(),'admin')`) can do everything.
+```
+src/routes/_authenticated/
+  dashboard.press.tsx          → /dashboard/press         (list, public + member-only)
+  dashboard.press.$slug.tsx    → /dashboard/press/:slug
+  dashboard.events.index.tsx   → /dashboard/events        (list, public + member-only)
+  dashboard.events.$eventId.tsx→ /dashboard/events/:id
+  dashboard.scholar-qa.tsx     → /dashboard/scholar-qa
+  dashboard.opportunities.tsx  → /dashboard/opportunities
+  dashboard.opportunities.$slug.tsx
+  dashboard.shop.tsx           → /dashboard/shop
+```
 
-**Server functions** in `src/lib/jiy/opportunities.functions.ts`:
-- `listPublishedOpportunities({ category?, limit?, offset? })` — public.
-- `getOpportunityBySlug(slug)` — public, published only.
-- `listAllOpportunitiesAdmin()` — admin-only via `requireSupabaseAuth` + role check.
-- `upsertOpportunity(input)` — admin.
-- `deleteOpportunity(id)` — admin.
+Existing `src/routes/_authenticated/dashboard.tsx` (the `/dashboard` index) becomes a layout-friendly leaf — convert to `dashboard.index.tsx` and add `dashboard.tsx` parent rendering `<Outlet />` (so child segments mount).
 
-**Routes:**
-- Replace placeholder `src/routes/opportunities.tsx` with real listing (filter chips by category, deadline sort, card grid using JIY editorial tokens).
-- `src/routes/opportunities.$slug.tsx` — detail page with cover, summary, body, deadline, "Apply" CTA opening `url` in new tab. Head metadata derived from row (title, description, og:image = cover).
-- `src/routes/admin/opportunities.tsx` — admin list + create/edit drawer mirroring the existing `admin/announcements` pattern (table, status badges, publish toggle, slug auto-gen).
+### Public routes — behavior changes
 
-**Navigation:** add "Opportunities" link in admin sidebar (where Announcements/Events live).
+- `/press`, `/press/:slug`, `/events`, `/events/:eventId`: stay public, public-only content (current filtering already excludes `audience_visibility != 'public'`). Add a small `beforeLoad` redirect: if the user is signed in, `redirect({ to: '/dashboard/press' })` etc.
+- `/scholar-qa`, `/opportunities`, `/opportunities/:slug`, `/shop`: **delete** the public files. Add lightweight redirect-only routes (`beforeLoad` → `/dashboard/...`) so old links/bookmarks still work. Unauthenticated visitors hitting these get bounced through `_authenticated` → `/auth`.
 
-## 2. Shop — Coming Soon + Waitlist
+## Data layer
 
-No commerce yet. A teaser page that collects emails for launch notification.
+`src/lib/jiy/youth-press.functions.ts` and `events.functions.ts` already filter to public via `audience_visibility = 'public'`. Add member-scoped siblings that return public + member content:
 
-**New table `shop_waitlist`:**
-- `email` (citext, unique), `user_id` (nullable fk to auth.users), `source` (text, default 'shop_page'), `created_at`.
-- GRANTs: `anon` + `authenticated` INSERT; `service_role` all. No SELECT for anon/authenticated (admin-only via service_role / admin policy).
-- RLS:
-  - Insert allowed for anyone (anon + authenticated) with a valid email.
-  - Select restricted to admins.
+- `listMemberArticles()` — same select, drop the public-only filters, still `status = 'published'`.
+- `getMemberArticleBySlug(slug)` — same as public but no audience filter.
+- `listMemberEvents()` / `getMemberEvent(id)` — same pattern.
 
-**Server fn** `src/lib/jiy/shop.functions.ts`:
-- `joinShopWaitlist({ email })` — public, zod-validates email, inserts with `on conflict do nothing`, attaches `user_id` when session present.
-- `listShopWaitlistAdmin()` — admin only.
+Both use `requireSupabaseAuth` middleware so RLS enforces the member gate. No schema changes.
 
-**Route:** replace placeholder `src/routes/shop.tsx` with editorial "Coming Soon" hero + waitlist form (email field, submit, success state). Optional admin view at `src/routes/admin/shop-waitlist.tsx` (simple table + CSV export button using client-side blob).
+`scholar-questions.functions.ts`, `opportunities.functions.ts`, `shop.functions.ts` stay as-is — they're already used from authenticated context.
 
-## 3. Out of scope (intentionally deferred)
+## TopNavBar
 
-- All Track B email work (pgmq drain worker, React Email templates, transactional sends, auth email templates, notification prefs). Stays paused until DNS is ready.
-- Real Stripe checkout for the shop.
-- Saving/bookmarking opportunities per member (can add later if requested).
+Update `NAV` in `src/components/dashboard/TopNavBar.tsx` to point at the new URLs:
 
-## Technical notes
+- Events → `/dashboard/events`
+- Scholar Q&A → `/dashboard/scholar-qa`
+- The Press → `/dashboard/press`
+- RESOURCES → Opportunity Board `/dashboard/opportunities`
+- Merch Shop → `/dashboard/shop`
 
-- Migration runs first (single call) creating both tables with GRANTs + RLS + admin policies using existing `has_role` security-definer.
-- Server fns follow existing `src/lib/jiy/*.functions.ts` patterns (`createServerFn`, zod `inputValidator`, `requireSupabaseAuth` middleware for admin/mutation fns).
-- UI reuses JIY tokens (`headline-*`, `form-title`, `margin-safe`, `gap-section`, midnight-sapphire / damascus-gold) and shadcn primitives already in the project. Responsive header rows use the `grid-cols-[minmax(0,1fr)_auto] sm:flex` pattern per project memory.
-- Admin opportunity editor uses the same markdown textarea + cover image upload helper as announcements.
+Logo link stays `/dashboard`.
 
-## Open question
+## Member page wrappers
 
-For `opportunities.cover_image_url`: reuse the existing `site-content` storage bucket pattern (admin upload + signed/public URL), or skip cover images for v1 and ship text-only cards? Default if you don't answer: reuse existing bucket, cover image optional.
+Each `_authenticated/dashboard.*` route renders:
+
+```
+<TopNavBar />
+<SponsorNotice /> (optional — same as DashboardShell)
+<main>{/* reuse existing page body, swap data fn for member variant */}</main>
+<DashboardFooter />
+```
+
+Press/events list & detail bodies copy the existing public component bodies but call the member data fns. Scholar-qa/opportunities/shop bodies are lifted from the current public files mostly unchanged.
+
+## Redirect helpers
+
+Tiny pattern for public→member redirect when signed-in:
+
+```ts
+beforeLoad: async () => {
+  const { data } = await supabase.auth.getSession();
+  if (data.session) throw redirect({ to: "/dashboard/press" });
+}
+```
+
+Used on `/press`, `/events`. The replaced shop/opportunities/scholar-qa public routes redirect unconditionally to the dashboard equivalent.
+
+## Out of scope
+
+- No DB migrations.
+- No changes to admin pages.
+- No email/notification work.
+- Public `SiteHeader` unchanged (still lists Events/Press for visitors).
