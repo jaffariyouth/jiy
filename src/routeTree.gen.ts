@@ -33,6 +33,8 @@ import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedOnboardingStep3RouteImport } from './routes/_authenticated/onboarding.step-3'
 import { Route as AuthenticatedOnboardingStep2RouteImport } from './routes/_authenticated/onboarding.step-2'
 import { Route as AuthenticatedOnboardingStep1RouteImport } from './routes/_authenticated/onboarding.step-1'
+import { Route as AuthenticatedDashboardShopRouteImport } from './routes/_authenticated/dashboard.shop'
+import { Route as AuthenticatedDashboardScholarQaRouteImport } from './routes/_authenticated/dashboard.scholar-qa'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
 import { Route as AuthenticatedAdminShopWaitlistRouteImport } from './routes/_authenticated/admin.shop-waitlist'
@@ -46,6 +48,9 @@ import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminAnnouncementsRouteImport } from './routes/_authenticated/admin.announcements'
 import { Route as AuthenticatedAccountSubmissionsRouteImport } from './routes/_authenticated/account.submissions'
 import { Route as AuthenticatedAccountRegistrationsRouteImport } from './routes/_authenticated/account.registrations'
+import { Route as AuthenticatedDashboardPressIndexRouteImport } from './routes/_authenticated/dashboard.press.index'
+import { Route as AuthenticatedDashboardOpportunitiesIndexRouteImport } from './routes/_authenticated/dashboard.opportunities.index'
+import { Route as AuthenticatedDashboardEventsIndexRouteImport } from './routes/_authenticated/dashboard.events.index'
 import { Route as AuthenticatedAdminTeamIndexRouteImport } from './routes/_authenticated/admin.team.index'
 import { Route as AuthenticatedAdminPressIndexRouteImport } from './routes/_authenticated/admin.press.index'
 import { Route as AuthenticatedAdminHomepageIndexRouteImport } from './routes/_authenticated/admin.homepage.index'
@@ -53,6 +58,9 @@ import { Route as AuthenticatedAdminFormsIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminEventsIndexRouteImport } from './routes/_authenticated/admin.events.index'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
 import { Route as ApiPublicCronDispatchNotificationsRouteImport } from './routes/api/public/cron/dispatch-notifications'
+import { Route as AuthenticatedDashboardPressSlugRouteImport } from './routes/_authenticated/dashboard.press.$slug'
+import { Route as AuthenticatedDashboardOpportunitiesSlugRouteImport } from './routes/_authenticated/dashboard.opportunities.$slug'
+import { Route as AuthenticatedDashboardEventsEventIdRouteImport } from './routes/_authenticated/dashboard.events.$eventId'
 import { Route as AuthenticatedAdminTeamMembersRouteImport } from './routes/_authenticated/admin.team.members'
 import { Route as AuthenticatedAdminTeamLeadershipRouteImport } from './routes/_authenticated/admin.team.leadership'
 import { Route as AuthenticatedAdminTeamIntroRouteImport } from './routes/_authenticated/admin.team.intro'
@@ -195,6 +203,18 @@ const AuthenticatedOnboardingStep1Route =
     path: '/step-1',
     getParentRoute: () => AuthenticatedOnboardingRoute,
   } as any)
+const AuthenticatedDashboardShopRoute =
+  AuthenticatedDashboardShopRouteImport.update({
+    id: '/shop',
+    path: '/shop',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardScholarQaRoute =
+  AuthenticatedDashboardScholarQaRouteImport.update({
+    id: '/scholar-qa',
+    path: '/scholar-qa',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -268,6 +288,24 @@ const AuthenticatedAccountRegistrationsRoute =
     path: '/registrations',
     getParentRoute: () => AuthenticatedAccountRoute,
   } as any)
+const AuthenticatedDashboardPressIndexRoute =
+  AuthenticatedDashboardPressIndexRouteImport.update({
+    id: '/press/',
+    path: '/press/',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardOpportunitiesIndexRoute =
+  AuthenticatedDashboardOpportunitiesIndexRouteImport.update({
+    id: '/opportunities/',
+    path: '/opportunities/',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardEventsIndexRoute =
+  AuthenticatedDashboardEventsIndexRouteImport.update({
+    id: '/events/',
+    path: '/events/',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedAdminTeamIndexRoute =
   AuthenticatedAdminTeamIndexRouteImport.update({
     id: '/',
@@ -308,6 +346,24 @@ const ApiPublicCronDispatchNotificationsRoute =
     id: '/api/public/cron/dispatch-notifications',
     path: '/api/public/cron/dispatch-notifications',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedDashboardPressSlugRoute =
+  AuthenticatedDashboardPressSlugRouteImport.update({
+    id: '/press/$slug',
+    path: '/press/$slug',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardOpportunitiesSlugRoute =
+  AuthenticatedDashboardOpportunitiesSlugRouteImport.update({
+    id: '/opportunities/$slug',
+    path: '/opportunities/$slug',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardEventsEventIdRoute =
+  AuthenticatedDashboardEventsEventIdRouteImport.update({
+    id: '/events/$eventId',
+    path: '/events/$eventId',
+    getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
 const AuthenticatedAdminTeamMembersRoute =
   AuthenticatedAdminTeamMembersRouteImport.update({
@@ -443,6 +499,8 @@ export interface FileRoutesByFullPath {
   '/admin/shop-waitlist': typeof AuthenticatedAdminShopWaitlistRoute
   '/admin/team': typeof AuthenticatedAdminTeamRouteWithChildren
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/dashboard/scholar-qa': typeof AuthenticatedDashboardScholarQaRoute
+  '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
   '/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
@@ -466,6 +524,9 @@ export interface FileRoutesByFullPath {
   '/admin/team/intro': typeof AuthenticatedAdminTeamIntroRoute
   '/admin/team/leadership': typeof AuthenticatedAdminTeamLeadershipRoute
   '/admin/team/members': typeof AuthenticatedAdminTeamMembersRoute
+  '/dashboard/events/$eventId': typeof AuthenticatedDashboardEventsEventIdRoute
+  '/dashboard/opportunities/$slug': typeof AuthenticatedDashboardOpportunitiesSlugRoute
+  '/dashboard/press/$slug': typeof AuthenticatedDashboardPressSlugRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/admin/events/': typeof AuthenticatedAdminEventsIndexRoute
@@ -473,6 +534,9 @@ export interface FileRoutesByFullPath {
   '/admin/homepage/': typeof AuthenticatedAdminHomepageIndexRoute
   '/admin/press/': typeof AuthenticatedAdminPressIndexRoute
   '/admin/team/': typeof AuthenticatedAdminTeamIndexRoute
+  '/dashboard/events/': typeof AuthenticatedDashboardEventsIndexRoute
+  '/dashboard/opportunities/': typeof AuthenticatedDashboardOpportunitiesIndexRoute
+  '/dashboard/press/': typeof AuthenticatedDashboardPressIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -498,6 +562,8 @@ export interface FileRoutesByTo {
   '/admin/recurring': typeof AuthenticatedAdminRecurringRoute
   '/admin/shop-waitlist': typeof AuthenticatedAdminShopWaitlistRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/dashboard/scholar-qa': typeof AuthenticatedDashboardScholarQaRoute
+  '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
   '/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
@@ -521,6 +587,9 @@ export interface FileRoutesByTo {
   '/admin/team/intro': typeof AuthenticatedAdminTeamIntroRoute
   '/admin/team/leadership': typeof AuthenticatedAdminTeamLeadershipRoute
   '/admin/team/members': typeof AuthenticatedAdminTeamMembersRoute
+  '/dashboard/events/$eventId': typeof AuthenticatedDashboardEventsEventIdRoute
+  '/dashboard/opportunities/$slug': typeof AuthenticatedDashboardOpportunitiesSlugRoute
+  '/dashboard/press/$slug': typeof AuthenticatedDashboardPressSlugRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/admin/events': typeof AuthenticatedAdminEventsIndexRoute
@@ -528,6 +597,9 @@ export interface FileRoutesByTo {
   '/admin/homepage': typeof AuthenticatedAdminHomepageIndexRoute
   '/admin/press': typeof AuthenticatedAdminPressIndexRoute
   '/admin/team': typeof AuthenticatedAdminTeamIndexRoute
+  '/dashboard/events': typeof AuthenticatedDashboardEventsIndexRoute
+  '/dashboard/opportunities': typeof AuthenticatedDashboardOpportunitiesIndexRoute
+  '/dashboard/press': typeof AuthenticatedDashboardPressIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -562,6 +634,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/shop-waitlist': typeof AuthenticatedAdminShopWaitlistRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRouteWithChildren
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/dashboard/scholar-qa': typeof AuthenticatedDashboardScholarQaRoute
+  '/_authenticated/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/_authenticated/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
   '/_authenticated/onboarding/step-2': typeof AuthenticatedOnboardingStep2Route
   '/_authenticated/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
@@ -585,6 +659,9 @@ export interface FileRoutesById {
   '/_authenticated/admin/team/intro': typeof AuthenticatedAdminTeamIntroRoute
   '/_authenticated/admin/team/leadership': typeof AuthenticatedAdminTeamLeadershipRoute
   '/_authenticated/admin/team/members': typeof AuthenticatedAdminTeamMembersRoute
+  '/_authenticated/dashboard/events/$eventId': typeof AuthenticatedDashboardEventsEventIdRoute
+  '/_authenticated/dashboard/opportunities/$slug': typeof AuthenticatedDashboardOpportunitiesSlugRoute
+  '/_authenticated/dashboard/press/$slug': typeof AuthenticatedDashboardPressSlugRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/_authenticated/admin/events/': typeof AuthenticatedAdminEventsIndexRoute
@@ -592,6 +669,9 @@ export interface FileRoutesById {
   '/_authenticated/admin/homepage/': typeof AuthenticatedAdminHomepageIndexRoute
   '/_authenticated/admin/press/': typeof AuthenticatedAdminPressIndexRoute
   '/_authenticated/admin/team/': typeof AuthenticatedAdminTeamIndexRoute
+  '/_authenticated/dashboard/events/': typeof AuthenticatedDashboardEventsIndexRoute
+  '/_authenticated/dashboard/opportunities/': typeof AuthenticatedDashboardOpportunitiesIndexRoute
+  '/_authenticated/dashboard/press/': typeof AuthenticatedDashboardPressIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -626,6 +706,8 @@ export interface FileRouteTypes {
     | '/admin/shop-waitlist'
     | '/admin/team'
     | '/admin/users'
+    | '/dashboard/scholar-qa'
+    | '/dashboard/shop'
     | '/onboarding/step-1'
     | '/onboarding/step-2'
     | '/onboarding/step-3'
@@ -649,6 +731,9 @@ export interface FileRouteTypes {
     | '/admin/team/intro'
     | '/admin/team/leadership'
     | '/admin/team/members'
+    | '/dashboard/events/$eventId'
+    | '/dashboard/opportunities/$slug'
+    | '/dashboard/press/$slug'
     | '/api/public/cron/dispatch-notifications'
     | '/api/public/stripe/webhook'
     | '/admin/events/'
@@ -656,6 +741,9 @@ export interface FileRouteTypes {
     | '/admin/homepage/'
     | '/admin/press/'
     | '/admin/team/'
+    | '/dashboard/events/'
+    | '/dashboard/opportunities/'
+    | '/dashboard/press/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -681,6 +769,8 @@ export interface FileRouteTypes {
     | '/admin/recurring'
     | '/admin/shop-waitlist'
     | '/admin/users'
+    | '/dashboard/scholar-qa'
+    | '/dashboard/shop'
     | '/onboarding/step-1'
     | '/onboarding/step-2'
     | '/onboarding/step-3'
@@ -704,6 +794,9 @@ export interface FileRouteTypes {
     | '/admin/team/intro'
     | '/admin/team/leadership'
     | '/admin/team/members'
+    | '/dashboard/events/$eventId'
+    | '/dashboard/opportunities/$slug'
+    | '/dashboard/press/$slug'
     | '/api/public/cron/dispatch-notifications'
     | '/api/public/stripe/webhook'
     | '/admin/events'
@@ -711,6 +804,9 @@ export interface FileRouteTypes {
     | '/admin/homepage'
     | '/admin/press'
     | '/admin/team'
+    | '/dashboard/events'
+    | '/dashboard/opportunities'
+    | '/dashboard/press'
   id:
     | '__root__'
     | '/'
@@ -744,6 +840,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/shop-waitlist'
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/users'
+    | '/_authenticated/dashboard/scholar-qa'
+    | '/_authenticated/dashboard/shop'
     | '/_authenticated/onboarding/step-1'
     | '/_authenticated/onboarding/step-2'
     | '/_authenticated/onboarding/step-3'
@@ -767,6 +865,9 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/team/intro'
     | '/_authenticated/admin/team/leadership'
     | '/_authenticated/admin/team/members'
+    | '/_authenticated/dashboard/events/$eventId'
+    | '/_authenticated/dashboard/opportunities/$slug'
+    | '/_authenticated/dashboard/press/$slug'
     | '/api/public/cron/dispatch-notifications'
     | '/api/public/stripe/webhook'
     | '/_authenticated/admin/events/'
@@ -774,6 +875,9 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/homepage/'
     | '/_authenticated/admin/press/'
     | '/_authenticated/admin/team/'
+    | '/_authenticated/dashboard/events/'
+    | '/_authenticated/dashboard/opportunities/'
+    | '/_authenticated/dashboard/press/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -963,6 +1067,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOnboardingStep1RouteImport
       parentRoute: typeof AuthenticatedOnboardingRoute
     }
+    '/_authenticated/dashboard/shop': {
+      id: '/_authenticated/dashboard/shop'
+      path: '/shop'
+      fullPath: '/dashboard/shop'
+      preLoaderRoute: typeof AuthenticatedDashboardShopRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/scholar-qa': {
+      id: '/_authenticated/dashboard/scholar-qa'
+      path: '/scholar-qa'
+      fullPath: '/dashboard/scholar-qa'
+      preLoaderRoute: typeof AuthenticatedDashboardScholarQaRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/admin/users': {
       id: '/_authenticated/admin/users'
       path: '/users'
@@ -1054,6 +1172,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountRegistrationsRouteImport
       parentRoute: typeof AuthenticatedAccountRoute
     }
+    '/_authenticated/dashboard/press/': {
+      id: '/_authenticated/dashboard/press/'
+      path: '/press'
+      fullPath: '/dashboard/press/'
+      preLoaderRoute: typeof AuthenticatedDashboardPressIndexRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/opportunities/': {
+      id: '/_authenticated/dashboard/opportunities/'
+      path: '/opportunities'
+      fullPath: '/dashboard/opportunities/'
+      preLoaderRoute: typeof AuthenticatedDashboardOpportunitiesIndexRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/events/': {
+      id: '/_authenticated/dashboard/events/'
+      path: '/events'
+      fullPath: '/dashboard/events/'
+      preLoaderRoute: typeof AuthenticatedDashboardEventsIndexRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/admin/team/': {
       id: '/_authenticated/admin/team/'
       path: '/'
@@ -1102,6 +1241,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/cron/dispatch-notifications'
       preLoaderRoute: typeof ApiPublicCronDispatchNotificationsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/dashboard/press/$slug': {
+      id: '/_authenticated/dashboard/press/$slug'
+      path: '/press/$slug'
+      fullPath: '/dashboard/press/$slug'
+      preLoaderRoute: typeof AuthenticatedDashboardPressSlugRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/opportunities/$slug': {
+      id: '/_authenticated/dashboard/opportunities/$slug'
+      path: '/opportunities/$slug'
+      fullPath: '/dashboard/opportunities/$slug'
+      preLoaderRoute: typeof AuthenticatedDashboardOpportunitiesSlugRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/events/$eventId': {
+      id: '/_authenticated/dashboard/events/$eventId'
+      path: '/events/$eventId'
+      fullPath: '/dashboard/events/$eventId'
+      preLoaderRoute: typeof AuthenticatedDashboardEventsEventIdRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/_authenticated/admin/team/members': {
       id: '/_authenticated/admin/team/members'
@@ -1372,12 +1532,33 @@ const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
 interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardScholarQaRoute: typeof AuthenticatedDashboardScholarQaRoute
+  AuthenticatedDashboardShopRoute: typeof AuthenticatedDashboardShopRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+  AuthenticatedDashboardEventsEventIdRoute: typeof AuthenticatedDashboardEventsEventIdRoute
+  AuthenticatedDashboardOpportunitiesSlugRoute: typeof AuthenticatedDashboardOpportunitiesSlugRoute
+  AuthenticatedDashboardPressSlugRoute: typeof AuthenticatedDashboardPressSlugRoute
+  AuthenticatedDashboardEventsIndexRoute: typeof AuthenticatedDashboardEventsIndexRoute
+  AuthenticatedDashboardOpportunitiesIndexRoute: typeof AuthenticatedDashboardOpportunitiesIndexRoute
+  AuthenticatedDashboardPressIndexRoute: typeof AuthenticatedDashboardPressIndexRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
+    AuthenticatedDashboardScholarQaRoute: AuthenticatedDashboardScholarQaRoute,
+    AuthenticatedDashboardShopRoute: AuthenticatedDashboardShopRoute,
     AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+    AuthenticatedDashboardEventsEventIdRoute:
+      AuthenticatedDashboardEventsEventIdRoute,
+    AuthenticatedDashboardOpportunitiesSlugRoute:
+      AuthenticatedDashboardOpportunitiesSlugRoute,
+    AuthenticatedDashboardPressSlugRoute: AuthenticatedDashboardPressSlugRoute,
+    AuthenticatedDashboardEventsIndexRoute:
+      AuthenticatedDashboardEventsIndexRoute,
+    AuthenticatedDashboardOpportunitiesIndexRoute:
+      AuthenticatedDashboardOpportunitiesIndexRoute,
+    AuthenticatedDashboardPressIndexRoute:
+      AuthenticatedDashboardPressIndexRoute,
   }
 
 const AuthenticatedDashboardRouteWithChildren =
