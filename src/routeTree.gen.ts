@@ -24,9 +24,9 @@ import { Route as OpportunitiesSlugRouteImport } from './routes/opportunities.$s
 import { Route as FormsTemplateIdRouteImport } from './routes/forms.$templateId'
 import { Route as EventsEventIdRouteImport } from './routes/events.$eventId'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
 import { Route as AuthenticatedOnboardingStep3RouteImport } from './routes/_authenticated/onboarding.step-3'
@@ -144,11 +144,6 @@ const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -159,6 +154,12 @@ const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
   path: '/account',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDashboardIndexRoute =
+  AuthenticatedDashboardIndexRouteImport.update({
+    id: '/dashboard/',
+    path: '/dashboard/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -416,7 +417,6 @@ export interface FileRoutesByFullPath {
   '/team': typeof TeamRoute
   '/account': typeof AuthenticatedAccountRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
@@ -441,6 +441,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
   '/account/': typeof AuthenticatedAccountIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/admin/events/$id': typeof AuthenticatedAdminEventsIdRoute
   '/admin/events/new': typeof AuthenticatedAdminEventsNewRoute
   '/admin/forms/$id': typeof AuthenticatedAdminFormsIdRoute
@@ -475,7 +476,6 @@ export interface FileRoutesByTo {
   '/scholar-qa': typeof ScholarQaRoute
   '/shop': typeof ShopRoute
   '/team': typeof TeamRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
@@ -496,6 +496,7 @@ export interface FileRoutesByTo {
   '/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
   '/account': typeof AuthenticatedAccountIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/admin/events/$id': typeof AuthenticatedAdminEventsIdRoute
   '/admin/events/new': typeof AuthenticatedAdminEventsNewRoute
   '/admin/forms/$id': typeof AuthenticatedAdminFormsIdRoute
@@ -534,7 +535,6 @@ export interface FileRoutesById {
   '/team': typeof TeamRoute
   '/_authenticated/account': typeof AuthenticatedAccountRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/events/$eventId': typeof EventsEventIdRoute
   '/forms/$templateId': typeof FormsTemplateIdRoute
@@ -559,6 +559,7 @@ export interface FileRoutesById {
   '/_authenticated/onboarding/step-3': typeof AuthenticatedOnboardingStep3Route
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/admin/events/$id': typeof AuthenticatedAdminEventsIdRoute
   '/_authenticated/admin/events/new': typeof AuthenticatedAdminEventsNewRoute
   '/_authenticated/admin/forms/$id': typeof AuthenticatedAdminFormsIdRoute
@@ -597,7 +598,6 @@ export interface FileRouteTypes {
     | '/team'
     | '/account'
     | '/admin'
-    | '/dashboard'
     | '/onboarding'
     | '/events/$eventId'
     | '/forms/$templateId'
@@ -622,6 +622,7 @@ export interface FileRouteTypes {
     | '/onboarding/step-3'
     | '/account/'
     | '/admin/'
+    | '/dashboard/'
     | '/admin/events/$id'
     | '/admin/events/new'
     | '/admin/forms/$id'
@@ -656,7 +657,6 @@ export interface FileRouteTypes {
     | '/scholar-qa'
     | '/shop'
     | '/team'
-    | '/dashboard'
     | '/onboarding'
     | '/events/$eventId'
     | '/forms/$templateId'
@@ -677,6 +677,7 @@ export interface FileRouteTypes {
     | '/onboarding/step-3'
     | '/account'
     | '/admin'
+    | '/dashboard'
     | '/admin/events/$id'
     | '/admin/events/new'
     | '/admin/forms/$id'
@@ -714,7 +715,6 @@ export interface FileRouteTypes {
     | '/team'
     | '/_authenticated/account'
     | '/_authenticated/admin'
-    | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
     | '/events/$eventId'
     | '/forms/$templateId'
@@ -739,6 +739,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding/step-3'
     | '/_authenticated/account/'
     | '/_authenticated/admin/'
+    | '/_authenticated/dashboard/'
     | '/_authenticated/admin/events/$id'
     | '/_authenticated/admin/events/new'
     | '/_authenticated/admin/forms/$id'
@@ -889,13 +890,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -908,6 +902,13 @@ declare module '@tanstack/react-router' {
       path: '/account'
       fullPath: '/account'
       preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard/': {
+      id: '/_authenticated/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/': {
@@ -1374,15 +1375,15 @@ const AuthenticatedOnboardingRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAccountRoute: typeof AuthenticatedAccountRouteWithChildren
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
-  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRouteWithChildren
+  AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAccountRoute: AuthenticatedAccountRouteWithChildren,
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
-  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRouteWithChildren,
+  AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
