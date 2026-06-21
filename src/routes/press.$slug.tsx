@@ -1,7 +1,16 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { getArticleBySlug } from "@/lib/jiy/youth-press.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/press/$slug")({
+  beforeLoad: async ({ params }) => {
+    if (typeof window !== "undefined") {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        throw redirect({ to: "/dashboard/press/$slug", params: { slug: params.slug } });
+      }
+    }
+  },
   loader: async ({ params }) => {
     try {
       return await getArticleBySlug({ data: { slug: params.slug } });
@@ -9,6 +18,7 @@ export const Route = createFileRoute("/press/$slug")({
       throw notFound();
     }
   },
+
   head: ({ loaderData }) => {
     const a = loaderData?.article;
     if (!a) return { meta: [{ title: "Article — JIY" }] };
