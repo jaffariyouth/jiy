@@ -1,13 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({
-    meta: [{ title: "JIY Central Member Dashboard Hub" }],
-  }),
-  component: DashboardPage,
+  component: () => <Outlet />,
 });
-
-function DashboardPage() {
-  return <DashboardShell />;
-}

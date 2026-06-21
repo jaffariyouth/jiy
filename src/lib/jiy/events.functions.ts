@@ -41,6 +41,34 @@ export const listMemberEvents = createServerFn({ method: "GET" })
     return { events: data ?? [] };
   });
 
+export const getMemberEvent = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    const { data: event, error } = await context.supabase
+      .from("events")
+      .select(
+        "id, title, description, location, starts_at, ends_at, capacity, cover_image_url, category_label, speakers, requires_payment, status, audience_visibility, audience_gender, audience_min_age, audience_max_age, is_member_only",
+      )
+      .eq("id", data.id)
+      .eq("status", "published")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!event) throw new Error("NOT_FOUND");
+
+    const { data: pay } = await context.supabase
+      .from("event_payments")
+      .select("price_cents, currency, requires_payment")
+      .eq("event_id", data.id)
+      .maybeSingle();
+
+    return {
+      event,
+      payment: pay ?? { price_cents: 0, currency: "usd", requires_payment: false },
+    };
+  });
+
+
 // ---------- Admin reads ----------
 
 export const getEventAdmin = createServerFn({ method: "GET" })

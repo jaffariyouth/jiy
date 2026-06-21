@@ -1,9 +1,15 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useRouter } from "@tanstack/react-router";
 import { listPublicEvents } from "@/lib/jiy/events.functions";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/events/")({
+  beforeLoad: async () => {
+    if (typeof window === "undefined") return;
+    const { data } = await supabase.auth.getSession();
+    if (data.session) throw redirect({ to: "/dashboard/events" });
+  },
   head: () => ({
     meta: [
       { title: "Events — JIY" },
@@ -13,6 +19,7 @@ export const Route = createFileRoute("/events/")({
     ],
   }),
   loader: () => listPublicEvents(),
+
   errorComponent: ({ error, reset }) => {
     const router = useRouter();
     return (

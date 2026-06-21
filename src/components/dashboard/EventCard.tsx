@@ -43,7 +43,7 @@ export function EventCard({ id, image, alt, day, month, eyebrow, title, descript
         <div className="pt-4 border-t border-horizon-mist/60 flex justify-between items-center">
           {detailHref ? (
             <Link
-              to="/events/$eventId"
+              to="/dashboard/events/$eventId"
               params={{ eventId: id! }}
               className="font-body text-[10px] uppercase tracking-[0.2em] text-damascus-gold hover:text-primary-dark font-black transition-colors duration-200"
             >

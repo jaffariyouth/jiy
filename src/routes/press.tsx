@@ -1,9 +1,15 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listPublishedArticles } from "@/lib/jiy/youth-press.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/press")({
+  beforeLoad: async () => {
+    if (typeof window === "undefined") return;
+    const { data } = await supabase.auth.getSession();
+    if (data.session) throw redirect({ to: "/dashboard/press" });
+  },
   head: () => ({
     meta: [
       { title: "The Youth Press — JIY" },
@@ -22,6 +28,7 @@ export const Route = createFileRoute("/press")({
   }),
   component: PressIndex,
 });
+
 
 function formatDate(iso: string | null) {
   if (!iso) return "";

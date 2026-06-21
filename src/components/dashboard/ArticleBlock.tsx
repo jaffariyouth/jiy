@@ -35,7 +35,7 @@ export function ArticleBlock({ slug, date, category, title, excerpt }: Props) {
 
   if (slug) {
     return (
-      <Link to="/press/$slug" params={{ slug }} className="group block">
+      <Link to="/dashboard/press/$slug" params={{ slug }} className="group block">
         {inner}
       </Link>
     );

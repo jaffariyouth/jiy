@@ -1,10 +1,11 @@
-import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { queryOptions, useSuspenseQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { getPublicEvent, registerPublicForEvent } from "@/lib/jiy/events.functions";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { supabase } from "@/integrations/supabase/client";
 
 const eventQuery = (id: string) =>
   queryOptions({
@@ -13,7 +14,19 @@ const eventQuery = (id: string) =>
   });
 
 export const Route = createFileRoute("/events/$eventId")({
+  beforeLoad: async ({ params }) => {
+    if (typeof window !== "undefined") {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        throw redirect({
+          to: "/dashboard/events/$eventId",
+          params: { eventId: params.eventId },
+        });
+      }
+    }
+  },
   loader: ({ params, context }) => context.queryClient.ensureQueryData(eventQuery(params.eventId)),
+
   head: ({ loaderData }) => {
     const ev = loaderData?.event;
     const title = ev?.title ? `${ev.title} — JIY` : "Event — JIY";

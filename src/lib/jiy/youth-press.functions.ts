@@ -52,6 +52,37 @@ export const getArticleBySlug = createServerFn({ method: "GET" })
     return { article: row };
   });
 
+// ---------- Member reads (public + members-only) ----------
+
+export const listMemberArticles = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("youth_press_articles")
+      .select("id, title, slug, excerpt, cover_image_url, published_at, author_id, audience_visibility")
+      .eq("status", "published")
+      .order("published_at", { ascending: false })
+      .limit(100);
+    if (error) throw new Error(error.message);
+    return { articles: data ?? [] };
+  });
+
+export const getMemberArticleBySlug = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => slugInput.parse(input))
+  .handler(async ({ data, context }) => {
+    const { data: row, error } = await context.supabase
+      .from("youth_press_articles")
+      .select("id, title, slug, excerpt, body_md, cover_image_url, published_at, author_id, audience_visibility")
+      .eq("status", "published")
+      .eq("slug", data.slug)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!row) throw new Error("NOT_FOUND");
+    return { article: row };
+  });
+
+
 // ---------- Mutations ----------
 
 const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;

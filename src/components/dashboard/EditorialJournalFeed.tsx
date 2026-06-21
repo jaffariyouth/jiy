@@ -24,7 +24,7 @@ export function EditorialJournalFeed() {
       <div className="flex justify-between items-end border-b border-horizon-mist pb-3 mb-8">
         <h2 className="font-headline text-2xl text-primary-dark">The Youth Press</h2>
         <Link
-          to="/press"
+          to="/dashboard/press"
           className="font-body text-[10px] uppercase tracking-[0.2em] text-ash-slate hover:text-damascus-gold font-bold transition-colors"
         >
           Explore Archive →
