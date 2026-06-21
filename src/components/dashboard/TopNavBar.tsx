@@ -15,7 +15,7 @@ const NAV: NavItem[] = [
   { label: "Scholar Q&A", to: "/scholar-qa" },
   { label: "The Press", to: "/press" },
   {
-    label: "Resources",
+    label: "RESOURCES",
     children: [
       { label: "Opportunity Board", to: "/opportunities" },
     ],
