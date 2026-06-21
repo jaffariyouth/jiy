@@ -11,16 +11,16 @@ type NavLeaf = { label: string; to: string };
 type NavItem = NavLeaf | { label: string; children: NavLeaf[] };
 
 const NAV: NavItem[] = [
-  { label: "Events", to: "/events" },
-  { label: "Scholar Q&A", to: "/scholar-qa" },
-  { label: "The Press", to: "/press" },
+  { label: "Events", to: "/dashboard/events" },
+  { label: "Scholar Q&A", to: "/dashboard/scholar-qa" },
+  { label: "The Press", to: "/dashboard/press" },
   {
     label: "RESOURCES",
     children: [
-      { label: "Opportunity Board", to: "/opportunities" },
+      { label: "Opportunity Board", to: "/dashboard/opportunities" },
     ],
   },
-  { label: "Merch Shop", to: "/shop" },
+  { label: "Merch Shop", to: "/dashboard/shop" },
 ];
 
 function isGroup(item: NavItem): item is { label: string; children: NavLeaf[] } {
