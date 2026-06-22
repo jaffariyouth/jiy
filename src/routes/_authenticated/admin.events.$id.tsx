@@ -100,15 +100,6 @@ function EventEditPage() {
     );
   }, [q.data?.event]);
 
-  const uploadCover = async (file: File) => {
-    const path = `events/${id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
-    const { error } = await supabase.storage.from("editorial-media").upload(path, file);
-    if (error) { toast.error(error.message); return; }
-    const { data } = supabase.storage.from("editorial-media").getPublicUrl(path);
-    setCoverUrl(data.publicUrl);
-    toast.success("Cover uploaded");
-  };
-
   const saveMut = useMutation({
     mutationFn: () => upd({
       data: {
@@ -140,6 +131,35 @@ function EventEditPage() {
   });
 
   const status = q.data?.event.status;
+  const scheduledAt = (q.data?.event as { publish_at?: string | null } | undefined)?.publish_at ?? null;
+
+  const statusLabel =
+    status === "draft" && scheduledAt
+      ? `Scheduled for ${new Date(scheduledAt).toLocaleString()}`
+      : status
+        ? `Status: ${status}`
+        : undefined;
+
+  const doSchedule = async () => {
+    if (!publishAt) {
+      toast.error("Pick a publish date/time first");
+      return;
+    }
+    const iso = new Date(publishAt).toISOString();
+    if (new Date(iso).getTime() <= Date.now()) {
+      toast.error("Scheduled time must be in the future");
+      return;
+    }
+    await sched({ data: { id, publish_at: iso, idempotencyKey: crypto.randomUUID() } });
+    toast.success("Scheduled");
+    qc.invalidateQueries({ queryKey: ["admin", "event", id] });
+  };
+
+  const doUnschedule = async () => {
+    await unsched({ data: { id, idempotencyKey: crypto.randomUUID() } });
+    toast.success("Schedule cleared");
+    qc.invalidateQueries({ queryKey: ["admin", "event", id] });
+  };
 
   return (
     <div>
