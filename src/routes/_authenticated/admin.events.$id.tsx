@@ -64,6 +64,7 @@ function EventEditPage() {
   const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
   const [categoryLabel, setCategoryLabel] = useState("");
   const [speakers, setSpeakers] = useState<SpeakerInput[]>([]);
+  const [publishAt, setPublishAt] = useState("");
 
   useEffect(() => {
     const e = q.data?.event;
