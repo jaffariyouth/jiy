@@ -118,6 +118,7 @@ const createEventSchema = z.object({
   featured_on_home: z.boolean().optional(),
   category_label: z.string().max(120).nullable().optional(),
   speakers: z.array(speakerSchema).max(20).optional(),
+  publish_at: z.string().datetime().nullable().optional(),
   ...audienceFields,
 });
 
