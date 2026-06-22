@@ -317,8 +317,8 @@
 }
 /* Mosque silhouette mask — fills image into the building outline */
 .jiy-dashboard .ogee-arch-portal {
-  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='14 3 72 94.5' preserveAspectRatio='none'><path fill='black' d='M50.136,2.969 l24.834,10.396 l5.043,3.902 l3.839,5.083 l2.456,5.917 l0.807,6.423 L87.501,97.374 c0,0.154 -0.126,0.28 -0.28,0.28 h-2.786 c-0.154,0 -0.28,-0.126 -0.28,-0.28 H16.347 c0,0.154 -0.126,0.28 -0.28,0.28 h-2.836 c-0.154,0 -0.28,-0.126 -0.28,-0.28 V34.948 l0.854,-6.46 l2.444,-5.918 l3.842,-5.083 l5.048,-3.902 Z'/></svg>");
-  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='14 3 72 94.5' preserveAspectRatio='none'><path fill='black' d='M50.136,2.969 l24.834,10.396 l5.043,3.902 l3.839,5.083 l2.456,5.917 l0.807,6.423 L87.501,97.374 c0,0.154 -0.126,0.28 -0.28,0.28 h-2.786 c-0.154,0 -0.28,-0.126 -0.28,-0.28 H16.347 c0,0.154 -0.126,0.28 -0.28,0.28 h-2.836 c-0.154,0 -0.28,-0.126 -0.28,-0.28 V34.948 l0.854,-6.46 l2.444,-5.918 l3.842,-5.083 l5.048,-3.902 Z'/></svg>");
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='14 3 72 94.5' preserveAspectRatio='none'><path fill='black' d='M50.136,2.969 C62,3.4 71,7 74.97,13.365 L80.013,17.267 L83.852,22.35 L86.308,28.267 L87.115,34.69 L87.501,97.654 L13.231,97.654 L13.231,34.948 L14.585,28.488 L17.029,22.57 L20.871,17.487 L25.919,13.585 C29.3,7 38.272,3.4 50.136,2.969 Z'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='14 3 72 94.5' preserveAspectRatio='none'><path fill='black' d='M50.136,2.969 C62,3.4 71,7 74.97,13.365 L80.013,17.267 L83.852,22.35 L86.308,28.267 L87.115,34.69 L87.501,97.654 L13.231,97.654 L13.231,34.948 L14.585,28.488 L17.029,22.57 L20.871,17.487 L25.919,13.585 C29.3,7 38.272,3.4 50.136,2.969 Z'/></svg>");
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
