@@ -1,85 +1,68 @@
-## Goal
+## Goals
 
-- Split press and events into **public** (`/press`, `/events`) and **member** (`/dashboard/press`, `/dashboard/events`) views. Members see public + member-only content; public visitors see only public.
-- Gate scholar-qa, opportunities, shop (and future resource pages) behind auth and move them under `/dashboard/*` with the member TopNavBar.
-- When a signed-in user hits a member-only URL's old public path, redirect to the `/dashboard/*` equivalent.
+1. Make event cover-image upload work like the homepage editor: file picker **plus** a "Browse gallery" button that opens `MediaGalleryPicker` (scoped to `events/` in the `editorial-media` bucket).
+2. Verify the saved `cover_image_url` flows through to the Upcoming Events cards and the event detail poster (they already read `cover_image_url`, but I'll confirm and tighten the fallback).
+3. Add **Save Draft** as a separate action from **Publish**, plus **Schedule publish** (pick a future date/time; event auto-publishes then).
 
-## Route changes
+## What changes
 
-New member routes (all wrapped by existing `_authenticated` gate, render `TopNavBar` + content):
+### A. Shared event cover uploader
+- New component `src/components/admin/EventCoverPicker.tsx`:
+  - Preview of current image
+  - "Upload new" file input → uploads to `editorial-media/events/{eventId|new}/...`
+  - "Browse gallery" button → opens `MediaGalleryPicker` with `defaultFolder="events"` (gallery already supports remove/select)
+  - "Remove" button
+- Use it in both `admin.events.new.tsx` and `admin.events.$id.tsx` in place of the bare `<input type="file">`.
+- Small tweak to `MediaGalleryPicker`: allow folders outside `homepage/` (currently the "All" scope walks `homepage/` only — add an `allFolderPrefix` prop so events use `events/`).
 
+### B. Cover image rendering
+- `UpcomingEvents.tsx`, `dashboard.events.index.tsx`, `events.index.tsx`, `events.$eventId.tsx`, `dashboard.events.$eventId.tsx` already render `cover_image_url`. Audit each: when missing, show the existing JIY placeholder (already in place on most). No data-shape changes needed — fix is just confirming the URL persists end-to-end after the picker change.
+
+### C. Draft / Publish / Schedule
+
+DB migration:
+```sql
+alter table public.events
+  add column if not exists publish_at timestamptz;
+create index if not exists events_publish_at_idx
+  on public.events (publish_at) where status = 'draft' and publish_at is not null;
 ```
-src/routes/_authenticated/
-  dashboard.press.tsx          → /dashboard/press         (list, public + member-only)
-  dashboard.press.$slug.tsx    → /dashboard/press/:slug
-  dashboard.events.index.tsx   → /dashboard/events        (list, public + member-only)
-  dashboard.events.$eventId.tsx→ /dashboard/events/:id
-  dashboard.scholar-qa.tsx     → /dashboard/scholar-qa
-  dashboard.opportunities.tsx  → /dashboard/opportunities
-  dashboard.opportunities.$slug.tsx
-  dashboard.shop.tsx           → /dashboard/shop
-```
+No enum change — scheduled events stay `status='draft'` until cron flips them, so existing member/public reads keep working unchanged.
 
-Existing `src/routes/_authenticated/dashboard.tsx` (the `/dashboard` index) becomes a layout-friendly leaf — convert to `dashboard.index.tsx` and add `dashboard.tsx` parent rendering `<Outlet />` (so child segments mount).
+Server functions (`src/lib/jiy/events.functions.ts`):
+- Extend `createEventSchema` / `updateEventSchema` with optional `publish_at: string | null`.
+- `createEvent` already inserts as `draft` → reused for "Save draft".
+- New `schedulePublish` server fn: admin-only, sets `publish_at` and ensures `status='draft'`.
+- New `unschedulePublish` server fn: clears `publish_at`.
+- `publishEvent` stays as the immediate-publish path; also clears `publish_at`.
 
-### Public routes — behavior changes
+Cron route (`src/routes/api/public/cron/publish-scheduled-events.ts`):
+- Verifies Supabase anon key in `apikey` header.
+- Uses `supabaseAdmin` to `update events set status='published', publish_at=null where status='draft' and publish_at is not null and publish_at <= now()`.
+- pg_cron entry runs every 5 min (added via `supabase--insert`, not migration, since URL/key are env-specific).
 
-- `/press`, `/press/:slug`, `/events`, `/events/:eventId`: stay public, public-only content (current filtering already excludes `audience_visibility != 'public'`). Add a small `beforeLoad` redirect: if the user is signed in, `redirect({ to: '/dashboard/press' })` etc.
-- `/scholar-qa`, `/opportunities`, `/opportunities/:slug`, `/shop`: **delete** the public files. Add lightweight redirect-only routes (`beforeLoad` → `/dashboard/...`) so old links/bookmarks still work. Unauthenticated visitors hitting these get bounced through `_authenticated` → `/auth`.
+Admin UI:
+- `admin.events.new.tsx`: button row becomes **Save draft** | **Save & publish now** | **Schedule…** (opens datetime input).
+- `admin.events.$id.tsx`: header actions become
+  - **Save draft** (always)
+  - **Publish now** (when `draft`)
+  - **Schedule publish** / **Reschedule** / **Unschedule** (shows current `publish_at` if set)
+  - **Cancel** (when `published`)
+  - **Duplicate**
+- Subtitle shows "Draft", "Scheduled for {date}", "Published", or "Cancelled".
 
-## Data layer
+### Out of scope
+- Image cropping/resizing.
+- Sending notifications when scheduled events auto-publish (can add later).
+- Changing public/member route filtering — scheduled events appear automatically once cron flips them.
 
-`src/lib/jiy/youth-press.functions.ts` and `events.functions.ts` already filter to public via `audience_visibility = 'public'`. Add member-scoped siblings that return public + member content:
+## Files
 
-- `listMemberArticles()` — same select, drop the public-only filters, still `status = 'published'`.
-- `getMemberArticleBySlug(slug)` — same as public but no audience filter.
-- `listMemberEvents()` / `getMemberEvent(id)` — same pattern.
-
-Both use `requireSupabaseAuth` middleware so RLS enforces the member gate. No schema changes.
-
-`scholar-questions.functions.ts`, `opportunities.functions.ts`, `shop.functions.ts` stay as-is — they're already used from authenticated context.
-
-## TopNavBar
-
-Update `NAV` in `src/components/dashboard/TopNavBar.tsx` to point at the new URLs:
-
-- Events → `/dashboard/events`
-- Scholar Q&A → `/dashboard/scholar-qa`
-- The Press → `/dashboard/press`
-- RESOURCES → Opportunity Board `/dashboard/opportunities`
-- Merch Shop → `/dashboard/shop`
-
-Logo link stays `/dashboard`.
-
-## Member page wrappers
-
-Each `_authenticated/dashboard.*` route renders:
-
-```
-<TopNavBar />
-<SponsorNotice /> (optional — same as DashboardShell)
-<main>{/* reuse existing page body, swap data fn for member variant */}</main>
-<DashboardFooter />
-```
-
-Press/events list & detail bodies copy the existing public component bodies but call the member data fns. Scholar-qa/opportunities/shop bodies are lifted from the current public files mostly unchanged.
-
-## Redirect helpers
-
-Tiny pattern for public→member redirect when signed-in:
-
-```ts
-beforeLoad: async () => {
-  const { data } = await supabase.auth.getSession();
-  if (data.session) throw redirect({ to: "/dashboard/press" });
-}
-```
-
-Used on `/press`, `/events`. The replaced shop/opportunities/scholar-qa public routes redirect unconditionally to the dashboard equivalent.
-
-## Out of scope
-
-- No DB migrations.
-- No changes to admin pages.
-- No email/notification work.
-- Public `SiteHeader` unchanged (still lists Events/Press for visitors).
+- create `src/components/admin/EventCoverPicker.tsx`
+- create `src/routes/api/public/cron/publish-scheduled-events.ts`
+- edit `src/components/admin/MediaGalleryPicker.tsx` (add `allFolderPrefix` prop)
+- edit `src/lib/jiy/events.functions.ts` (schemas + `schedulePublish` / `unschedulePublish`, clear `publish_at` on publish/cancel)
+- edit `src/routes/_authenticated/admin.events.new.tsx`
+- edit `src/routes/_authenticated/admin.events.$id.tsx`
+- migration: add `publish_at` column + partial index
+- supabase insert: pg_cron schedule calling the new route every 5 min
