@@ -31,12 +31,16 @@ export function MediaGalleryPicker({
   onClose,
   onSelect,
   defaultFolder,
+  allFolderPrefix,
 }: {
   open: boolean;
   onClose: () => void;
   onSelect: (url: string) => void;
-  defaultFolder: string; // e.g. "homepage/hero"
+  defaultFolder: string; // e.g. "homepage/hero" or "events"
+  /** Top-level prefix to walk when scope === "all". Defaults to first segment of defaultFolder. */
+  allFolderPrefix?: string;
 }) {
+  const allRoot = allFolderPrefix ?? defaultFolder.split("/")[0] ?? defaultFolder;
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [scope, setScope] = useState<"folder" | "all">("folder");
