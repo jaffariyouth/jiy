@@ -1,68 +1,51 @@
-## Goals
+# Muharram Theme — Site-Wide Toggle
 
-1. Make event cover-image upload work like the homepage editor: file picker **plus** a "Browse gallery" button that opens `MediaGalleryPicker` (scoped to `events/` in the `editorial-media` bucket).
-2. Verify the saved `cover_image_url` flows through to the Upcoming Events cards and the event detail poster (they already read `cover_image_url`, but I'll confirm and tighten the fallback).
-3. Add **Save Draft** as a separate action from **Publish**, plus **Schedule publish** (pick a future date/time; event auto-publishes then).
+Import the Muharram color scheme from the uploaded HTML and let admins switch the entire site (public + dashboard + admin) into it during Muharram/Safar.
 
-## What changes
+## 1. Theme tokens (CSS)
 
-### A. Shared event cover uploader
-- New component `src/components/admin/EventCoverPicker.tsx`:
-  - Preview of current image
-  - "Upload new" file input → uploads to `editorial-media/events/{eventId|new}/...`
-  - "Browse gallery" button → opens `MediaGalleryPicker` with `defaultFolder="events"` (gallery already supports remove/select)
-  - "Remove" button
-- Use it in both `admin.events.new.tsx` and `admin.events.$id.tsx` in place of the bare `<input type="file">`.
-- Small tweak to `MediaGalleryPicker`: allow folders outside `homepage/` (currently the "All" scope walks `homepage/` only — add an `allFolderPrefix` prop so events use `events/`).
+In `src/styles.css`, add a `.theme-muharram` scope class with overridden CSS variables mapped to the uploaded palette:
 
-### B. Cover image rendering
-- `UpcomingEvents.tsx`, `dashboard.events.index.tsx`, `events.index.tsx`, `events.$eventId.tsx`, `dashboard.events.$eventId.tsx` already render `cover_image_url`. Audit each: when missing, show the existing JIY placeholder (already in place on most). No data-shape changes needed — fix is just confirming the URL persists end-to-end after the picker change.
+- `--color-alabaster-parchment` → `#0a0304` (page bg)
+- `--color-warm-silk-grey` → `#130607` (elevated surface)
+- `--color-horizon-mist` → `#2b1013` (borders)
+- `--color-midnight-sapphire` / `--color-primary-dark` / `--color-primary` → `#e5dada` (primary text on dark)
+- `--color-deep-garnet` → `#7a0810` (blood-ruby)
+- `--color-damascus-gold` → `#d91823` (crimson-glow accent — replaces gold)
+- `--color-ash-slate` → `#917b7c` (muted text)
+- `--color-persian-indigo` → `#130607`
 
-### C. Draft / Publish / Schedule
+Override the `.jiy-dashboard` dotted-parchment background + `studio-card` colors when nested under `.theme-muharram` so cards become `#130607` with `#2b1013` borders and the crimson glow replaces gold on hover/focus rings.
 
-DB migration:
-```sql
-alter table public.events
-  add column if not exists publish_at timestamptz;
-create index if not exists events_publish_at_idx
-  on public.events (publish_at) where status = 'draft' and publish_at is not null;
-```
-No enum change — scheduled events stay `status='draft'` until cron flips them, so existing member/public reads keep working unchanged.
+Add a body-level background override for `.theme-muharram` matching the uploaded radial-dot pattern (`#1c0a0c` on `#0a0304`).
 
-Server functions (`src/lib/jiy/events.functions.ts`):
-- Extend `createEventSchema` / `updateEventSchema` with optional `publish_at: string | null`.
-- `createEvent` already inserts as `draft` → reused for "Save draft".
-- New `schedulePublish` server fn: admin-only, sets `publish_at` and ensures `status='draft'`.
-- New `unschedulePublish` server fn: clears `publish_at`.
-- `publishEvent` stays as the immediate-publish path; also clears `publish_at`.
+## 2. Persisting the toggle
 
-Cron route (`src/routes/api/public/cron/publish-scheduled-events.ts`):
-- Verifies Supabase anon key in `apikey` header.
-- Uses `supabaseAdmin` to `update events set status='published', publish_at=null where status='draft' and publish_at is not null and publish_at <= now()`.
-- pg_cron entry runs every 5 min (added via `supabase--insert`, not migration, since URL/key are env-specific).
+Store as a `feature_flags` row with key `theme_muharram` (table + admin UI already exist at `/admin/flags`). No schema change needed — reuse existing flag infrastructure.
 
-Admin UI:
-- `admin.events.new.tsx`: button row becomes **Save draft** | **Save & publish now** | **Schedule…** (opens datetime input).
-- `admin.events.$id.tsx`: header actions become
-  - **Save draft** (always)
-  - **Publish now** (when `draft`)
-  - **Schedule publish** / **Reschedule** / **Unschedule** (shows current `publish_at` if set)
-  - **Cancel** (when `published`)
-  - **Duplicate**
-- Subtitle shows "Draft", "Scheduled for {date}", "Published", or "Cancelled".
+Add a lightweight public server fn `getActiveTheme()` that reads the flag with the server publishable client (anon SELECT on `feature_flags` already allowed for enabled flags — verify; if not, add a `TO anon` SELECT policy via migration restricted to `key = 'theme_muharram'`).
 
-### Out of scope
-- Image cropping/resizing.
-- Sending notifications when scheduled events auto-publish (can add later).
-- Changing public/member route filtering — scheduled events appear automatically once cron flips them.
+## 3. Applying the class globally
 
-## Files
+In `src/routes/__root.tsx`:
+- Add a loader that calls `getActiveTheme()` and returns `{ muharram: boolean }`.
+- In `RootComponent`, read it via `Route.useLoaderData()` and add `theme-muharram` to the `<body>` className (or to the top-level wrapper div) conditionally. This covers public pages, `_authenticated/dashboard`, and `_authenticated/admin` in one place.
 
-- create `src/components/admin/EventCoverPicker.tsx`
-- create `src/routes/api/public/cron/publish-scheduled-events.ts`
-- edit `src/components/admin/MediaGalleryPicker.tsx` (add `allFolderPrefix` prop)
-- edit `src/lib/jiy/events.functions.ts` (schemas + `schedulePublish` / `unschedulePublish`, clear `publish_at` on publish/cancel)
-- edit `src/routes/_authenticated/admin.events.new.tsx`
-- edit `src/routes/_authenticated/admin.events.$id.tsx`
-- migration: add `publish_at` column + partial index
-- supabase insert: pg_cron schedule calling the new route every 5 min
+## 4. Admin toggle UI
+
+Add a dedicated card to `/admin/flags` (or a new `/admin/appearance` tab) labeled **"Muharram Theme"** with:
+- Toggle switch (reusing `ToggleSwitch` component)
+- Helper copy: "Switch the entire site to the Muharram/Safar mourning palette."
+- Wires to an `updateFeatureFlag({ key: 'theme_muharram', enabled })` server fn (gated by `requireSupabaseAuth` + `has_role(admin)`).
+
+## 5. Verification
+
+- Toggle on → reload `/`, `/events`, `/dashboard`, `/admin` → confirm dark crimson palette applies everywhere, cards/borders/text legible.
+- Toggle off → site returns to JIY editorial parchment palette.
+- Build passes.
+
+## Technical notes
+
+- No new color tokens — we override existing semantic tokens under `.theme-muharram` so every component (studio-card, interactive-btn, ogee mask, footer, auth pages) reskins automatically without touching component code.
+- Damascus-gold accents become crimson-glow (`#d91823`) in Muharram mode — intentional, matches the source design.
+- Mosque silhouette and arch motifs stay; only colors swap.

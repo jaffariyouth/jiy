@@ -11,6 +11,8 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { getActiveTheme } from "../lib/jiy/theme.functions";
+
 
 function NotFoundComponent() {
   return (
@@ -108,11 +110,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
+  loader: () => getActiveTheme(),
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const theme = Route.useLoaderData();
+  const muharram = Boolean(theme?.muharram);
   return (
-    <html lang="en">
+    <html lang="en" className={muharram ? "theme-muharram" : undefined}>
       <head>
         <HeadContent />
       </head>

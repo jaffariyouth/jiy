@@ -27,11 +27,34 @@ function FlagsPage() {
     refresh();
   };
 
+  const muharramFlag = q.data?.flags.find((f) => f.key === "theme_muharram");
+  const muharramOn = Boolean(muharramFlag?.enabled);
+
   return (
     <div>
       <AdminPageHeader title="Feature flags" subtitle="Toggle features without a deploy." />
       <div className="px-6 sm:px-10 py-8 space-y-6 max-w-3xl">
+        <div className="bg-white border border-[#e5dec9] rounded-sm p-5 flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="font-serif text-lg text-[#010b21]">Muharram theme</div>
+            <p className="text-sm text-[#6b6453] mt-1">
+              Switch the entire site — public pages, dashboard, and admin — into the dark crimson
+              Muharram &amp; Safar mourning palette.
+            </p>
+          </div>
+          <label className="flex items-center gap-2 shrink-0 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={muharramOn}
+              onChange={(e) => toggle("theme_muharram", e.target.checked)}
+            />
+            <span className="text-xs uppercase tracking-[0.18em] text-[#6b6453]">
+              {muharramOn ? "On" : "Off"}
+            </span>
+          </label>
+        </div>
         <div className="bg-white border border-[#e5dec9] rounded-sm divide-y divide-[#f0ead7]">
+
           {q.data?.flags.map((f) => (
             <div key={f.id} className="flex items-center justify-between px-4 py-3 gap-3">
               <div className="min-w-0">
