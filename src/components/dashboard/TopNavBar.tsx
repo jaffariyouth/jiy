@@ -296,7 +296,7 @@ function MobileDrawer({
           </ul>
         </nav>
 
-        <div className="border-t border-horizon-mist px-6 py-4">
+        <div className="border-t border-horizon-mist px-6 py-4 flex flex-col gap-3">
           <Link
             to="/account"
             onClick={onClose}
@@ -304,6 +304,26 @@ function MobileDrawer({
           >
             Account & Settings →
           </Link>
+          {isAdmin ? (
+            <Link
+              to="/admin"
+              onClick={onClose}
+              className="inline-flex items-center gap-2 font-body text-[11px] uppercase tracking-[0.2em] font-bold text-damascus-gold hover:text-primary-dark transition-colors"
+            >
+              <Shield className="h-3.5 w-3.5" strokeWidth={2} />
+              Admin Console
+            </Link>
+          ) : null}
+          <button
+            onClick={() => {
+              onClose();
+              onSignOut();
+            }}
+            className="inline-flex items-center gap-2 font-body text-[11px] uppercase tracking-[0.2em] font-bold text-deep-garnet hover:text-primary-dark transition-colors text-left"
+          >
+            <LogOut className="h-3.5 w-3.5" strokeWidth={2} />
+            Sign out
+          </button>
         </div>
       </aside>
     </>,
