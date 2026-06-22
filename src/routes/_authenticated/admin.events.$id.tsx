@@ -165,22 +165,22 @@ function EventEditPage() {
     <div>
       <AdminPageHeader
         title={q.data?.event.title ?? "Event"}
-        subtitle={status ? `Status: ${status}` : undefined}
+        subtitle={statusLabel}
         backTo={{ to: "/admin/events", label: "Events" }}
         actions={
           <>
             {status === "draft" && (
-              <Button variant="outline" onClick={async () => {
+              <Button onClick={async () => {
                 await pub({ data: { id, idempotencyKey: crypto.randomUUID() } });
                 toast.success("Published"); qc.invalidateQueries({ queryKey: ["admin", "event", id] });
-              }}>Publish</Button>
+              }}>Publish now</Button>
             )}
             {status === "published" && (
               <Button variant="outline" onClick={async () => {
                 if (!confirm("Cancel this event?")) return;
                 await can({ data: { id, idempotencyKey: crypto.randomUUID() } });
                 toast.success("Cancelled"); qc.invalidateQueries({ queryKey: ["admin", "event", id] });
-              }}>Cancel</Button>
+              }}>Cancel event</Button>
             )}
             <Button variant="outline" onClick={async () => {
               const r = await dup({ data: { id, idempotencyKey: crypto.randomUUID() } });
