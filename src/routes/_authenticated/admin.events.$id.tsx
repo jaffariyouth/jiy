@@ -218,18 +218,7 @@ function EventEditPage() {
               <div><Label>Capacity</Label><Input type="number" min={0} value={capacity} onChange={(e) => setCapacity(e.target.value)} /></div>
               <div><Label>Location</Label><Input value={location} onChange={(e) => setLocation(e.target.value)} /></div>
             </div>
-            <div>
-              <Label>Cover image</Label>
-              <div className="flex flex-col sm:flex-row gap-3 items-start">
-                {coverUrl && <img src={coverUrl} alt="" className="h-24 w-40 object-cover border border-[#e5dec9] rounded-sm" />}
-                <input
-                  type="file" accept="image/*"
-                  onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadCover(f); }}
-                  className="text-sm"
-                />
-                {coverUrl && <Button type="button" variant="ghost" size="sm" onClick={() => setCoverUrl("")}>Remove</Button>}
-              </div>
-            </div>
+            <EventCoverPicker value={coverUrl} onChange={setCoverUrl} eventId={id} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label>Registration form</Label>
