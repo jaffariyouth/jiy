@@ -86,6 +86,7 @@ function EventEditPage() {
       audience_max_age: e.audience_max_age ?? null,
     });
     setCategoryLabel((e as { category_label?: string | null }).category_label ?? "");
+    setPublishAt(toLocalInput((e as { publish_at?: string | null }).publish_at ?? null));
     const rawSpeakers = (e as { speakers?: unknown }).speakers;
     setSpeakers(
       Array.isArray(rawSpeakers)
