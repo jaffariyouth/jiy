@@ -225,7 +225,7 @@ export const publishEvent = createServerFn({ method: "POST" })
     if (idem.cached) return idem.cached;
     const { error } = await context.supabase
       .from("events")
-      .update({ status: "published" })
+      .update({ status: "published", publish_at: null })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
     await writeAudit(context.supabase, {
@@ -248,7 +248,7 @@ export const cancelEvent = createServerFn({ method: "POST" })
     if (idem.cached) return idem.cached;
     const { error } = await context.supabase
       .from("events")
-      .update({ status: "cancelled" })
+      .update({ status: "cancelled", publish_at: null })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
     await writeAudit(context.supabase, {
@@ -258,6 +258,56 @@ export const cancelEvent = createServerFn({ method: "POST" })
       entityId: data.id,
     });
     await idem.complete({ ok: true });
+    return { ok: true as const };
+  });
+
+const scheduleSchema = z.object({
+  id: z.string().uuid(),
+  publish_at: z.string().datetime(),
+  idempotencyKey: z.string().min(8),
+});
+
+export const schedulePublish = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => scheduleSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin, writeAudit } = await import("./idempotency.server");
+    await assertAdmin(context.supabase, context.userId);
+    if (new Date(data.publish_at).getTime() <= Date.now()) {
+      throw new Error("Scheduled time must be in the future");
+    }
+    const { error } = await context.supabase
+      .from("events")
+      .update({ status: "draft", publish_at: data.publish_at })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    await writeAudit(context.supabase, {
+      actorId: context.userId,
+      action: "event.scheduled",
+      entity: "events",
+      entityId: data.id,
+      metadata: { publish_at: data.publish_at },
+    });
+    return { ok: true as const };
+  });
+
+export const unschedulePublish = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => transitionSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin, writeAudit } = await import("./idempotency.server");
+    await assertAdmin(context.supabase, context.userId);
+    const { error } = await context.supabase
+      .from("events")
+      .update({ publish_at: null })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    await writeAudit(context.supabase, {
+      actorId: context.userId,
+      action: "event.unscheduled",
+      entity: "events",
+      entityId: data.id,
+    });
     return { ok: true as const };
   });
 export const duplicateEvent = createServerFn({ method: "POST" })
