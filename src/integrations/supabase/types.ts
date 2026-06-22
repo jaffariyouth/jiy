@@ -339,6 +339,7 @@ export type Database = {
           id: string
           is_member_only: boolean
           location: string | null
+          publish_at: string | null
           recurring_event_id: string | null
           requires_payment: boolean
           speakers: Json
@@ -364,6 +365,7 @@ export type Database = {
           id?: string
           is_member_only?: boolean
           location?: string | null
+          publish_at?: string | null
           recurring_event_id?: string | null
           requires_payment?: boolean
           speakers?: Json
@@ -389,6 +391,7 @@ export type Database = {
           id?: string
           is_member_only?: boolean
           location?: string | null
+          publish_at?: string | null
           recurring_event_id?: string | null
           requires_payment?: boolean
           speakers?: Json
