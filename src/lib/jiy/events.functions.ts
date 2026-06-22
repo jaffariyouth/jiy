@@ -157,6 +157,7 @@ export const createEvent = createServerFn({ method: "POST" })
         audience_max_age: data.audience_max_age ?? null,
         category_label: data.category_label ?? null,
         speakers: data.speakers ?? [],
+        publish_at: data.publish_at ?? null,
         created_by: context.userId,
         status: "draft",
       })
