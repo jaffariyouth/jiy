@@ -117,7 +117,7 @@ export function MediaGalleryPicker({
               variant={scope === "all" ? "default" : "outline"}
               onClick={() => setScope("all")}
             >
-              All homepage
+              All in /{allRoot}
             </Button>
           </div>
         </div>
