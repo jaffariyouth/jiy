@@ -1,10 +1,12 @@
-import { Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut, Shield } from "lucide-react";
 import { getMyProfile } from "@/lib/jiy/profiles.functions";
+import { getMyRoles } from "@/lib/jiy/admin.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { NotificationBell } from "./NotificationBell";
 
 type NavLeaf = { label: string; to: string };
@@ -29,12 +31,27 @@ function isGroup(item: NavItem): item is { label: string; children: NavLeaf[] } 
 
 export function TopNavBar() {
   const fetchProfile = useServerFn(getMyProfile);
+  const fetchRoles = useServerFn(getMyRoles);
+  const navigate = useNavigate();
+  const qc = useQueryClient();
   const { data: profile } = useQuery({
     queryKey: ["my-profile"],
     queryFn: () => fetchProfile(),
     staleTime: 60_000,
   });
+  const { data: roles } = useQuery({
+    queryKey: ["my-roles"],
+    queryFn: () => fetchRoles(),
+    staleTime: 60_000,
+  });
+  const isAdmin = roles?.includes("admin") ?? false;
 
+  const handleSignOut = async () => {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  };
   const displayName = profile?.displayName?.trim() || "Member";
   const initial = displayName.charAt(0).toUpperCase();
   const short = displayName.length > 18 ? `${displayName.slice(0, 16)}…` : displayName;
@@ -160,6 +177,26 @@ export function TopNavBar() {
             </span>
           </Link>
 
+          {isAdmin ? (
+            <Link
+              to="/admin"
+              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-damascus-gold/40 text-damascus-gold hover:bg-damascus-gold hover:text-primary-dark font-body text-[10px] font-bold tracking-[0.2em] uppercase transition-all"
+              aria-label="Admin console"
+            >
+              <Shield className="h-3.5 w-3.5" strokeWidth={2} />
+              Admin
+            </Link>
+          ) : null}
+
+          <button
+            onClick={handleSignOut}
+            className="hidden md:inline-flex items-center gap-1.5 text-ash-slate hover:text-deep-garnet transition-colors font-body text-[10px] font-bold tracking-[0.2em] uppercase"
+            aria-label="Sign out"
+          >
+            <LogOut className="h-3.5 w-3.5" strokeWidth={2} />
+            Sign out
+          </button>
+
           {/* Hamburger — shown below lg */}
           <button
             onClick={() => setDrawerOpen(true)}
@@ -172,12 +209,27 @@ export function TopNavBar() {
       </div>
 
       {/* Mobile drawer */}
-      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <MobileDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        isAdmin={isAdmin}
+        onSignOut={handleSignOut}
+      />
     </header>
   );
 }
 
-function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+function MobileDrawer({
+  open,
+  onClose,
+  isAdmin,
+  onSignOut,
+}: {
+  open: boolean;
+  onClose: () => void;
+  isAdmin: boolean;
+  onSignOut: () => void;
+}) {
   if (typeof document === "undefined") return null;
   return createPortal(
     <>
@@ -244,7 +296,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
           </ul>
         </nav>
 
-        <div className="border-t border-horizon-mist px-6 py-4">
+        <div className="border-t border-horizon-mist px-6 py-4 flex flex-col gap-3">
           <Link
             to="/account"
             onClick={onClose}
@@ -252,6 +304,26 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
           >
             Account & Settings →
           </Link>
+          {isAdmin ? (
+            <Link
+              to="/admin"
+              onClick={onClose}
+              className="inline-flex items-center gap-2 font-body text-[11px] uppercase tracking-[0.2em] font-bold text-damascus-gold hover:text-primary-dark transition-colors"
+            >
+              <Shield className="h-3.5 w-3.5" strokeWidth={2} />
+              Admin Console
+            </Link>
+          ) : null}
+          <button
+            onClick={() => {
+              onClose();
+              onSignOut();
+            }}
+            className="inline-flex items-center gap-2 font-body text-[11px] uppercase tracking-[0.2em] font-bold text-deep-garnet hover:text-primary-dark transition-colors text-left"
+          >
+            <LogOut className="h-3.5 w-3.5" strokeWidth={2} />
+            Sign out
+          </button>
         </div>
       </aside>
     </>,
