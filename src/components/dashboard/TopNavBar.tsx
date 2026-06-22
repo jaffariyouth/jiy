@@ -52,6 +52,8 @@ export function TopNavBar() {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   };
+  const displayName = profile?.displayName?.trim() || "Member";
+  const initial = displayName.charAt(0).toUpperCase();
   const short = displayName.length > 18 ? `${displayName.slice(0, 16)}…` : displayName;
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
