@@ -351,3 +351,69 @@
 .jiy-dashboard .max-w-max-width { max-width: 1280px; }
 .jiy-dashboard .px-margin-safe { padding-left: clamp(20px, 5vw, 40px); padding-right: clamp(20px, 5vw, 40px); }
 
+/* ============================================
+ * Muharram Theme — site-wide dark crimson override
+ * Applied by adding `.theme-muharram` to <html>.
+ * ========================================== */
+.theme-muharram {
+  --color-alabaster-parchment: #0a0304;
+  --color-warm-silk-grey: #130607;
+  --color-horizon-mist: #2b1013;
+  --color-midnight-sapphire: #e5dada;
+  --color-primary-dark: #e5dada;
+  --color-primary: #e5dada;
+  --color-persian-indigo: #130607;
+  --color-deep-garnet: #7a0810;
+  --color-damascus-gold: #d91823;
+  --color-ash-slate: #917b7c;
+  --color-muted-dusk: #917b7c;
+  --color-background: #0a0304;
+  --color-on-background: #e5dada;
+  --color-on-surface: #e5dada;
+  --color-foreground: #e5dada;
+  color-scheme: dark;
+}
+.theme-muharram body {
+  background-color: #0a0304;
+  color: #e5dada;
+}
+.theme-muharram .jiy-dashboard {
+  background-color: #0a0304;
+  background-image:
+    radial-gradient(#1c0a0c 0.75px, transparent 0.75px),
+    radial-gradient(#1c0a0c 0.75px, #0a0304 0.75px);
+  color: #e5dada;
+}
+.theme-muharram .jiy-dashboard .studio-card,
+.theme-muharram .studio-card {
+  background: #130607;
+  border-color: #2b1013;
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.4),
+    0 4px 12px 0 rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.02);
+  color: #e5dada;
+}
+.theme-muharram .jiy-dashboard .studio-card:hover,
+.theme-muharram .studio-card:hover {
+  border-color: #d91823;
+  box-shadow:
+    0 10px 25px -5px rgba(217, 24, 35, 0.25),
+    0 8px 16px -6px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.02);
+}
+.theme-muharram .jiy-dashboard .interactive-btn::after {
+  border-color: #d91823;
+}
+.theme-muharram .jiy-dashboard .value-tab:hover {
+  border-left-color: #d91823;
+}
+.theme-muharram .jiy-dashboard .value-tab.is-active {
+  border-left-color: #d91823;
+  color: #e5dada;
+}
+.theme-muharram .jiy-dashboard ::selection {
+  background: rgba(217, 24, 35, 0.35);
+  color: #e5dada;
+}
+
