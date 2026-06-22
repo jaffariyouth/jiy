@@ -31,14 +31,27 @@ function isGroup(item: NavItem): item is { label: string; children: NavLeaf[] } 
 
 export function TopNavBar() {
   const fetchProfile = useServerFn(getMyProfile);
+  const fetchRoles = useServerFn(getMyRoles);
+  const navigate = useNavigate();
+  const qc = useQueryClient();
   const { data: profile } = useQuery({
     queryKey: ["my-profile"],
     queryFn: () => fetchProfile(),
     staleTime: 60_000,
   });
+  const { data: roles } = useQuery({
+    queryKey: ["my-roles"],
+    queryFn: () => fetchRoles(),
+    staleTime: 60_000,
+  });
+  const isAdmin = roles?.includes("admin") ?? false;
 
-  const displayName = profile?.displayName?.trim() || "Member";
-  const initial = displayName.charAt(0).toUpperCase();
+  const handleSignOut = async () => {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  };
   const short = displayName.length > 18 ? `${displayName.slice(0, 16)}…` : displayName;
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
