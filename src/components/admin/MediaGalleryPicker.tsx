@@ -53,15 +53,15 @@ export function MediaGalleryPicker({
       if (scope === "folder") {
         setItems(await listFolder(defaultFolder));
       } else {
-        // Walk top-level "homepage" tree two levels deep.
-        const top = await supabase.storage.from(BUCKET).list("homepage", { limit: 100 });
-        const folders = (top.data ?? []).filter((f) => !f.id).map((f) => `homepage/${f.name}`);
-        const all = await Promise.all(folders.map(listFolder));
+        // Walk top-level tree two levels deep.
+        const top = await supabase.storage.from(BUCKET).list(allRoot, { limit: 100 });
+        const folders = (top.data ?? []).filter((f) => !f.id).map((f) => `${allRoot}/${f.name}`);
+        const all = await Promise.all([listFolder(allRoot), ...folders.map(listFolder)]);
         setItems(all.flat().sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? "")));
       }
       setLoading(false);
     })();
-  }, [open, scope, defaultFolder]);
+  }, [open, scope, defaultFolder, allRoot]);
 
   if (!open) return null;
 
