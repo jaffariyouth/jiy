@@ -177,6 +177,26 @@ export function TopNavBar() {
             </span>
           </Link>
 
+          {isAdmin ? (
+            <Link
+              to="/admin"
+              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-damascus-gold/40 text-damascus-gold hover:bg-damascus-gold hover:text-primary-dark font-body text-[10px] font-bold tracking-[0.2em] uppercase transition-all"
+              aria-label="Admin console"
+            >
+              <Shield className="h-3.5 w-3.5" strokeWidth={2} />
+              Admin
+            </Link>
+          ) : null}
+
+          <button
+            onClick={handleSignOut}
+            className="hidden md:inline-flex items-center gap-1.5 text-ash-slate hover:text-deep-garnet transition-colors font-body text-[10px] font-bold tracking-[0.2em] uppercase"
+            aria-label="Sign out"
+          >
+            <LogOut className="h-3.5 w-3.5" strokeWidth={2} />
+            Sign out
+          </button>
+
           {/* Hamburger — shown below lg */}
           <button
             onClick={() => setDrawerOpen(true)}
@@ -189,12 +209,27 @@ export function TopNavBar() {
       </div>
 
       {/* Mobile drawer */}
-      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <MobileDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        isAdmin={isAdmin}
+        onSignOut={handleSignOut}
+      />
     </header>
   );
 }
 
-function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+function MobileDrawer({
+  open,
+  onClose,
+  isAdmin,
+  onSignOut,
+}: {
+  open: boolean;
+  onClose: () => void;
+  isAdmin: boolean;
+  onSignOut: () => void;
+}) {
   if (typeof document === "undefined") return null;
   return createPortal(
     <>
