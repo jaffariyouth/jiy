@@ -332,7 +332,7 @@ function Hero({ hero }: { hero?: Section }) {
             </h1>
             <p className="font-body text-lg text-ash-slate leading-relaxed max-w-xl">{str(hero, "body", d.body)}</p>
 
-            <div className="hidden lg:block h-px bg-horizon-mist w-full max-w-xl my-2" />
+            
 
             <div className="flex flex-col gap-3 mt-1">
               <span className="font-body text-[10px] uppercase tracking-[0.2em] text-ash-slate font-bold">
