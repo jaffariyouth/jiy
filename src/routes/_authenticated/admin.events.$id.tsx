@@ -253,9 +253,45 @@ function EventEditPage() {
               <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
               Feature on homepage
             </label>
-            <Button onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
-              {saveMut.isPending ? "Saving…" : "Save changes"}
-            </Button>
+            <div className="border-t border-[#e5dec9] pt-5 space-y-3">
+              <div>
+                <Label>Schedule publish (optional)</Label>
+                <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center mt-1">
+                  <Input
+                    type="datetime-local"
+                    value={publishAt}
+                    onChange={(e) => setPublishAt(e.target.value)}
+                    className="max-w-xs"
+                    disabled={status !== "draft"}
+                  />
+                  {status === "draft" && (
+                    <>
+                      <Button type="button" variant="outline" size="sm" onClick={doSchedule} disabled={!publishAt}>
+                        {scheduledAt ? "Reschedule" : "Schedule"}
+                      </Button>
+                      {scheduledAt && (
+                        <Button type="button" variant="ghost" size="sm" onClick={doUnschedule}>
+                          Clear schedule
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </div>
+                {status !== "draft" && (
+                  <p className="text-xs text-[#6b6453] mt-1">
+                    Scheduling is only available on drafts.
+                  </p>
+                )}
+                {scheduledAt && status === "draft" && (
+                  <p className="text-xs text-[#6b6453] mt-1">
+                    Currently scheduled for {new Date(scheduledAt).toLocaleString()}.
+                  </p>
+                )}
+              </div>
+              <Button onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
+                {saveMut.isPending ? "Saving…" : "Save changes"}
+              </Button>
+            </div>
           </TabsContent>
 
           <TabsContent value="speakers" className="mt-6">
