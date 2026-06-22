@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { createEvent } from "@/lib/jiy/events.functions";
+import { createEvent, publishEvent, schedulePublish } from "@/lib/jiy/events.functions";
 import { listFormTemplates } from "@/lib/jiy/form-templates.functions";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { Button } from "@/components/ui/button";
@@ -11,16 +11,20 @@ import { Label } from "@/components/ui/label";
 import { MarkdownEditor } from "@/components/admin/MarkdownEditor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AudiencePanel, DEFAULT_AUDIENCE, type AudienceValue } from "@/components/admin/AudiencePanel";
-import { supabase } from "@/integrations/supabase/client";
+import { EventCoverPicker } from "@/components/admin/EventCoverPicker";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/events/new")({
   component: NewEventPage,
 });
 
+type Mode = "draft" | "publish" | "schedule";
+
 function NewEventPage() {
   const navigate = useNavigate();
-  const fn = useServerFn(createEvent);
+  const create = useServerFn(createEvent);
+  const pub = useServerFn(publishEvent);
+  const sched = useServerFn(schedulePublish);
   const tplList = useServerFn(listFormTemplates);
   const tpls = useQuery({ queryKey: ["admin", "forms"], queryFn: () => tplList() });
 
@@ -35,27 +39,26 @@ function NewEventPage() {
   const [requiresPayment, setRequiresPayment] = useState(false);
   const [featured, setFeatured] = useState(false);
   const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
+  const [publishAt, setPublishAt] = useState("");
 
-  const uploadCover = async (file: File) => {
-    const path = `events/new/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
-    const { error } = await supabase.storage.from("editorial-media").upload(path, file);
-    if (error) { toast.error(error.message); return; }
-    const { data } = supabase.storage.from("editorial-media").getPublicUrl(path);
-    setCoverUrl(data.publicUrl);
-    toast.success("Cover uploaded");
-  };
-
-  const mut = useMutation({
-    mutationFn: async () => {
+  const submit = useMutation({
+    mutationFn: async (mode: Mode) => {
       if (!title.trim()) throw new Error("Title is required");
       if (!startsAt) throw new Error("Start date is required");
       const startsIso = new Date(startsAt).toISOString();
-      if (Number.isNaN(Date.parse(startsIso))) throw new Error("Invalid start date");
       const endsIso = endsAt ? new Date(endsAt).toISOString() : undefined;
       if (endsIso && new Date(endsIso) <= new Date(startsIso)) {
         throw new Error("End date must be after start date");
       }
-      return fn({
+      let schedIso: string | undefined;
+      if (mode === "schedule") {
+        if (!publishAt) throw new Error("Pick a publish date/time");
+        schedIso = new Date(publishAt).toISOString();
+        if (new Date(schedIso).getTime() <= Date.now()) {
+          throw new Error("Scheduled time must be in the future");
+        }
+      }
+      const created = await create({
         data: {
           idempotencyKey: crypto.randomUUID(),
           title: title.trim(),
@@ -69,13 +72,24 @@ function NewEventPage() {
           form_template_id: formTplId === "none" ? null : formTplId,
           requires_payment: requiresPayment,
           featured_on_home: featured,
+          publish_at: schedIso ?? null,
           ...audience,
         },
       });
+      if (mode === "publish") {
+        await pub({ data: { id: created.id, idempotencyKey: crypto.randomUUID() } });
+      } else if (mode === "schedule" && schedIso) {
+        await sched({
+          data: { id: created.id, publish_at: schedIso, idempotencyKey: crypto.randomUUID() },
+        });
+      }
+      return { id: created.id, mode };
     },
-    onSuccess: (r) => {
-      toast.success("Draft created");
-      navigate({ to: "/admin/events/$id", params: { id: r.id } });
+    onSuccess: ({ id, mode }) => {
+      toast.success(
+        mode === "publish" ? "Published" : mode === "schedule" ? "Scheduled" : "Draft saved",
+      );
+      navigate({ to: "/admin/events/$id", params: { id } });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -84,11 +98,14 @@ function NewEventPage() {
     <div>
       <AdminPageHeader
         title="New event"
-        subtitle="Creates a draft. You'll publish from the editor."
+        subtitle="Save as a draft, publish immediately, or schedule for later."
         backTo={{ to: "/admin/events", label: "Events" }}
       />
       <form
-        onSubmit={(e) => { e.preventDefault(); mut.mutate(); }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          submit.mutate("draft");
+        }}
         className="px-6 sm:px-10 py-8 max-w-3xl space-y-5"
       >
         <div>
@@ -118,18 +135,7 @@ function NewEventPage() {
           </div>
         </div>
 
-        <div>
-          <Label>Cover image (optional)</Label>
-          <div className="flex flex-col sm:flex-row gap-3 items-start mt-1">
-            {coverUrl && <img src={coverUrl} alt="" className="h-24 w-40 object-cover border border-[#e5dec9] rounded-sm" />}
-            <input
-              type="file" accept="image/*"
-              onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadCover(f); }}
-              className="text-sm"
-            />
-            {coverUrl && <Button type="button" variant="ghost" size="sm" onClick={() => setCoverUrl("")}>Remove</Button>}
-          </div>
-        </div>
+        <EventCoverPicker value={coverUrl} onChange={setCoverUrl} eventId="new" />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -166,11 +172,45 @@ function NewEventPage() {
           Feature on homepage
         </label>
 
+        <div className="border-t border-[#e5dec9] pt-5 space-y-4">
+          <div>
+            <Label>Schedule publish (optional)</Label>
+            <Input
+              type="datetime-local"
+              value={publishAt}
+              onChange={(e) => setPublishAt(e.target.value)}
+              className="max-w-xs"
+            />
+            <p className="text-xs text-[#6b6453] mt-1">
+              Leave empty to save as a draft or publish immediately.
+            </p>
+          </div>
 
-
-        <Button type="submit" disabled={mut.isPending}>
-          {mut.isPending ? "Creating…" : "Create draft"}
-        </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="submit"
+              variant="outline"
+              disabled={submit.isPending}
+            >
+              {submit.isPending && submit.variables === "draft" ? "Saving…" : "Save draft"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={submit.isPending || !publishAt}
+              onClick={() => submit.mutate("schedule")}
+            >
+              {submit.isPending && submit.variables === "schedule" ? "Scheduling…" : "Schedule publish"}
+            </Button>
+            <Button
+              type="button"
+              disabled={submit.isPending}
+              onClick={() => submit.mutate("publish")}
+            >
+              {submit.isPending && submit.variables === "publish" ? "Publishing…" : "Publish now"}
+            </Button>
+          </div>
+        </div>
       </form>
     </div>
   );

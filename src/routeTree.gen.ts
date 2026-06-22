@@ -57,6 +57,7 @@ import { Route as AuthenticatedAdminHomepageIndexRouteImport } from './routes/_a
 import { Route as AuthenticatedAdminFormsIndexRouteImport } from './routes/_authenticated/admin.forms.index'
 import { Route as AuthenticatedAdminEventsIndexRouteImport } from './routes/_authenticated/admin.events.index'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
+import { Route as ApiPublicCronPublishScheduledEventsRouteImport } from './routes/api/public/cron/publish-scheduled-events'
 import { Route as ApiPublicCronDispatchNotificationsRouteImport } from './routes/api/public/cron/dispatch-notifications'
 import { Route as AuthenticatedDashboardPressSlugRouteImport } from './routes/_authenticated/dashboard.press.$slug'
 import { Route as AuthenticatedDashboardOpportunitiesSlugRouteImport } from './routes/_authenticated/dashboard.opportunities.$slug'
@@ -341,6 +342,12 @@ const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   path: '/api/public/stripe/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronPublishScheduledEventsRoute =
+  ApiPublicCronPublishScheduledEventsRouteImport.update({
+    id: '/api/public/cron/publish-scheduled-events',
+    path: '/api/public/cron/publish-scheduled-events',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCronDispatchNotificationsRoute =
   ApiPublicCronDispatchNotificationsRouteImport.update({
     id: '/api/public/cron/dispatch-notifications',
@@ -528,6 +535,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/opportunities/$slug': typeof AuthenticatedDashboardOpportunitiesSlugRoute
   '/dashboard/press/$slug': typeof AuthenticatedDashboardPressSlugRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
+  '/api/public/cron/publish-scheduled-events': typeof ApiPublicCronPublishScheduledEventsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/admin/events/': typeof AuthenticatedAdminEventsIndexRoute
   '/admin/forms/': typeof AuthenticatedAdminFormsIndexRoute
@@ -591,6 +599,7 @@ export interface FileRoutesByTo {
   '/dashboard/opportunities/$slug': typeof AuthenticatedDashboardOpportunitiesSlugRoute
   '/dashboard/press/$slug': typeof AuthenticatedDashboardPressSlugRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
+  '/api/public/cron/publish-scheduled-events': typeof ApiPublicCronPublishScheduledEventsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/admin/events': typeof AuthenticatedAdminEventsIndexRoute
   '/admin/forms': typeof AuthenticatedAdminFormsIndexRoute
@@ -663,6 +672,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/opportunities/$slug': typeof AuthenticatedDashboardOpportunitiesSlugRoute
   '/_authenticated/dashboard/press/$slug': typeof AuthenticatedDashboardPressSlugRoute
   '/api/public/cron/dispatch-notifications': typeof ApiPublicCronDispatchNotificationsRoute
+  '/api/public/cron/publish-scheduled-events': typeof ApiPublicCronPublishScheduledEventsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/_authenticated/admin/events/': typeof AuthenticatedAdminEventsIndexRoute
   '/_authenticated/admin/forms/': typeof AuthenticatedAdminFormsIndexRoute
@@ -735,6 +745,7 @@ export interface FileRouteTypes {
     | '/dashboard/opportunities/$slug'
     | '/dashboard/press/$slug'
     | '/api/public/cron/dispatch-notifications'
+    | '/api/public/cron/publish-scheduled-events'
     | '/api/public/stripe/webhook'
     | '/admin/events/'
     | '/admin/forms/'
@@ -798,6 +809,7 @@ export interface FileRouteTypes {
     | '/dashboard/opportunities/$slug'
     | '/dashboard/press/$slug'
     | '/api/public/cron/dispatch-notifications'
+    | '/api/public/cron/publish-scheduled-events'
     | '/api/public/stripe/webhook'
     | '/admin/events'
     | '/admin/forms'
@@ -869,6 +881,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/opportunities/$slug'
     | '/_authenticated/dashboard/press/$slug'
     | '/api/public/cron/dispatch-notifications'
+    | '/api/public/cron/publish-scheduled-events'
     | '/api/public/stripe/webhook'
     | '/_authenticated/admin/events/'
     | '/_authenticated/admin/forms/'
@@ -894,6 +907,7 @@ export interface RootRouteChildren {
   FormsTemplateIdRoute: typeof FormsTemplateIdRoute
   EventsIndexRoute: typeof EventsIndexRoute
   ApiPublicCronDispatchNotificationsRoute: typeof ApiPublicCronDispatchNotificationsRoute
+  ApiPublicCronPublishScheduledEventsRoute: typeof ApiPublicCronPublishScheduledEventsRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
 
@@ -1233,6 +1247,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/stripe/webhook'
       fullPath: '/api/public/stripe/webhook'
       preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cron/publish-scheduled-events': {
+      id: '/api/public/cron/publish-scheduled-events'
+      path: '/api/public/cron/publish-scheduled-events'
+      fullPath: '/api/public/cron/publish-scheduled-events'
+      preLoaderRoute: typeof ApiPublicCronPublishScheduledEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/cron/dispatch-notifications': {
@@ -1638,6 +1659,8 @@ const rootRouteChildren: RootRouteChildren = {
   EventsIndexRoute: EventsIndexRoute,
   ApiPublicCronDispatchNotificationsRoute:
     ApiPublicCronDispatchNotificationsRoute,
+  ApiPublicCronPublishScheduledEventsRoute:
+    ApiPublicCronPublishScheduledEventsRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport

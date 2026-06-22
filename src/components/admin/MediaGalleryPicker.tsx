@@ -31,12 +31,16 @@ export function MediaGalleryPicker({
   onClose,
   onSelect,
   defaultFolder,
+  allFolderPrefix,
 }: {
   open: boolean;
   onClose: () => void;
   onSelect: (url: string) => void;
-  defaultFolder: string; // e.g. "homepage/hero"
+  defaultFolder: string; // e.g. "homepage/hero" or "events"
+  /** Top-level prefix to walk when scope === "all". Defaults to first segment of defaultFolder. */
+  allFolderPrefix?: string;
 }) {
+  const allRoot = allFolderPrefix ?? defaultFolder.split("/")[0] ?? defaultFolder;
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [scope, setScope] = useState<"folder" | "all">("folder");
@@ -49,15 +53,15 @@ export function MediaGalleryPicker({
       if (scope === "folder") {
         setItems(await listFolder(defaultFolder));
       } else {
-        // Walk top-level "homepage" tree two levels deep.
-        const top = await supabase.storage.from(BUCKET).list("homepage", { limit: 100 });
-        const folders = (top.data ?? []).filter((f) => !f.id).map((f) => `homepage/${f.name}`);
-        const all = await Promise.all(folders.map(listFolder));
+        // Walk top-level tree two levels deep.
+        const top = await supabase.storage.from(BUCKET).list(allRoot, { limit: 100 });
+        const folders = (top.data ?? []).filter((f) => !f.id).map((f) => `${allRoot}/${f.name}`);
+        const all = await Promise.all([listFolder(allRoot), ...folders.map(listFolder)]);
         setItems(all.flat().sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? "")));
       }
       setLoading(false);
     })();
-  }, [open, scope, defaultFolder]);
+  }, [open, scope, defaultFolder, allRoot]);
 
   if (!open) return null;
 
@@ -113,7 +117,7 @@ export function MediaGalleryPicker({
               variant={scope === "all" ? "default" : "outline"}
               onClick={() => setScope("all")}
             >
-              All homepage
+              All in /{allRoot}
             </Button>
           </div>
         </div>

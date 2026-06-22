@@ -9,15 +9,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
+
 import { toast } from "sonner";
 import { AudiencePanel, DEFAULT_AUDIENCE, type AudienceValue } from "@/components/admin/AudiencePanel";
 import {
   getEventAdmin, updateEvent, publishEvent, cancelEvent, duplicateEvent,
+  schedulePublish, unschedulePublish,
   listPublicRegistrationsAdmin,
 } from "@/lib/jiy/events.functions";
 import { listEventRoster, checkInRegistration } from "@/lib/jiy/event-registrations.functions";
 import { listFormTemplates, listSubmissionsForEvent } from "@/lib/jiy/form-templates.functions";
+import { EventCoverPicker } from "@/components/admin/EventCoverPicker";
 
 type SpeakerInput = { name: string; role: string; bio: string; photo_url: string };
 
@@ -42,6 +44,8 @@ function EventEditPage() {
   const pub = useServerFn(publishEvent);
   const can = useServerFn(cancelEvent);
   const dup = useServerFn(duplicateEvent);
+  const sched = useServerFn(schedulePublish);
+  const unsched = useServerFn(unschedulePublish);
   const tplList = useServerFn(listFormTemplates);
 
   const q = useQuery({ queryKey: ["admin", "event", id], queryFn: () => get({ data: { id } }) });
@@ -60,6 +64,7 @@ function EventEditPage() {
   const [audience, setAudience] = useState<AudienceValue>(DEFAULT_AUDIENCE);
   const [categoryLabel, setCategoryLabel] = useState("");
   const [speakers, setSpeakers] = useState<SpeakerInput[]>([]);
+  const [publishAt, setPublishAt] = useState("");
 
   useEffect(() => {
     const e = q.data?.event;
@@ -81,6 +86,7 @@ function EventEditPage() {
       audience_max_age: e.audience_max_age ?? null,
     });
     setCategoryLabel((e as { category_label?: string | null }).category_label ?? "");
+    setPublishAt(toLocalInput((e as { publish_at?: string | null }).publish_at ?? null));
     const rawSpeakers = (e as { speakers?: unknown }).speakers;
     setSpeakers(
       Array.isArray(rawSpeakers)
@@ -93,15 +99,6 @@ function EventEditPage() {
         : [],
     );
   }, [q.data?.event]);
-
-  const uploadCover = async (file: File) => {
-    const path = `events/${id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
-    const { error } = await supabase.storage.from("editorial-media").upload(path, file);
-    if (error) { toast.error(error.message); return; }
-    const { data } = supabase.storage.from("editorial-media").getPublicUrl(path);
-    setCoverUrl(data.publicUrl);
-    toast.success("Cover uploaded");
-  };
 
   const saveMut = useMutation({
     mutationFn: () => upd({
@@ -134,27 +131,56 @@ function EventEditPage() {
   });
 
   const status = q.data?.event.status;
+  const scheduledAt = (q.data?.event as { publish_at?: string | null } | undefined)?.publish_at ?? null;
+
+  const statusLabel =
+    status === "draft" && scheduledAt
+      ? `Scheduled for ${new Date(scheduledAt).toLocaleString()}`
+      : status
+        ? `Status: ${status}`
+        : undefined;
+
+  const doSchedule = async () => {
+    if (!publishAt) {
+      toast.error("Pick a publish date/time first");
+      return;
+    }
+    const iso = new Date(publishAt).toISOString();
+    if (new Date(iso).getTime() <= Date.now()) {
+      toast.error("Scheduled time must be in the future");
+      return;
+    }
+    await sched({ data: { id, publish_at: iso, idempotencyKey: crypto.randomUUID() } });
+    toast.success("Scheduled");
+    qc.invalidateQueries({ queryKey: ["admin", "event", id] });
+  };
+
+  const doUnschedule = async () => {
+    await unsched({ data: { id, idempotencyKey: crypto.randomUUID() } });
+    toast.success("Schedule cleared");
+    qc.invalidateQueries({ queryKey: ["admin", "event", id] });
+  };
 
   return (
     <div>
       <AdminPageHeader
         title={q.data?.event.title ?? "Event"}
-        subtitle={status ? `Status: ${status}` : undefined}
+        subtitle={statusLabel}
         backTo={{ to: "/admin/events", label: "Events" }}
         actions={
           <>
             {status === "draft" && (
-              <Button variant="outline" onClick={async () => {
+              <Button onClick={async () => {
                 await pub({ data: { id, idempotencyKey: crypto.randomUUID() } });
                 toast.success("Published"); qc.invalidateQueries({ queryKey: ["admin", "event", id] });
-              }}>Publish</Button>
+              }}>Publish now</Button>
             )}
             {status === "published" && (
               <Button variant="outline" onClick={async () => {
                 if (!confirm("Cancel this event?")) return;
                 await can({ data: { id, idempotencyKey: crypto.randomUUID() } });
                 toast.success("Cancelled"); qc.invalidateQueries({ queryKey: ["admin", "event", id] });
-              }}>Cancel</Button>
+              }}>Cancel event</Button>
             )}
             <Button variant="outline" onClick={async () => {
               const r = await dup({ data: { id, idempotencyKey: crypto.randomUUID() } });
@@ -192,18 +218,7 @@ function EventEditPage() {
               <div><Label>Capacity</Label><Input type="number" min={0} value={capacity} onChange={(e) => setCapacity(e.target.value)} /></div>
               <div><Label>Location</Label><Input value={location} onChange={(e) => setLocation(e.target.value)} /></div>
             </div>
-            <div>
-              <Label>Cover image</Label>
-              <div className="flex flex-col sm:flex-row gap-3 items-start">
-                {coverUrl && <img src={coverUrl} alt="" className="h-24 w-40 object-cover border border-[#e5dec9] rounded-sm" />}
-                <input
-                  type="file" accept="image/*"
-                  onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadCover(f); }}
-                  className="text-sm"
-                />
-                {coverUrl && <Button type="button" variant="ghost" size="sm" onClick={() => setCoverUrl("")}>Remove</Button>}
-              </div>
-            </div>
+            <EventCoverPicker value={coverUrl} onChange={setCoverUrl} eventId={id} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label>Registration form</Label>
@@ -238,9 +253,45 @@ function EventEditPage() {
               <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
               Feature on homepage
             </label>
-            <Button onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
-              {saveMut.isPending ? "Saving…" : "Save changes"}
-            </Button>
+            <div className="border-t border-[#e5dec9] pt-5 space-y-3">
+              <div>
+                <Label>Schedule publish (optional)</Label>
+                <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center mt-1">
+                  <Input
+                    type="datetime-local"
+                    value={publishAt}
+                    onChange={(e) => setPublishAt(e.target.value)}
+                    className="max-w-xs"
+                    disabled={status !== "draft"}
+                  />
+                  {status === "draft" && (
+                    <>
+                      <Button type="button" variant="outline" size="sm" onClick={doSchedule} disabled={!publishAt}>
+                        {scheduledAt ? "Reschedule" : "Schedule"}
+                      </Button>
+                      {scheduledAt && (
+                        <Button type="button" variant="ghost" size="sm" onClick={doUnschedule}>
+                          Clear schedule
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </div>
+                {status !== "draft" && (
+                  <p className="text-xs text-[#6b6453] mt-1">
+                    Scheduling is only available on drafts.
+                  </p>
+                )}
+                {scheduledAt && status === "draft" && (
+                  <p className="text-xs text-[#6b6453] mt-1">
+                    Currently scheduled for {new Date(scheduledAt).toLocaleString()}.
+                  </p>
+                )}
+              </div>
+              <Button onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
+                {saveMut.isPending ? "Saving…" : "Save changes"}
+              </Button>
+            </div>
           </TabsContent>
 
           <TabsContent value="speakers" className="mt-6">

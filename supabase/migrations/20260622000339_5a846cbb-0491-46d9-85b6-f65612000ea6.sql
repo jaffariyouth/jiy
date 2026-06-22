@@ -1,0 +1,2 @@
+alter table public.events add column if not exists publish_at timestamptz;
+create index if not exists events_publish_at_idx on public.events (publish_at) where status = 'draft' and publish_at is not null;
