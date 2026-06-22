@@ -262,10 +262,10 @@
  * JIY Dashboard — scoped styles (1:1 port)
  * ========================================== */
 .jiy-dashboard {
-  background-color: #FAF8F5;
+  background-color: #F8F6EF;
   background-image:
-    radial-gradient(#e5dec9 0.75px, transparent 0.75px),
-    radial-gradient(#e5dec9 0.75px, #FAF8F5 0.75px);
+    radial-gradient(#e4ddc7 0.75px, transparent 0.75px),
+    radial-gradient(#e4ddc7 0.75px, #F8F6EF 0.75px);
   background-size: 24px 24px;
   background-position: 0 0, 12px 12px;
   background-attachment: fixed;

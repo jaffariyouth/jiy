@@ -520,7 +520,7 @@ function UpcomingEvents({ events }: { events: HomepageEvent[] }) {
             return (
               <div key={ev.id} className="studio-card rounded-xl overflow-hidden flex flex-col bg-white">
                 <div className="relative overflow-hidden aspect-[4/5] bg-warm-silk-grey border-b border-horizon-mist p-2">
-                  <div className="w-full h-full overflow-hidden relative ogee-arch-portal">
+                  <div className="w-full h-full overflow-hidden relative rounded-lg">
                     <img
                       src={
                         ev.cover_image_url ??

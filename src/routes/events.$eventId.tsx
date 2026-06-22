@@ -191,7 +191,7 @@ function EventDetailPage() {
           </div>
 
           <div className="w-full max-w-md justify-self-center lg:justify-self-end">
-            <div className="aspect-[4/5] w-full ogee-arch-portal overflow-hidden bg-gradient-to-b from-horizon-mist via-horizon-mist/60 to-persian-indigo/30">
+            <div className="aspect-[4/5] w-full rounded-xl overflow-hidden bg-gradient-to-b from-horizon-mist via-horizon-mist/60 to-persian-indigo/30 border border-horizon-mist">
               {event.cover_image_url ? (
                 <img
                   src={event.cover_image_url}
