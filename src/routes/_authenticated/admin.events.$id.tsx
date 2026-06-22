@@ -44,6 +44,8 @@ function EventEditPage() {
   const pub = useServerFn(publishEvent);
   const can = useServerFn(cancelEvent);
   const dup = useServerFn(duplicateEvent);
+  const sched = useServerFn(schedulePublish);
+  const unsched = useServerFn(unschedulePublish);
   const tplList = useServerFn(listFormTemplates);
 
   const q = useQuery({ queryKey: ["admin", "event", id], queryFn: () => get({ data: { id } }) });
