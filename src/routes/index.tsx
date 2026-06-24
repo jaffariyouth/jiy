@@ -302,8 +302,9 @@ function Hero({ hero }: { hero?: Section }) {
           backgroundSize: "32px 32px",
         }}
       />
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-deep-garnet/10 via-transparent to-transparent opacity-60" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-damascus-gold/15 via-transparent to-transparent opacity-60" />
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-deep-garnet/30 via-transparent to-transparent opacity-80" />
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-damascus-gold/20 via-transparent to-transparent opacity-60" />
+
 
       {/* Full-bleed background ornament, spanning left to right, very low opacity */}
       <img
