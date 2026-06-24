@@ -298,7 +298,7 @@ function Hero({ hero }: { hero?: Section }) {
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
-          backgroundImage: "radial-gradient(circle at center, #caa460 1.5px, transparent 1.5px)",
+          backgroundImage: "radial-gradient(circle at center, var(--color-damascus-gold) 1.5px, transparent 1.5px)",
           backgroundSize: "32px 32px",
         }}
       />
