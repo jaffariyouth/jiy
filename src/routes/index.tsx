@@ -163,7 +163,7 @@ const DEFAULTS = {
     section_headline: "The Youth Press",
     section_subhead_italic: "& Publications",
     archive_label: "Explore Journal Archive →",
-    archive_href: "#",
+    archive_href: "/press",
     volume_label: "VOLUME IX • ISSUE II",
     journal_title: "The Youth Press",
     journal_subtitle: "A Journal of Thought & Art",
@@ -541,6 +541,7 @@ function UpcomingEvents({ events }: { events: HomepageEvent[] }) {
             const day = String(start.getDate()).padStart(2, "0");
             const mon = monthName(start);
             const time = start.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+            const dayName = start.toLocaleDateString([], { weekday: "long" });
             return (
               <div key={ev.id} className="studio-card rounded-xl overflow-hidden flex flex-col bg-white">
                 <div className="relative overflow-hidden aspect-[4/5] bg-warm-silk-grey border-b border-horizon-mist p-2">
@@ -563,7 +564,7 @@ function UpcomingEvents({ events }: { events: HomepageEvent[] }) {
                 </div>
                 <div className="p-6 flex flex-col flex-grow">
                   <span className="font-body text-[9px] uppercase tracking-[0.2em] text-deep-garnet font-black mb-2">
-                    {ev.location ?? "Event"} • {time}
+                    {ev.location ?? "Event"} • {dayName} • {time}
                   </span>
                   <h3 className="font-headline text-xl text-persian-indigo leading-snug mb-3 hover:text-damascus-gold transition-colors">
                     {ev.title}

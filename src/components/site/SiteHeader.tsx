@@ -146,7 +146,7 @@ export function SiteHeader() {
           <EventsDropdown />
           <a
             className="hover:text-damascus-gold transition-colors duration-200 relative py-1 group"
-            href="/#journal"
+            href="/press"
           >
             The Press
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-damascus-gold transition-all duration-300 group-hover:w-full" />
@@ -274,7 +274,7 @@ function SiteMobileDrawer({
               </ul>
             </li>
 
-            <DrawerAnchor href="/#journal" label="The Press" onClose={onClose} />
+            <DrawerAnchor href="/press" label="The Press" onClose={onClose} />
           </ul>
         </nav>
 
