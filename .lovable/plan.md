@@ -1,119 +1,116 @@
-## Problem
+## What's wrong now
 
-The current `.theme-muharram` only overrides the JIY brand tokens (`--color-midnight-sapphire`, `--color-damascus-gold`, etc.) and a couple of `.jiy-dashboard` rules. It does NOT override:
+1. **Stats card surface.** `<Metrics>` uses `bg-persian-indigo`. My current `.theme-muharram` remaps `bg-persian-indigo` → `#7a0810` (blood-ruby) because the same class is used on solid buttons. So the stats strip becomes pure red instead of the deep card surface (`#130607`) shown in your mock.
+2. **Stats card divider** uses `border-white/10` — stays white-on-red instead of `muharram-border #2b1013`.
+3. **Hero ambient gradients** use `from-deep-garnet/10` and `from-damascus-gold/15`. The mock uses 30 % / 20 % opacities, so they barely show in Muharram.
+4. **Event-card image fade.** Mock uses `bg-gradient-to-t from-muharram-bg/90 via-muharram-bg/20 to-transparent` over event covers; the app card has no such fade.
 
-1. The **Material surface palette** (`--color-surface*`, `--color-on-surface*`, `--color-primary-container`, `--color-on-primary`, `--color-outline*`, `--color-secondary*`, `--color-tertiary*`) — these still resolve to the light blue/grey defaults, so any component using `bg-surface`, `bg-primary-container`, `text-on-surface`, etc. stays light.
-2. The **shadcn `:root` tokens** (`--card`, `--popover`, `--border`, `--input`, `--muted`, `--accent`, `--sidebar*`) — every shadcn primitive (cards, inputs, popovers, sidebar) stays white-on-light.
-3. The **hardcoded JIY rule colors** inside `.jiy-dashboard` (e.g. `value-tab.is-active { color: #14243b }`, `interactive-btn::after { border: #caa460 }`, the dotted-parchment background uses literal hexes, the mosque-mask is unchanged).
-4. The homepage uses one inline hex: `radial-gradient(... #caa460 ...)` in `src/routes/index.tsx:301` (mosque silhouette dotting).
+These exist because a single brand class (e.g. `bg-persian-indigo`) plays two roles (deep surface AND button). One CSS-variable swap can't satisfy both — that's the same constraint that's about to bite us every time we add a new theme.
 
-Result: the page is mostly still in the parchment palette with only a handful of tokens swapped, which is why it doesn't match your uploaded `timeless_high_contrast_dashboard_4.html`.
+## Architecture: base tokens + role tokens + theme presets
 
-## Reference palette (from your upload, verified)
+Restructure tokens into three layers in `src/styles.css`:
 
-```
-muharram-bg       #0a0304   page background (obsidian black-red)
-muharram-card     #130607   elevated surfaces
-muharram-border   #2b1013   borders
-blood-ruby        #7a0810   deep accent
-crimson-glow      #d91823   primary accent (replaces damascus-gold)
-ash-rose          #917b7c   muted text
-parchment-white   #e5dada   primary text
-dot-texture       #1c0a0c   on #0a0304, 24px radial-gradient grid
-```
-
-## Fix
-
-Rewrite the `.theme-muharram` block in `src/styles.css` so it remaps EVERY token the app reads, not just the JIY brand subset.
-
-### 1. JIY brand tokens (keep — already correct)
-
-```
---color-alabaster-parchment: #0a0304
---color-warm-silk-grey:      #130607
---color-horizon-mist:        #2b1013
---color-midnight-sapphire:   #e5dada
---color-primary-dark:        #e5dada
---color-persian-indigo:      #130607
---color-deep-garnet:         #7a0810
---color-damascus-gold:       #d91823
---color-ash-slate:           #917b7c
---color-muted-dusk:           #917b7c
-```
-
-### 2. Material surface palette (NEW — required for any non-JIY component)
-
-```
---color-surface, --color-surface-bright, --color-background: #0a0304
---color-surface-dim:                                          #050102
---color-surface-container-lowest:                             #050102
---color-surface-container-low:                                #100506
---color-surface-container:                                    #130607
---color-surface-container-high:                               #1a080a
---color-surface-container-highest:                            #21090c
---color-surface-variant:                                      #2b1013
---color-on-surface, --color-on-background:                    #e5dada
---color-on-surface-variant:                                   #917b7c
---color-inverse-surface:                                      #e5dada
---color-inverse-on-surface:                                   #130607
---color-outline:                                              #2b1013
---color-outline-variant:                                      #21090c
-
---color-primary:                                              #e5dada
---color-on-primary:                                           #0a0304
---color-primary-container:                                    #130607
---color-on-primary-container:                                 #d91823
---color-inverse-primary:                                      #7a0810
-
---color-secondary:                                            #917b7c
---color-on-secondary:                                         #0a0304
---color-secondary-container:                                  #1a080a
---color-on-secondary-container:                               #e5dada
-
---color-tertiary:                                             #d91823
---color-on-tertiary:                                          #0a0304
---color-tertiary-container:                                   #7a0810
---color-on-tertiary-container:                                #e5dada
-
---color-error:                                                #d91823
---color-on-error:                                             #0a0304
---color-error-container:                                      #2b1013
---color-on-error-container:                                   #e5dada
+```text
+┌───────────────────────────────────────────────────────────────┐
+│ LAYER 1  Brand palette (raw colors)                           │
+│   --color-midnight-sapphire, --color-damascus-gold, …         │
+│   --color-blood-ruby, --color-crimson-glow, --color-parchment │
+│   (NEW raw entries for every preset's hexes, never reassigned)│
+├───────────────────────────────────────────────────────────────┤
+│ LAYER 2  Semantic role tokens (what components consume)       │
+│   --role-bg-page          page background                     │
+│   --role-bg-surface       elevated card / header              │
+│   --role-bg-deep          dark stat strip / footer            │
+│   --role-bg-button        primary button fill                 │
+│   --role-text-strong      headlines                           │
+│   --role-text-muted       captions                            │
+│   --role-text-on-deep     text on the deep strip              │
+│   --role-accent           default accent (gold / crimson-glow)│
+│   --role-accent-strong    hover accent                        │
+│   --role-border-subtle    hairlines                           │
+│   --role-border-deep      divider on deep strip               │
+│   --role-gradient-warm    radial wash A                       │
+│   --role-gradient-cool    radial wash B                       │
+├───────────────────────────────────────────────────────────────┤
+│ LAYER 3  Theme presets (map L1 raws into L2 roles)            │
+│   :root / .theme-default  → gold + parchment                  │
+│   .theme-muharram         → crimson + obsidian                │
+│   .theme-ramadan / …      → add in future, one block each     │
+└───────────────────────────────────────────────────────────────┘
 ```
 
-### 3. shadcn `:root` tokens (NEW)
+Layer 1 stays hard-coded so the site has a working fallback even if the preset never loads. Layer 2 names are stable — they're what components import. Layer 3 is what we swap.
 
-Inside `.theme-muharram`, override:
+Each preset is one CSS block:
 
+```css
+.theme-muharram {
+  --role-bg-page:        var(--color-obsidian-black);   /* #0a0304 */
+  --role-bg-surface:     var(--color-muharram-card);    /* #130607 */
+  --role-bg-deep:        var(--color-muharram-card);
+  --role-bg-button:      var(--color-blood-ruby);       /* #7a0810 */
+  --role-text-strong:    var(--color-parchment);        /* #e5dada */
+  --role-text-muted:     var(--color-ash-rose);         /* #917b7c */
+  --role-text-on-deep:   var(--color-parchment);
+  --role-accent:         var(--color-crimson-glow);     /* #d91823 */
+  --role-accent-strong:  var(--color-crimson-glow);
+  --role-border-subtle:  var(--color-muharram-border);  /* #2b1013 */
+  --role-border-deep:    var(--color-muharram-border);
+  --role-gradient-warm:  rgba(122, 8, 16, 0.30);        /* blood-ruby /30 */
+  --role-gradient-cool:  rgba(217, 24, 35, 0.20);       /* crimson-glow /20 */
+  color-scheme: dark;
+}
 ```
---card / --popover                  → oklch equivalent of #130607
---card-foreground / --popover-fg    → #e5dada
---muted                              → #1a080a
---muted-foreground                   → #917b7c
---accent                             → #2b1013
---accent-foreground                  → #e5dada
---border / --input                   → #2b1013
---ring                               → #d91823
---destructive                        → #d91823
---sidebar / --sidebar-foreground / --sidebar-border / etc. → matching dark crimson tones
+
+Default preset is the same shape with parchment / sapphire / gold raws.
+
+For migration speed we keep the existing brand-token utilities working (`text-persian-indigo`, `bg-damascus-gold`, etc.) by mapping them inside each preset block (this is what's there today). New components added going forward use the role tokens.
+
+## Persisting the active preset (no schema change)
+
+Themes live in a registry in code:
+
+```ts
+// src/lib/jiy/themes.ts
+export const THEMES = {
+  default:  { label: "Default (Editorial)", flag: null,             className: null },
+  muharram: { label: "Muharram / Safar",    flag: "theme_muharram", className: "theme-muharram" },
+  // future: ramadan, eid, ashura-night, …
+} as const;
 ```
 
-### 4. `.jiy-dashboard` rule colors
+The existing `feature_flags` boolean (`theme_muharram`) is kept. New themes = add a new boolean flag + a registry entry + a `.theme-{key}` CSS block. `getActiveTheme()` walks the registry in priority order and returns the first enabled one (default if none).
 
-Replace the hardcoded `#14243b`, `#caa460`, `#7a2230`, `#F8F6EF`, `#FFFFFF` references inside scoped rules (dotted background, value-tab active/hover, interactive-btn ring, ::selection) so under `.theme-muharram` they resolve to the crimson palette.
+Admin page becomes a **single-select radio list of themes** instead of a per-flag toggle. Switching themes flips the right flag on and the others off in one server call. This keeps every existing migration intact and makes adding "Ramadan" a 3-file diff.
 
-### 5. Homepage inline gradient
+## Specific fixes (apply during refactor)
 
-In `src/routes/index.tsx:301`, change the literal `#caa460` to `currentColor` or read `var(--color-damascus-gold)` so the mosque-silhouette dots reskin too.
+1. `<Metrics>` (`src/routes/index.tsx:407-419`):
+   - `bg-persian-indigo` → `bg-[var(--role-bg-deep)]`
+   - `text-damascus-gold` (the number) → `text-[var(--role-accent)]`
+   - `text-white/80` → `text-[var(--role-text-on-deep)]/80`
+   - `border-white/10` → `border-[var(--role-border-deep)]`
+   - Overlay gradient `from-deep-garnet/30` → use `--role-gradient-warm`
+2. Hero ambient gradients (`src/routes/index.tsx:305-306`): bump default opacities from `/10` and `/15` to `/30` and `/20` to match the mock — they read correctly in both themes because the tokens still resolve to gold (default) or crimson (Muharram).
+3. Event card cover (`EventCard.tsx` if present, else inline): add `bg-gradient-to-t from-[var(--role-bg-page)]/90 via-[var(--role-bg-page)]/20 to-transparent` overlay so titles stay legible on dark images in Muharram and on light images otherwise.
+4. Drop the per-class `!important` overrides in `.theme-muharram` once the role tokens are in place — components that consume role tokens don't need them.
 
 ## Verification
 
-After the change, with the Muharram flag on:
-- `/` (homepage) — body bg `#0a0304`, dotted texture in `#1c0a0c`, mosque silhouette dots in crimson, headlines in `#e5dada`, buttons/links accent in `#d91823`.
-- `/events`, `/team`, `/press`, `/scholar-qa` — all dark crimson.
-- `/dashboard`, `/account`, `/admin/*` — studio cards `#130607` on `#0a0304`, borders `#2b1013`, hover ring `#d91823`.
-- Shadcn primitives (inputs on `/auth`, dropdowns, popovers) — dark crimson surfaces, not white.
+- `/` in default theme: looks identical to today (gold + parchment + sapphire stats strip).
+- `/` in Muharram: stats strip is `#130607` card surface with crimson `1,200+` numbers, hairlines in `#2b1013`, hero glow visible in blood-ruby / crimson-glow.
+- Admin → Appearance: single radio (Default · Muharram). Switching writes one `feature_flags` row, reload paints the new theme everywhere.
+- Add a placeholder `theme_ramadan` flag + a green `.theme-ramadan` block locally and confirm it appears in the radio without any other code change.
 
-Toggle off → returns to JIY parchment palette unchanged.
+## Files touched
 
-No component code changes other than the one inline-hex fix in `index.tsx`. Everything else is a single rewrite of the `.theme-muharram` block in `src/styles.css`.
+- `src/styles.css` — restructure tokens into the 3 layers; rewrite `.theme-muharram` against role tokens; add `.theme-default` block.
+- `src/lib/jiy/themes.ts` (new) — registry.
+- `src/lib/jiy/theme.functions.ts` — return active theme key (not just boolean).
+- `src/routes/__root.tsx` — apply `THEMES[key].className` to `<html>`.
+- `src/routes/_authenticated/admin.flags.tsx` (or new `admin.appearance.tsx`) — radio selector backed by registry.
+- `src/routes/index.tsx` — Metrics + hero gradient classes.
+- `src/components/dashboard/EventCard.tsx` — image fade overlay.
+
+No migration. No breaking change to existing brand-class usage.
