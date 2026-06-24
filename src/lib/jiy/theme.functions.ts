@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { THEMES, THEME_PRIORITY, type ThemeKey } from "./themes";
 
 export const getActiveTheme = createServerFn({ method: "GET" }).handler(async () => {
   try {
@@ -8,13 +9,21 @@ export const getActiveTheme = createServerFn({ method: "GET" }).handler(async ()
       process.env.SUPABASE_PUBLISHABLE_KEY!,
       { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
     );
+    const flagKeys = THEME_PRIORITY.map((k) => THEMES[k].flag).filter(
+      (v): v is string => Boolean(v),
+    );
+    if (flagKeys.length === 0) return { theme: "default" as ThemeKey };
     const { data } = await supabase
       .from("feature_flags")
-      .select("enabled")
-      .eq("key", "theme_muharram")
-      .maybeSingle();
-    return { muharram: Boolean(data?.enabled) };
+      .select("key,enabled")
+      .in("key", flagKeys);
+    const enabled = new Set((data ?? []).filter((f) => f.enabled).map((f) => f.key));
+    const active = THEME_PRIORITY.find((k) => {
+      const flag = THEMES[k].flag;
+      return flag !== null && enabled.has(flag);
+    });
+    return { theme: (active ?? "default") as ThemeKey };
   } catch {
-    return { muharram: false };
+    return { theme: "default" as ThemeKey };
   }
 });
