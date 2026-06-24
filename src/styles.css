@@ -354,27 +354,112 @@
 /* ============================================
  * Muharram Theme — site-wide dark crimson override
  * Applied by adding `.theme-muharram` to <html>.
+ * Palette mirrors uploaded timeless_high_contrast_dashboard_4.html:
+ *   bg #0a0304, card #130607, border #2b1013, blood-ruby #7a0810,
+ *   crimson-glow #d91823, ash-rose #917b7c, parchment-white #e5dada
  * ========================================== */
 .theme-muharram {
+  /* JIY brand tokens */
   --color-alabaster-parchment: #0a0304;
   --color-warm-silk-grey: #130607;
   --color-horizon-mist: #2b1013;
   --color-midnight-sapphire: #e5dada;
   --color-primary-dark: #e5dada;
-  --color-primary: #e5dada;
   --color-persian-indigo: #130607;
   --color-deep-garnet: #7a0810;
   --color-damascus-gold: #d91823;
   --color-ash-slate: #917b7c;
   --color-muted-dusk: #917b7c;
+
+  /* Material surface palette */
+  --color-surface: #0a0304;
+  --color-surface-bright: #0a0304;
+  --color-surface-dim: #050102;
+  --color-surface-container-lowest: #050102;
+  --color-surface-container-low: #100506;
+  --color-surface-container: #130607;
+  --color-surface-container-high: #1a080a;
+  --color-surface-container-highest: #21090c;
+  --color-surface-variant: #2b1013;
+  --color-surface-tint: #d91823;
+  --color-on-surface: #e5dada;
+  --color-on-surface-variant: #917b7c;
+  --color-inverse-surface: #e5dada;
+  --color-inverse-on-surface: #130607;
+  --color-outline: #2b1013;
+  --color-outline-variant: #21090c;
   --color-background: #0a0304;
   --color-on-background: #e5dada;
-  --color-on-surface: #e5dada;
   --color-foreground: #e5dada;
+
+  --color-primary: #e5dada;
+  --color-on-primary: #0a0304;
+  --color-primary-container: #130607;
+  --color-on-primary-container: #d91823;
+  --color-inverse-primary: #7a0810;
+  --color-primary-fixed: #2b1013;
+  --color-primary-fixed-dim: #1a080a;
+  --color-on-primary-fixed: #e5dada;
+  --color-on-primary-fixed-variant: #917b7c;
+
+  --color-secondary: #917b7c;
+  --color-on-secondary: #0a0304;
+  --color-secondary-container: #1a080a;
+  --color-on-secondary-container: #e5dada;
+  --color-secondary-fixed: #2b1013;
+  --color-secondary-fixed-dim: #1a080a;
+  --color-on-secondary-fixed: #e5dada;
+  --color-on-secondary-fixed-variant: #917b7c;
+
+  --color-tertiary: #d91823;
+  --color-on-tertiary: #0a0304;
+  --color-tertiary-container: #7a0810;
+  --color-on-tertiary-container: #e5dada;
+  --color-tertiary-fixed: #2b1013;
+  --color-tertiary-fixed-dim: #1a080a;
+  --color-on-tertiary-fixed: #e5dada;
+  --color-on-tertiary-fixed-variant: #917b7c;
+
+  --color-error: #d91823;
+  --color-on-error: #0a0304;
+  --color-error-container: #2b1013;
+  --color-on-error-container: #e5dada;
+
+  /* shadcn :root tokens (oklch equivalents of the crimson palette) */
+  --card: oklch(0.13 0.03 18);
+  --card-foreground: oklch(0.92 0.01 20);
+  --popover: oklch(0.13 0.03 18);
+  --popover-foreground: oklch(0.92 0.01 20);
+  --primary-foreground: oklch(0.08 0.02 18);
+  --secondary-foreground: oklch(0.92 0.01 20);
+  --muted: oklch(0.16 0.03 18);
+  --muted-foreground: oklch(0.62 0.02 18);
+  --accent: oklch(0.20 0.04 18);
+  --accent-foreground: oklch(0.92 0.01 20);
+  --destructive: oklch(0.58 0.22 25);
+  --destructive-foreground: oklch(0.92 0.01 20);
+  --border: oklch(0.20 0.04 18);
+  --input: oklch(0.20 0.04 18);
+  --ring: oklch(0.58 0.22 25);
+  --sidebar: oklch(0.10 0.02 18);
+  --sidebar-foreground: oklch(0.92 0.01 20);
+  --sidebar-primary: oklch(0.58 0.22 25);
+  --sidebar-primary-foreground: oklch(0.08 0.02 18);
+  --sidebar-accent: oklch(0.16 0.03 18);
+  --sidebar-accent-foreground: oklch(0.92 0.01 20);
+  --sidebar-border: oklch(0.20 0.04 18);
+  --sidebar-ring: oklch(0.58 0.22 25);
+
   color-scheme: dark;
 }
 .theme-muharram body {
   background-color: #0a0304;
+  background-image:
+    radial-gradient(#1c0a0c 0.75px, transparent 0.75px),
+    radial-gradient(#1c0a0c 0.75px, #0a0304 0.75px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+  background-attachment: fixed;
   color: #e5dada;
 }
 .theme-muharram .jiy-dashboard {
@@ -382,6 +467,11 @@
   background-image:
     radial-gradient(#1c0a0c 0.75px, transparent 0.75px),
     radial-gradient(#1c0a0c 0.75px, #0a0304 0.75px);
+  color: #e5dada;
+}
+.theme-muharram .jiy-dashboard ::selection,
+.theme-muharram ::selection {
+  background: rgba(217, 24, 35, 0.35);
   color: #e5dada;
 }
 .theme-muharram .jiy-dashboard .studio-card,
@@ -412,8 +502,11 @@
   border-left-color: #d91823;
   color: #e5dada;
 }
-.theme-muharram .jiy-dashboard ::selection {
-  background: rgba(217, 24, 35, 0.35);
-  color: #e5dada;
+/* Force backgrounds that hardcoded the parchment cream to crimson-black */
+.theme-muharram .bg-white,
+.theme-muharram .bg-\[\#F8F6EF\],
+.theme-muharram .bg-\[\#FFFFFF\] {
+  background-color: #0a0304 !important;
 }
+
 
