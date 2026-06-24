@@ -294,7 +294,7 @@ function Hero({ hero }: { hero?: Section }) {
   const d = DEFAULTS.hero;
   const socials = arr<{ network: string; url: string }>(hero, "socials", d.socials);
   return (
-    <section className="relative overflow-hidden pt-6 sm:pt-8 lg:pt-12 pb-12 lg:pb-20 border-b border-horizon-mist bg-white">
+    <section className="relative overflow-hidden pt-6 sm:pt-8 lg:pt-12 pb-12 lg:pb-20 border-b border-horizon-mist bg-alabaster-parchment">
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
@@ -451,7 +451,7 @@ function Metrics({ metrics }: { metrics?: Section }) {
 function About({ about }: { about?: Section }) {
   const d = DEFAULTS.about;
   return (
-    <section id="about-us" className="py-24 border-b border-horizon-mist bg-white relative">
+    <section id="about-us" className="py-24 border-b border-horizon-mist bg-alabaster-parchment relative">
       <div className="max-w-max-width mx-auto px-margin-safe relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7 flex flex-col gap-6">
@@ -517,7 +517,7 @@ function About({ about }: { about?: Section }) {
 
 function UpcomingEvents({ events }: { events: HomepageEvent[] }) {
   return (
-    <section id="upcoming-events" className="py-24 border-b border-horizon-mist bg-alabaster-parchment/60">
+    <section id="upcoming-events" className="py-24 border-b border-horizon-mist bg-white">
       <div className="max-w-max-width mx-auto px-margin-safe">
         <div className="flex flex-col sm:flex-row justify-between items-baseline border-b border-horizon-mist pb-3 mb-10">
           <div className="flex flex-col">
@@ -595,7 +595,7 @@ function OngoingEvents({ ongoing }: { ongoing?: Section }) {
   const d = DEFAULTS.ongoing;
   const initiatives = arr<{ icon: string; title: string; description: string }>(ongoing, "initiatives", d.initiatives);
   return (
-    <section id="ongoing-events" className="py-24 border-b border-horizon-mist bg-white">
+    <section id="ongoing-events" className="py-24 border-b border-horizon-mist bg-alabaster-parchment">
       <div className="max-w-max-width mx-auto px-margin-safe">
         <div className="flex flex-col sm:flex-row justify-between items-baseline border-b border-horizon-mist pb-3 mb-10">
           <div className="flex flex-col">
@@ -677,7 +677,7 @@ function CoreValues({ values }: { values?: Section }) {
   return (
     <section
       id="core-values"
-      className="py-24 border-b border-horizon-mist bg-alabaster-parchment relative overflow-hidden"
+      className="py-24 border-b border-horizon-mist bg-white relative overflow-hidden"
     >
       <div className="max-w-max-width mx-auto px-margin-safe relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
@@ -786,7 +786,7 @@ function StarBreak() {
 function Press({ press, articles }: { press?: Section; articles: HomepageArticle[] }) {
   const d = DEFAULTS.press;
   return (
-    <section id="journal" className="py-24 bg-white border-b border-horizon-mist relative">
+    <section id="journal" className="py-24 bg-alabaster-parchment border-b border-horizon-mist relative">
       <div className="max-w-max-width mx-auto px-margin-safe">
         <div className="flex flex-col sm:flex-row justify-between items-baseline border-b border-horizon-mist pb-4 mb-16">
           <div className="flex flex-col">
@@ -809,7 +809,7 @@ function Press({ press, articles }: { press?: Section; articles: HomepageArticle
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
-          <div className="lg:col-span-4 hidden lg:flex flex-col items-center justify-center p-8 bg-alabaster-parchment border-r border-horizon-mist/60 relative">
+          <div className="lg:col-span-4 hidden lg:flex flex-col items-center justify-center p-8 bg-white border-r border-horizon-mist/60 relative">
             <div className="border border-horizon-mist/60 p-4 h-full flex flex-col justify-between w-full">
               <div className="text-center pt-4">
                 <span className="font-body text-[9px] uppercase tracking-[0.3em] text-ash-slate font-bold block mb-1">
