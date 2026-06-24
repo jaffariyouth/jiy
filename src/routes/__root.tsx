@@ -114,10 +114,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
-  const theme = Route.useLoaderData();
-  const muharram = Boolean(theme?.muharram);
+  const data = Route.useLoaderData();
+  const themeKey = data?.theme ?? "default";
+  const className = themeKey === "muharram" ? "theme-muharram" : undefined;
   return (
-    <html lang="en" className={muharram ? "theme-muharram" : undefined}>
+    <html lang="en" className={className}>
       <head>
         <HeadContent />
       </head>

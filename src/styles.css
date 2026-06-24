@@ -352,6 +352,29 @@
 .jiy-dashboard .px-margin-safe { padding-left: clamp(20px, 5vw, 40px); padding-right: clamp(20px, 5vw, 40px); }
 
 /* ============================================
+ * Semantic role tokens — Layer 2
+ * Components consume these via bg-[var(--role-*)], text-[var(--role-*)], etc.
+ * Each theme preset reassigns them from the raw brand palette.
+ * Defaults below ARE the editorial (default) theme — kept hard-coded so the
+ * site renders correctly even if the active-theme query fails.
+ * ========================================== */
+:root {
+  --role-bg-page: #faf8f5;          /* alabaster-parchment */
+  --role-bg-surface: #ffffff;       /* card / header */
+  --role-bg-deep: #14243b;          /* persian-indigo (dark stat strip) */
+  --role-bg-button: #14243b;        /* primary button */
+  --role-text-strong: #162238;      /* midnight-sapphire headlines */
+  --role-text-muted: #616975;       /* ash-slate */
+  --role-text-on-deep: #ffffff;     /* text on deep strip */
+  --role-accent: #caa460;           /* damascus-gold */
+  --role-accent-strong: #b8924f;
+  --role-border-subtle: #dcd9d2;    /* horizon-mist */
+  --role-border-deep: rgba(255, 255, 255, 0.10);
+  --role-gradient-warm: rgba(122, 34, 48, 0.30);  /* deep-garnet /30 */
+  --role-gradient-cool: rgba(202, 164, 96, 0.20); /* damascus-gold /20 */
+}
+
+/* ============================================
  * Muharram Theme — site-wide dark crimson override
  * Applied by adding `.theme-muharram` to <html>.
  * Palette mirrors uploaded timeless_high_contrast_dashboard_4.html:
@@ -359,6 +382,21 @@
  *   crimson-glow #d91823, ash-rose #917b7c, parchment-white #e5dada
  * ========================================== */
 .theme-muharram {
+  /* Role tokens (Layer 2) — what new components should consume */
+  --role-bg-page: #0a0304;
+  --role-bg-surface: #130607;
+  --role-bg-deep: #130607;
+  --role-bg-button: #7a0810;
+  --role-text-strong: #e5dada;
+  --role-text-muted: #917b7c;
+  --role-text-on-deep: #e5dada;
+  --role-accent: #d91823;
+  --role-accent-strong: #d91823;
+  --role-border-subtle: #2b1013;
+  --role-border-deep: #2b1013;
+  --role-gradient-warm: rgba(122, 8, 16, 0.30);   /* blood-ruby /30 */
+  --role-gradient-cool: rgba(217, 24, 35, 0.20);  /* crimson-glow /20 */
+
   /* JIY brand tokens */
   --color-alabaster-parchment: #0a0304;
   --color-warm-silk-grey: #130607;
