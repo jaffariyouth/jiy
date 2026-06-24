@@ -404,14 +404,37 @@ function Metrics({ metrics }: { metrics?: Section }) {
     ? (metrics as Array<{ value: string; label: string }>)
     : arr<{ value: string; label: string }>(metrics, "items", DEFAULTS.metrics);
   return (
-    <section className="bg-persian-indigo text-white py-12 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-deep-garnet/30 via-transparent to-transparent opacity-60" />
+    <section
+      className="py-12 relative overflow-hidden border-y"
+      style={{ backgroundColor: "var(--role-bg-deep)", borderColor: "var(--role-border-subtle)" }}
+    >
+      <div
+        className="absolute inset-0 opacity-60"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse at bottom, var(--role-gradient-warm), transparent 70%)",
+        }}
+      />
       <div className="max-w-max-width mx-auto px-margin-safe relative z-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
           {items.map((m, i) => (
-            <div key={i} className={`flex flex-col gap-1 ${i < items.length - 1 ? "border-r border-white/10" : ""}`}>
-              <span className="font-headline text-4xl lg:text-5xl text-damascus-gold font-bold">{m.value}</span>
-              <span className="font-body text-[11px] uppercase tracking-[0.15em] text-white/80">{m.label}</span>
+            <div
+              key={i}
+              className={`flex flex-col gap-1 ${i < items.length - 1 ? "border-r" : ""}`}
+              style={i < items.length - 1 ? { borderColor: "var(--role-border-deep)" } : undefined}
+            >
+              <span
+                className="font-headline text-4xl lg:text-5xl font-bold"
+                style={{ color: "var(--role-accent)" }}
+              >
+                {m.value}
+              </span>
+              <span
+                className="font-body text-[11px] uppercase tracking-[0.15em]"
+                style={{ color: "var(--role-text-on-deep)", opacity: 0.8 }}
+              >
+                {m.label}
+              </span>
             </div>
           ))}
         </div>
