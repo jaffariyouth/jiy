@@ -615,3 +615,15 @@
 
 
 
+
+@utility press-drop-cap {
+  &::first-letter {
+    float: left;
+    font-size: 5rem;
+    line-height: 0.8;
+    padding-right: 0.5rem;
+    padding-top: 0.2rem;
+    font-family: "Playfair Display", serif;
+    color: var(--color-deep-garnet, #7a2230);
+  }
+}
