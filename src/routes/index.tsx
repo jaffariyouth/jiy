@@ -809,7 +809,7 @@ function Press({ press, articles }: { press?: Section; articles: HomepageArticle
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
-          <div className="lg:col-span-4 hidden lg:flex flex-col items-center justify-center p-8 bg-alabaster-parchment border-r border-horizon-mist/60 relative">
+          <div className="lg:col-span-4 hidden lg:flex flex-col items-center justify-center p-8 bg-white border-r border-horizon-mist/60 relative">
             <div className="border border-horizon-mist/60 p-4 h-full flex flex-col justify-between w-full">
               <div className="text-center pt-4">
                 <span className="font-body text-[9px] uppercase tracking-[0.3em] text-ash-slate font-bold block mb-1">
