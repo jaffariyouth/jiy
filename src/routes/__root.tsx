@@ -115,10 +115,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   const data = Route.useLoaderData();
-  const themeKey = (data?.theme ?? "default") as keyof typeof import("../lib/jiy/themes").THEMES;
-  // Lazy reference avoids pulling THEMES into the SSR shell prop bag.
-  const className =
-    themeKey === "muharram" ? "theme-muharram" : undefined;
+  const themeKey = data?.theme ?? "default";
+  const className = themeKey === "muharram" ? "theme-muharram" : undefined;
   return (
     <html lang="en" className={className}>
       <head>
