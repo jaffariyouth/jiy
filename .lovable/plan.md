@@ -1,116 +1,78 @@
-## What's wrong now
+## 1. Homepage section background swap
 
-1. **Stats card surface.** `<Metrics>` uses `bg-persian-indigo`. My current `.theme-muharram` remaps `bg-persian-indigo` → `#7a0810` (blood-ruby) because the same class is used on solid buttons. So the stats strip becomes pure red instead of the deep card surface (`#130607`) shown in your mock.
-2. **Stats card divider** uses `border-white/10` — stays white-on-red instead of `muharram-border #2b1013`.
-3. **Hero ambient gradients** use `from-deep-garnet/10` and `from-damascus-gold/15`. The mock uses 30 % / 20 % opacities, so they barely show in Muharram.
-4. **Event-card image fade.** Mock uses `bg-gradient-to-t from-muharram-bg/90 via-muharram-bg/20 to-transparent` over event covers; the app card has no such fade.
-
-These exist because a single brand class (e.g. `bg-persian-indigo`) plays two roles (deep surface AND button). One CSS-variable swap can't satisfy both — that's the same constraint that's about to bite us every time we add a new theme.
-
-## Architecture: base tokens + role tokens + theme presets
-
-Restructure tokens into three layers in `src/styles.css`:
+Current homepage section order and bgs (`src/routes/index.tsx`):
 
 ```text
-┌───────────────────────────────────────────────────────────────┐
-│ LAYER 1  Brand palette (raw colors)                           │
-│   --color-midnight-sapphire, --color-damascus-gold, …         │
-│   --color-blood-ruby, --color-crimson-glow, --color-parchment │
-│   (NEW raw entries for every preset's hexes, never reassigned)│
-├───────────────────────────────────────────────────────────────┤
-│ LAYER 2  Semantic role tokens (what components consume)       │
-│   --role-bg-page          page background                     │
-│   --role-bg-surface       elevated card / header              │
-│   --role-bg-deep          dark stat strip / footer            │
-│   --role-bg-button        primary button fill                 │
-│   --role-text-strong      headlines                           │
-│   --role-text-muted       captions                            │
-│   --role-text-on-deep     text on the deep strip              │
-│   --role-accent           default accent (gold / crimson-glow)│
-│   --role-accent-strong    hover accent                        │
-│   --role-border-subtle    hairlines                           │
-│   --role-border-deep      divider on deep strip               │
-│   --role-gradient-warm    radial wash A                       │
-│   --role-gradient-cool    radial wash B                       │
-├───────────────────────────────────────────────────────────────┤
-│ LAYER 3  Theme presets (map L1 raws into L2 roles)            │
-│   :root / .theme-default  → gold + parchment                  │
-│   .theme-muharram         → crimson + obsidian                │
-│   .theme-ramadan / …      → add in future, one block each     │
-└───────────────────────────────────────────────────────────────┘
+Hero            bg-white                       ← "hero bg"
+Metrics         var(--role-bg-deep)            (deep band, unchanged)
+About           bg-white                       ← "hero bg"
+UpcomingEvents  bg-alabaster-parchment/60      ← "upcoming bg"
+OngoingEvents   bg-white                       ← "hero bg"
+CoreValues      bg-alabaster-parchment         (in-between)
+Press           bg-white                       ← "hero bg"
 ```
 
-Layer 1 stays hard-coded so the site has a working fallback even if the preset never loads. Layer 2 names are stable — they're what components import. Layer 3 is what we swap.
+New mapping you asked for:
 
-Each preset is one CSS block:
+- **Group A — "upcoming-events bg"** → Hero, About (Mission & Vision), OngoingEvents, Press
+- **Group B — "main-hero bg"** → the in-between sections (Metrics, UpcomingEvents, CoreValues)
 
-```css
-.theme-muharram {
-  --role-bg-page:        var(--color-obsidian-black);   /* #0a0304 */
-  --role-bg-surface:     var(--color-muharram-card);    /* #130607 */
-  --role-bg-deep:        var(--color-muharram-card);
-  --role-bg-button:      var(--color-blood-ruby);       /* #7a0810 */
-  --role-text-strong:    var(--color-parchment);        /* #e5dada */
-  --role-text-muted:     var(--color-ash-rose);         /* #917b7c */
-  --role-text-on-deep:   var(--color-parchment);
-  --role-accent:         var(--color-crimson-glow);     /* #d91823 */
-  --role-accent-strong:  var(--color-crimson-glow);
-  --role-border-subtle:  var(--color-muharram-border);  /* #2b1013 */
-  --role-border-deep:    var(--color-muharram-border);
-  --role-gradient-warm:  rgba(122, 8, 16, 0.30);        /* blood-ruby /30 */
-  --role-gradient-cool:  rgba(217, 24, 35, 0.20);       /* crimson-glow /20 */
-  color-scheme: dark;
-}
-```
+Concretely, swap the two parchment tones across these sections:
 
-Default preset is the same shape with parchment / sapphire / gold raws.
+| Section         | Before                       | After                            |
+| --------------- | ---------------------------- | -------------------------------- |
+| Hero            | `bg-white`                   | `bg-alabaster-parchment`         |
+| About           | `bg-white`                   | `bg-alabaster-parchment`         |
+| OngoingEvents   | `bg-white`                   | `bg-alabaster-parchment`         |
+| Press           | `bg-white`                   | `bg-alabaster-parchment`         |
+| UpcomingEvents  | `bg-alabaster-parchment/60`  | `bg-white`                       |
+| CoreValues      | `bg-alabaster-parchment`     | `bg-white`                       |
+| Metrics         | `--role-bg-deep` (deep band) | unchanged                        |
 
-For migration speed we keep the existing brand-token utilities working (`text-persian-indigo`, `bg-damascus-gold`, etc.) by mapping them inside each preset block (this is what's there today). New components added going forward use the role tokens.
+Because `bg-white` and `bg-alabaster-parchment` are both already remapped in `.theme-muharram` (Layer 2 → role tokens via the `--surface` overrides in `src/styles.css`), this swap automatically lands the correct dark/obsidian + crimson tones in the Muharram theme while staying parchment/white in the default theme. No new tokens required.
 
-## Persisting the active preset (no schema change)
+Also touch the `StarBreak` divider so its inline `bg-alabaster-parchment` chip matches whichever side it sits between (use `bg-[var(--role-bg-page)]` or simply keep `bg-alabaster-parchment` — both resolve correctly per theme; pick parchment to match the surrounding Press/Ongoing sections).
 
-Themes live in a registry in code:
+## 2. Rebuild Press pages 1:1 from uploaded HTML
 
-```ts
-// src/lib/jiy/themes.ts
-export const THEMES = {
-  default:  { label: "Default (Editorial)", flag: null,             className: null },
-  muharram: { label: "Muharram / Safar",    flag: "theme_muharram", className: "theme-muharram" },
-  // future: ramadan, eid, ashura-night, …
-} as const;
-```
+The uploaded `JIY_Press_SCREENS_htmls.txt` contains two screens:
 
-The existing `feature_flags` boolean (`theme_muharram`) is kept. New themes = add a new boolean flag + a registry entry + a `.theme-{key}` CSS block. `getActiveTheme()` walks the registry in priority order and returns the first enabled one (default if none).
+1. **Press catalog** (list of articles) — used for BOTH `/press` (public) and `/dashboard/press` (members). Layout is identical; only the data source differs (public uses `listPublishedArticles`, members use `listMemberArticles`, which already filters by audience).
+2. **Article reader** (full article view) — used for BOTH `/press/$slug` (public) and `/dashboard/press/$slug` (members). Same layout; member route uses `getMemberArticleBySlug`, public uses `getArticleBySlug`.
 
-Admin page becomes a **single-select radio list of themes** instead of a per-flag toggle. Switching themes flips the right flag on and the others off in one server call. This keeps every existing migration intact and makes adding "Ramadan" a 3-file diff.
+### Shared components (new files)
 
-## Specific fixes (apply during refactor)
+- `src/components/press/PressHero.tsx` — Featured-issue hero band (dark sapphire / Muharram-obsidian) with eyebrow + headline + body + CTA + framed cover image. Driven by the first article in the list (newest published) or a chosen "featured" article.
+- `src/components/press/PressFeedItem.tsx` — Editorial feed row with three variants: `image-right`, `centered-no-image`, `image-left`. Pick variant by index (`i % 3`) to mirror the uploaded HTML rhythm. Each row links to the correct slug route depending on `mode` prop (`public` → `/press/$slug`, `member` → `/dashboard/press/$slug`). Members-only items show a small "MEMBERS" eyebrow.
+- `src/components/press/PressDivider.tsx` — Hairline + crescent divider between feed rows.
+- `src/components/press/ArticleHero.tsx` — Dark band with eyebrow + display headline + subhead; tall enough that an outset image overlaps the next section by `-mt-32`.
+- `src/components/press/ArticleOutsetImage.tsx` — `max-w-[1024px]` aspect-video framed cover with double damascus-gold border rings, grayscale + hover scale.
+- `src/components/press/ArticleReadingCanvas.tsx` — Two-column layout: sticky left sidebar (back link, author avatar/name/bio, share button) + right reading column with `drop-cap`, justified body, generous spacing. Accepts `backTo` prop so it can route to `/press` or `/dashboard/press`.
+- `src/components/press/ArticleEndmark.tsx` — Crescent dingbat.
 
-1. `<Metrics>` (`src/routes/index.tsx:407-419`):
-   - `bg-persian-indigo` → `bg-[var(--role-bg-deep)]`
-   - `text-damascus-gold` (the number) → `text-[var(--role-accent)]`
-   - `text-white/80` → `text-[var(--role-text-on-deep)]/80`
-   - `border-white/10` → `border-[var(--role-border-deep)]`
-   - Overlay gradient `from-deep-garnet/30` → use `--role-gradient-warm`
-2. Hero ambient gradients (`src/routes/index.tsx:305-306`): bump default opacities from `/10` and `/15` to `/30` and `/20` to match the mock — they read correctly in both themes because the tokens still resolve to gold (default) or crimson (Muharram).
-3. Event card cover (`EventCard.tsx` if present, else inline): add `bg-gradient-to-t from-[var(--role-bg-page)]/90 via-[var(--role-bg-page)]/20 to-transparent` overlay so titles stay legible on dark images in Muharram and on light images otherwise.
-4. Drop the per-class `!important` overrides in `.theme-muharram` once the role tokens are in place — components that consume role tokens don't need them.
+All components use the existing semantic classes (`bg-midnight-sapphire`, `bg-alabaster-parchment`, `text-damascus-gold`, `text-deep-garnet`, `border-horizon-mist`, `font-headline`, `font-body`, `text-persian-indigo`, `text-ash-slate`) so the Muharram theme remap in `src/styles.css` recolors them automatically — no per-component theme branching.
 
-## Verification
+The HTML uses Inter; project standard is **Hanken Grotesk** (body) + **Playfair Display** (headline). Keep project fonts — do NOT introduce Inter (this is one of the project-memory rules). All other dimensions, spacing, ornament details, and class rhythm follow the HTML 1:1.
 
-- `/` in default theme: looks identical to today (gold + parchment + sapphire stats strip).
-- `/` in Muharram: stats strip is `#130607` card surface with crimson `1,200+` numbers, hairlines in `#2b1013`, hero glow visible in blood-ruby / crimson-glow.
-- Admin → Appearance: single radio (Default · Muharram). Switching writes one `feature_flags` row, reload paints the new theme everywhere.
-- Add a placeholder `theme_ramadan` flag + a green `.theme-ramadan` block locally and confirm it appears in the radio without any other code change.
+### Route rewrites (existing files, no new routes)
 
-## Files touched
+- `src/routes/press.tsx` — replace the current list UI with `<PressHero featured={data.articles[0]} /> + <PressFeedItem mode="public" />` rows. Keep current `beforeLoad` redirect (logged-in → dashboard) and `head()`.
+- `src/routes/press.$slug.tsx` — replace the current reader UI with `<ArticleHero> + <ArticleOutsetImage> + <ArticleReadingCanvas backTo="/press">`. Keep loader, redirect, and meta logic.
+- `src/routes/_authenticated/dashboard.press.index.tsx` — same `<PressHero>` + `<PressFeedItem mode="member">` rows, still inside `<MemberPageShell>`. Members-only items show the "MEMBERS ONLY" eyebrow already present in the data.
+- `src/routes/_authenticated/dashboard.press.$slug.tsx` — `<ArticleHero> + <ArticleOutsetImage> + <ArticleReadingCanvas backTo="/dashboard/press">` inside `<MemberPageShell>`.
 
-- `src/styles.css` — restructure tokens into the 3 layers; rewrite `.theme-muharram` against role tokens; add `.theme-default` block.
-- `src/lib/jiy/themes.ts` (new) — registry.
-- `src/lib/jiy/theme.functions.ts` — return active theme key (not just boolean).
-- `src/routes/__root.tsx` — apply `THEMES[key].className` to `<html>`.
-- `src/routes/_authenticated/admin.flags.tsx` (or new `admin.appearance.tsx`) — radio selector backed by registry.
-- `src/routes/index.tsx` — Metrics + hero gradient classes.
-- `src/components/dashboard/EventCard.tsx` — image fade overlay.
+### Data fields used
 
-No migration. No breaking change to existing brand-class usage.
+From existing functions (no migration): `id, slug, title, excerpt, body_md, cover_image_url, published_at, audience_visibility`. The author sidebar shows the article author when present (`author_name`, `author_bio`, `author_avatar_url` if those columns exist; otherwise hide gracefully — confirm shape during implementation by reading `youth-press.functions.ts` types).
+
+## 3. Out of scope
+
+- No backend / migration changes.
+- No new admin UI.
+- No new theme tokens — relies on the existing 3-layer system already in `src/styles.css` and `src/lib/jiy/themes.ts`.
+
+## Files
+
+**Edited:** `src/routes/index.tsx`, `src/routes/press.tsx`, `src/routes/press.$slug.tsx`, `src/routes/_authenticated/dashboard.press.index.tsx`, `src/routes/_authenticated/dashboard.press.$slug.tsx`
+
+**Created:** `src/components/press/PressHero.tsx`, `PressFeedItem.tsx`, `PressDivider.tsx`, `ArticleHero.tsx`, `ArticleOutsetImage.tsx`, `ArticleReadingCanvas.tsx`, `ArticleEndmark.tsx`
