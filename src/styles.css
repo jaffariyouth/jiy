@@ -627,3 +627,8 @@
     color: var(--color-deep-garnet, #7a2230);
   }
 }
+
+/* Muharram theme: invert mosque ornament from black to white */
+.theme-muharram .mosque-ornament {
+  filter: brightness(0) invert(1);
+}
