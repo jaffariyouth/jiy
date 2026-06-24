@@ -502,11 +502,78 @@
   border-left-color: #d91823;
   color: #e5dada;
 }
-/* Force backgrounds that hardcoded the parchment cream to crimson-black */
+/* Tailwind utility-class overrides — the homepage / header hardcode many
+ * brand classes that double as text AND background (e.g. text-persian-indigo
+ * for headlines, bg-persian-indigo for buttons). A single CSS var can't serve
+ * both roles, so we remap at the class level. */
+.theme-muharram .text-persian-indigo,
+.theme-muharram .text-primary-dark,
+.theme-muharram .text-midnight-sapphire,
+.theme-muharram .text-on-surface,
+.theme-muharram .text-foreground {
+  color: #e5dada !important;
+}
+.theme-muharram .text-ash-slate,
+.theme-muharram .text-muted-dusk,
+.theme-muharram .text-on-surface-variant {
+  color: #917b7c !important;
+}
+.theme-muharram .text-deep-garnet,
+.theme-muharram .text-damascus-gold {
+  color: #d91823 !important;
+}
+.theme-muharram .bg-persian-indigo,
+.theme-muharram .bg-midnight-sapphire,
+.theme-muharram .bg-primary-dark {
+  background-color: #7a0810 !important;
+}
+.theme-muharram .border-persian-indigo,
+.theme-muharram .border-midnight-sapphire {
+  border-color: #7a0810 !important;
+}
+.theme-muharram .bg-damascus-gold {
+  background-color: #d91823 !important;
+}
+.theme-muharram .border-damascus-gold {
+  border-color: #d91823 !important;
+}
+.theme-muharram .bg-alabaster-parchment,
+.theme-muharram .bg-warm-silk-grey {
+  background-color: #0a0304 !important;
+}
+.theme-muharram .border-horizon-mist {
+  border-color: #2b1013 !important;
+}
+
+/* Header / sticky surfaces — uploaded mock uses bg-muharram-card/95 backdrop-blur */
 .theme-muharram .bg-white,
 .theme-muharram .bg-\[\#F8F6EF\],
 .theme-muharram .bg-\[\#FFFFFF\] {
-  background-color: #0a0304 !important;
+  background-color: #130607 !important;
 }
+.theme-muharram .bg-white\/95 {
+  background-color: rgb(19 6 7 / 0.95) !important;
+}
+.theme-muharram .bg-white\/90 {
+  background-color: rgb(19 6 7 / 0.9) !important;
+}
+.theme-muharram .bg-white\/80 {
+  background-color: rgb(19 6 7 / 0.8) !important;
+}
+
+/* Buttons that hover to gold → crimson-glow */
+.theme-muharram .hover\:bg-damascus-gold:hover {
+  background-color: #d91823 !important;
+}
+.theme-muharram .hover\:text-damascus-gold:hover {
+  color: #d91823 !important;
+}
+.theme-muharram .hover\:border-damascus-gold:hover {
+  border-color: #d91823 !important;
+}
+.theme-muharram .hover\:text-persian-indigo:hover {
+  color: #0a0304 !important;
+}
+
 
 
