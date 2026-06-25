@@ -1,78 +1,72 @@
-## 1. Homepage section background swap
+## UI changes: registration state, sponsor form, volunteer form
 
-Current homepage section order and bgs (`src/routes/index.tsx`):
+### 1. Event "Register" button reflects registered state
+
+**File:** `src/routes/_authenticated/dashboard.events.$eventId.tsx`
+
+- `getMemberEvent` already returns the event; extend the server fn (in `src/lib/jiy/events.functions.ts`) to also return `isRegistered: boolean` by checking `event_registrations` for the current `userId + eventId`.
+- In the detail page, if `data.isRegistered || mut.isSuccess`, render a disabled button styled in damascus-gold with a check icon and label "Registered ✓" instead of the active "Confirm Registration →" CTA. Hide the click handler.
+- Keep the existing success path; on mutation success, invalidate `["member-event", eventId]` so the server-truth `isRegistered` flips.
+
+### 2. Sponsor Tabarruk modal → appreciation + contact form
+
+**File:** `src/components/dashboard/SponsorModal.tsx` (sponsor branch only; ticket branch untouched)
+
+Replace the two event buttons with a single form:
+- Heading: "Sponsor Tabarruk"
+- Appreciation copy: "Thank you for choosing to sponsor tabarruk for your marhumeen. Your generosity helps nourish our youth gatherings."
+- Fields:
+  - Phone number (required, `tel`, validated: non-empty, max 30 chars, basic digits/`+`/spaces regex)
+  - Amount (optional, `number`, min 0)
+  - Message (optional, `textarea`, max 500 chars)
+- Submit button "Submit" (gold CTA matching dashboard style).
+- Footer line: *"Any amount is appreciated. Jazakallah."*
+- On submit: call a new server fn `submitSponsorInterest` and on success swap the modal body to a confirmation state ("Thank you — we'll be in touch shortly.") with a Close button. Errors render inline in deep-garnet.
+
+### 3. Volunteer Corps widget → contact form + submitted state
+
+**File:** `src/components/dashboard/VolunteerCorpWidget.tsx`
+
+- Replace the single "Apply to Volunteer" button with an inline form (collapsible: button toggles the form open, or always visible — keeping the card compact, default to **always visible** below the description).
+- Fields:
+  - Phone number (required, `tel`, WhatsApp-reachable, same validation as sponsor)
+  - Message (optional, textarea, max 500 chars)
+- Submit "Apply to Volunteer".
+- On success: replace the card body with a confirmation state ("Application submitted ✓ — we'll reach out on WhatsApp shortly.") styled in the gold/indigo palette. Persist via local state for the session.
+- Also fire the existing `dispatchToast` for consistency.
+
+### 4. Backend: persist sponsor + volunteer interests
+
+**New table** (single migration, RLS + grants per project conventions):
 
 ```text
-Hero            bg-white                       ← "hero bg"
-Metrics         var(--role-bg-deep)            (deep band, unchanged)
-About           bg-white                       ← "hero bg"
-UpcomingEvents  bg-alabaster-parchment/60      ← "upcoming bg"
-OngoingEvents   bg-white                       ← "hero bg"
-CoreValues      bg-alabaster-parchment         (in-between)
-Press           bg-white                       ← "hero bg"
+interest_submissions
+  id uuid pk
+  kind text check in ('sponsor','volunteer')
+  user_id uuid null (auth.uid() at submit time, nullable for safety)
+  phone text not null
+  amount numeric null         -- sponsor only
+  message text null
+  created_at timestamptz default now()
 ```
 
-New mapping you asked for:
+Policies:
+- `INSERT` allowed to `authenticated` (with `user_id = auth.uid()` or null check).
+- `SELECT` restricted to admins via `has_role(auth.uid(), 'admin')`.
+- Grants: `INSERT` to `authenticated`, `ALL` to `service_role`, `SELECT` to `authenticated` (RLS narrows to admins).
 
-- **Group A — "upcoming-events bg"** → Hero, About (Mission & Vision), OngoingEvents, Press
-- **Group B — "main-hero bg"** → the in-between sections (Metrics, UpcomingEvents, CoreValues)
+**New server fns** in `src/lib/jiy/interests.functions.ts`:
+- `submitSponsorInterest({ phone, amount?, message? })` — zod validation, uses `requireSupabaseAuth`, inserts row with `kind='sponsor'`.
+- `submitVolunteerInterest({ phone, message? })` — same pattern, `kind='volunteer'`.
 
-Concretely, swap the two parchment tones across these sections:
+Admin viewing of submissions is **out of scope** for this turn (the question below covers it).
 
-| Section         | Before                       | After                            |
-| --------------- | ---------------------------- | -------------------------------- |
-| Hero            | `bg-white`                   | `bg-alabaster-parchment`         |
-| About           | `bg-white`                   | `bg-alabaster-parchment`         |
-| OngoingEvents   | `bg-white`                   | `bg-alabaster-parchment`         |
-| Press           | `bg-white`                   | `bg-alabaster-parchment`         |
-| UpcomingEvents  | `bg-alabaster-parchment/60`  | `bg-white`                       |
-| CoreValues      | `bg-alabaster-parchment`     | `bg-white`                       |
-| Metrics         | `--role-bg-deep` (deep band) | unchanged                        |
+### Technical details
 
-Because `bg-white` and `bg-alabaster-parchment` are both already remapped in `.theme-muharram` (Layer 2 → role tokens via the `--surface` overrides in `src/styles.css`), this swap automatically lands the correct dark/obsidian + crimson tones in the Muharram theme while staying parchment/white in the default theme. No new tokens required.
+- All new inputs validated client-side with zod (phone non-empty, ≤30 chars, regex `^[+0-9()\-\s]+$`; message ≤500; amount ≥0).
+- Modal and widget keep current editorial styling (warm-silk-grey, damascus-gold border, primary-dark text). No new color tokens.
+- No changes to email/notification system (deferred per earlier instruction).
 
-Also touch the `StarBreak` divider so its inline `bg-alabaster-parchment` chip matches whichever side it sits between (use `bg-[var(--role-bg-page)]` or simply keep `bg-alabaster-parchment` — both resolve correctly per theme; pick parchment to match the surrounding Press/Ongoing sections).
+### Open question
 
-## 2. Rebuild Press pages 1:1 from uploaded HTML
-
-The uploaded `JIY_Press_SCREENS_htmls.txt` contains two screens:
-
-1. **Press catalog** (list of articles) — used for BOTH `/press` (public) and `/dashboard/press` (members). Layout is identical; only the data source differs (public uses `listPublishedArticles`, members use `listMemberArticles`, which already filters by audience).
-2. **Article reader** (full article view) — used for BOTH `/press/$slug` (public) and `/dashboard/press/$slug` (members). Same layout; member route uses `getMemberArticleBySlug`, public uses `getArticleBySlug`.
-
-### Shared components (new files)
-
-- `src/components/press/PressHero.tsx` — Featured-issue hero band (dark sapphire / Muharram-obsidian) with eyebrow + headline + body + CTA + framed cover image. Driven by the first article in the list (newest published) or a chosen "featured" article.
-- `src/components/press/PressFeedItem.tsx` — Editorial feed row with three variants: `image-right`, `centered-no-image`, `image-left`. Pick variant by index (`i % 3`) to mirror the uploaded HTML rhythm. Each row links to the correct slug route depending on `mode` prop (`public` → `/press/$slug`, `member` → `/dashboard/press/$slug`). Members-only items show a small "MEMBERS" eyebrow.
-- `src/components/press/PressDivider.tsx` — Hairline + crescent divider between feed rows.
-- `src/components/press/ArticleHero.tsx` — Dark band with eyebrow + display headline + subhead; tall enough that an outset image overlaps the next section by `-mt-32`.
-- `src/components/press/ArticleOutsetImage.tsx` — `max-w-[1024px]` aspect-video framed cover with double damascus-gold border rings, grayscale + hover scale.
-- `src/components/press/ArticleReadingCanvas.tsx` — Two-column layout: sticky left sidebar (back link, author avatar/name/bio, share button) + right reading column with `drop-cap`, justified body, generous spacing. Accepts `backTo` prop so it can route to `/press` or `/dashboard/press`.
-- `src/components/press/ArticleEndmark.tsx` — Crescent dingbat.
-
-All components use the existing semantic classes (`bg-midnight-sapphire`, `bg-alabaster-parchment`, `text-damascus-gold`, `text-deep-garnet`, `border-horizon-mist`, `font-headline`, `font-body`, `text-persian-indigo`, `text-ash-slate`) so the Muharram theme remap in `src/styles.css` recolors them automatically — no per-component theme branching.
-
-The HTML uses Inter; project standard is **Hanken Grotesk** (body) + **Playfair Display** (headline). Keep project fonts — do NOT introduce Inter (this is one of the project-memory rules). All other dimensions, spacing, ornament details, and class rhythm follow the HTML 1:1.
-
-### Route rewrites (existing files, no new routes)
-
-- `src/routes/press.tsx` — replace the current list UI with `<PressHero featured={data.articles[0]} /> + <PressFeedItem mode="public" />` rows. Keep current `beforeLoad` redirect (logged-in → dashboard) and `head()`.
-- `src/routes/press.$slug.tsx` — replace the current reader UI with `<ArticleHero> + <ArticleOutsetImage> + <ArticleReadingCanvas backTo="/press">`. Keep loader, redirect, and meta logic.
-- `src/routes/_authenticated/dashboard.press.index.tsx` — same `<PressHero>` + `<PressFeedItem mode="member">` rows, still inside `<MemberPageShell>`. Members-only items show the "MEMBERS ONLY" eyebrow already present in the data.
-- `src/routes/_authenticated/dashboard.press.$slug.tsx` — `<ArticleHero> + <ArticleOutsetImage> + <ArticleReadingCanvas backTo="/dashboard/press">` inside `<MemberPageShell>`.
-
-### Data fields used
-
-From existing functions (no migration): `id, slug, title, excerpt, body_md, cover_image_url, published_at, audience_visibility`. The author sidebar shows the article author when present (`author_name`, `author_bio`, `author_avatar_url` if those columns exist; otherwise hide gracefully — confirm shape during implementation by reading `youth-press.functions.ts` types).
-
-## 3. Out of scope
-
-- No backend / migration changes.
-- No new admin UI.
-- No new theme tokens — relies on the existing 3-layer system already in `src/styles.css` and `src/lib/jiy/themes.ts`.
-
-## Files
-
-**Edited:** `src/routes/index.tsx`, `src/routes/press.tsx`, `src/routes/press.$slug.tsx`, `src/routes/_authenticated/dashboard.press.index.tsx`, `src/routes/_authenticated/dashboard.press.$slug.tsx`
-
-**Created:** `src/components/press/PressHero.tsx`, `PressFeedItem.tsx`, `PressDivider.tsx`, `ArticleHero.tsx`, `ArticleOutsetImage.tsx`, `ArticleReadingCanvas.tsx`, `ArticleEndmark.tsx`
+Do you want an admin page now to view sponsor/volunteer submissions (e.g. `/admin/interests`), or is storing to the DB enough for this pass and we add the admin view in a follow-up?
