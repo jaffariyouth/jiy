@@ -13,7 +13,13 @@ type NavLeaf = { label: string; to: string };
 type NavItem = NavLeaf | { label: string; children: NavLeaf[] };
 
 const NAV: NavItem[] = [
-  { label: "Events", to: "/dashboard/events" },
+  {
+    label: "Events",
+    children: [
+      { label: "All Events", to: "/dashboard/events" },
+      { label: "Ongoing Events", to: "/dashboard/ongoing-events" },
+    ],
+  },
   { label: "Scholar Q&A", to: "/dashboard/scholar-qa" },
   { label: "The Press", to: "/dashboard/press" },
   {

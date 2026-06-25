@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { useDashboard } from "./DashboardContext";
 
 type Props = {
@@ -14,9 +15,9 @@ type Props = {
 
 export function EventCard({ id, image, alt, day, month, eyebrow, title, description }: Props) {
   const { dispatchToast } = useDashboard();
-  const detailHref = id ? `/events/${id}` : null;
-  return (
-    <div className="studio-card rounded-xl flex flex-col h-full overflow-hidden group">
+
+  const inner = (
+    <>
       <div className="relative overflow-hidden aspect-[4/5] bg-warm-silk-grey border-b border-horizon-mist">
         <img
           src={image}
@@ -48,22 +49,9 @@ export function EventCard({ id, image, alt, day, month, eyebrow, title, descript
           {description}
         </p>
         <div className="pt-4 border-t border-horizon-mist/60 flex justify-between items-center">
-          {detailHref ? (
-            <Link
-              to="/dashboard/events/$eventId"
-              params={{ eventId: id! }}
-              className="font-body text-[10px] uppercase tracking-[0.2em] text-damascus-gold hover:text-primary-dark font-black transition-colors duration-200"
-            >
-              View Details →
-            </Link>
-          ) : (
-            <button
-              onClick={() => dispatchToast(`RSVP verified: "${title}" secured.`)}
-              className="font-body text-[10px] uppercase tracking-[0.2em] text-damascus-gold hover:text-primary-dark font-black transition-colors duration-200"
-            >
-              View Details →
-            </button>
-          )}
+          <span className="font-body text-[10px] uppercase tracking-[0.2em] text-damascus-gold group-hover:text-primary-dark font-black transition-colors duration-200">
+            View Details →
+          </span>
           <span
             className="material-symbols-outlined text-horizon-mist group-hover:translate-x-1 transition-transform"
             style={{ fontVariationSettings: "'wght' 300" }}
@@ -72,6 +60,30 @@ export function EventCard({ id, image, alt, day, month, eyebrow, title, descript
           </span>
         </div>
       </div>
-    </div>
+    </>
+  );
+
+  const className = "studio-card rounded-xl flex flex-col h-full overflow-hidden group cursor-pointer text-left";
+
+  if (id) {
+    return (
+      <Link
+        to="/dashboard/events/$eventId"
+        params={{ eventId: id }}
+        className={className}
+        aria-label={`View details for ${title}`}
+      >
+        {inner as ReactNode}
+      </Link>
+    );
+  }
+  return (
+    <button
+      type="button"
+      onClick={() => dispatchToast(`RSVP verified: "${title}" secured.`)}
+      className={className}
+    >
+      {inner}
+    </button>
   );
 }

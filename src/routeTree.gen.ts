@@ -35,6 +35,7 @@ import { Route as AuthenticatedOnboardingStep2RouteImport } from './routes/_auth
 import { Route as AuthenticatedOnboardingStep1RouteImport } from './routes/_authenticated/onboarding.step-1'
 import { Route as AuthenticatedDashboardShopRouteImport } from './routes/_authenticated/dashboard.shop'
 import { Route as AuthenticatedDashboardScholarQaRouteImport } from './routes/_authenticated/dashboard.scholar-qa'
+import { Route as AuthenticatedDashboardOngoingEventsRouteImport } from './routes/_authenticated/dashboard.ongoing-events'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
 import { Route as AuthenticatedAdminShopWaitlistRouteImport } from './routes/_authenticated/admin.shop-waitlist'
@@ -214,6 +215,12 @@ const AuthenticatedDashboardScholarQaRoute =
   AuthenticatedDashboardScholarQaRouteImport.update({
     id: '/scholar-qa',
     path: '/scholar-qa',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardOngoingEventsRoute =
+  AuthenticatedDashboardOngoingEventsRouteImport.update({
+    id: '/ongoing-events',
+    path: '/ongoing-events',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
@@ -506,6 +513,7 @@ export interface FileRoutesByFullPath {
   '/admin/shop-waitlist': typeof AuthenticatedAdminShopWaitlistRoute
   '/admin/team': typeof AuthenticatedAdminTeamRouteWithChildren
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/dashboard/ongoing-events': typeof AuthenticatedDashboardOngoingEventsRoute
   '/dashboard/scholar-qa': typeof AuthenticatedDashboardScholarQaRoute
   '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
@@ -570,6 +578,7 @@ export interface FileRoutesByTo {
   '/admin/recurring': typeof AuthenticatedAdminRecurringRoute
   '/admin/shop-waitlist': typeof AuthenticatedAdminShopWaitlistRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/dashboard/ongoing-events': typeof AuthenticatedDashboardOngoingEventsRoute
   '/dashboard/scholar-qa': typeof AuthenticatedDashboardScholarQaRoute
   '/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
@@ -643,6 +652,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/shop-waitlist': typeof AuthenticatedAdminShopWaitlistRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRouteWithChildren
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/dashboard/ongoing-events': typeof AuthenticatedDashboardOngoingEventsRoute
   '/_authenticated/dashboard/scholar-qa': typeof AuthenticatedDashboardScholarQaRoute
   '/_authenticated/dashboard/shop': typeof AuthenticatedDashboardShopRoute
   '/_authenticated/onboarding/step-1': typeof AuthenticatedOnboardingStep1Route
@@ -716,6 +726,7 @@ export interface FileRouteTypes {
     | '/admin/shop-waitlist'
     | '/admin/team'
     | '/admin/users'
+    | '/dashboard/ongoing-events'
     | '/dashboard/scholar-qa'
     | '/dashboard/shop'
     | '/onboarding/step-1'
@@ -780,6 +791,7 @@ export interface FileRouteTypes {
     | '/admin/recurring'
     | '/admin/shop-waitlist'
     | '/admin/users'
+    | '/dashboard/ongoing-events'
     | '/dashboard/scholar-qa'
     | '/dashboard/shop'
     | '/onboarding/step-1'
@@ -852,6 +864,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/shop-waitlist'
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/users'
+    | '/_authenticated/dashboard/ongoing-events'
     | '/_authenticated/dashboard/scholar-qa'
     | '/_authenticated/dashboard/shop'
     | '/_authenticated/onboarding/step-1'
@@ -1093,6 +1106,13 @@ declare module '@tanstack/react-router' {
       path: '/scholar-qa'
       fullPath: '/dashboard/scholar-qa'
       preLoaderRoute: typeof AuthenticatedDashboardScholarQaRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/ongoing-events': {
+      id: '/_authenticated/dashboard/ongoing-events'
+      path: '/ongoing-events'
+      fullPath: '/dashboard/ongoing-events'
+      preLoaderRoute: typeof AuthenticatedDashboardOngoingEventsRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/_authenticated/admin/users': {
@@ -1553,6 +1573,7 @@ const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
 interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardOngoingEventsRoute: typeof AuthenticatedDashboardOngoingEventsRoute
   AuthenticatedDashboardScholarQaRoute: typeof AuthenticatedDashboardScholarQaRoute
   AuthenticatedDashboardShopRoute: typeof AuthenticatedDashboardShopRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
@@ -1566,6 +1587,8 @@ interface AuthenticatedDashboardRouteChildren {
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
+    AuthenticatedDashboardOngoingEventsRoute:
+      AuthenticatedDashboardOngoingEventsRoute,
     AuthenticatedDashboardScholarQaRoute: AuthenticatedDashboardScholarQaRoute,
     AuthenticatedDashboardShopRoute: AuthenticatedDashboardShopRoute,
     AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
@@ -1666,13 +1689,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
