@@ -568,6 +568,36 @@ export type Database = {
         }
         Relationships: []
       }
+      interest_submissions: {
+        Row: {
+          amount: number | null
+          created_at: string
+          id: string
+          kind: string
+          message: string | null
+          phone: string
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          id?: string
+          kind: string
+          message?: string | null
+          phone: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          id?: string
+          kind?: string
+          message?: string | null
+          phone?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       isij_registry_cache: {
         Row: {
           created_at: string
