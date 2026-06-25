@@ -62,9 +62,18 @@ export const getMemberEvent = createServerFn({ method: "GET" })
       .eq("event_id", data.id)
       .maybeSingle();
 
+    const { data: reg } = await context.supabase
+      .from("event_registrations")
+      .select("id, check_in_status")
+      .eq("event_id", data.id)
+      .eq("user_id", context.userId)
+      .neq("check_in_status", "cancelled")
+      .maybeSingle();
+
     return {
       event,
       payment: pay ?? { price_cents: 0, currency: "usd", requires_payment: false },
+      isRegistered: Boolean(reg),
     };
   });
 
