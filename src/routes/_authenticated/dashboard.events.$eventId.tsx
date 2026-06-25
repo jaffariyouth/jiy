@@ -169,8 +169,11 @@ function MemberEventDetail() {
                 <p className="mt-3 text-sm text-ash-slate leading-relaxed">
                   As a JIY member, your registration is one click away.
                 </p>
-                {mut.isSuccess ? (
-                  <p className="mt-6 font-headline text-lg text-damascus-gold">You're registered ✓</p>
+                {data.isRegistered || mut.isSuccess ? (
+                  <div className="mt-6 w-full border border-damascus-gold bg-damascus-gold/10 text-damascus-gold py-3.5 px-6 text-[11px] font-bold tracking-[0.22em] uppercase flex items-center justify-center gap-2 rounded-sm">
+                    <span aria-hidden>✓</span>
+                    <span>Registered</span>
+                  </div>
                 ) : (
                   <button
                     onClick={() => mut.mutate()}
