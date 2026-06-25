@@ -17,11 +17,11 @@ export function EventCard({ id, image, alt, day, month, eyebrow, title, descript
   const detailHref = id ? `/events/${id}` : null;
   return (
     <div className="studio-card rounded-xl flex flex-col h-full overflow-hidden group">
-      <div className="relative overflow-hidden aspect-[16/10] bg-warm-silk-grey border-b border-horizon-mist">
+      <div className="relative overflow-hidden aspect-[4/5] bg-warm-silk-grey border-b border-horizon-mist">
         <img
           src={image}
           alt={alt}
-          className="w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-105 filter grayscale sepia-[20%] group-hover:grayscale-0 group-hover:sepia-0"
+          className="w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-105"
         />
         <div
           className="absolute inset-0 pointer-events-none"
