@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -132,6 +133,20 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const data = Route.useLoaderData();
+  const themeKey = data?.theme ?? "default";
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const isAdmin = pathname.startsWith("/admin");
+    const root = document.documentElement;
+    if (themeKey === "muharram" && !isAdmin) {
+      root.classList.add("theme-muharram");
+    } else {
+      root.classList.remove("theme-muharram");
+    }
+  }, [themeKey, pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
