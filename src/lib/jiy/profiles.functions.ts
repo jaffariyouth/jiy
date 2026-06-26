@@ -67,7 +67,7 @@ export const updateMyProfile = createServerFn({ method: "POST" })
     if (cached) return cached;
 
     const patch: ProfileUpdate = {};
-    if (data.displayName !== undefined) patch.display_name = data.displayName;
+    // display_name is set from full name at registration and cannot be self-edited
     if (data.ageDemographic !== undefined) patch.age_demographic = data.ageDemographic;
     if (data.country !== undefined) patch.country = data.country;
     if (data.consentMarketing !== undefined) patch.consent_marketing = data.consentMarketing;
