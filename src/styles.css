@@ -382,30 +382,32 @@
  *   crimson-glow #d91823, ash-rose #917b7c, parchment-white #e5dada
  * ========================================== */
 .theme-muharram {
-  /* Role tokens (Layer 2) — what new components should consume */
+  /* Role tokens (Layer 2) — what new components should consume.
+   * Default accent = soft oxblood. Crimson #d91823 is reserved for
+   * selected / active / hover indicators only. */
   --role-bg-page: #0a0304;
-  --role-bg-surface: #130607;
-  --role-bg-deep: #130607;
-  --role-bg-button: #7a0810;
+  --role-bg-surface: #1a1012;       /* solid charcoal card */
+  --role-bg-deep: #1a1012;
+  --role-bg-button: #8a2a32;        /* soft red default */
   --role-text-strong: #e5dada;
   --role-text-muted: #917b7c;
   --role-text-on-deep: #e5dada;
-  --role-accent: #d91823;
-  --role-accent-strong: #d91823;
-  --role-border-subtle: #2b1013;
-  --role-border-deep: #2b1013;
-  --role-gradient-warm: rgba(122, 8, 16, 0.30);   /* blood-ruby /30 */
-  --role-gradient-cool: rgba(217, 24, 35, 0.20);  /* crimson-glow /20 */
+  --role-accent: #8a2a32;           /* soft oxblood — default accent */
+  --role-accent-strong: #d91823;    /* crimson glow — selection only */
+  --role-border-subtle: #3a1f23;
+  --role-border-deep: #3a1f23;
+  --role-gradient-warm: rgba(122, 8, 16, 0.12);
+  --role-gradient-cool: rgba(217, 24, 35, 0.08);
 
-  /* JIY brand tokens */
+  /* JIY brand tokens — split the two reds */
   --color-alabaster-parchment: #0a0304;
-  --color-warm-silk-grey: #130607;
-  --color-horizon-mist: #2b1013;
+  --color-warm-silk-grey: #1a1012;
+  --color-horizon-mist: #3a1f23;
   --color-midnight-sapphire: #e5dada;
   --color-primary-dark: #e5dada;
-  --color-persian-indigo: #130607;
-  --color-deep-garnet: #7a0810;
-  --color-damascus-gold: #d91823;
+  --color-persian-indigo: #1a1012;
+  --color-deep-garnet: #8a2a32;     /* soft red — default */
+  --color-damascus-gold: #d91823;   /* crimson — selection indicator */
   --color-ash-slate: #917b7c;
   --color-muted-dusk: #917b7c;
 
@@ -493,8 +495,8 @@
 .theme-muharram body {
   background-color: #0a0304;
   background-image:
-    radial-gradient(#1c0a0c 0.75px, transparent 0.75px),
-    radial-gradient(#1c0a0c 0.75px, #0a0304 0.75px);
+    radial-gradient(#150709 0.75px, transparent 0.75px),
+    radial-gradient(#150709 0.75px, #0a0304 0.75px);
   background-size: 24px 24px;
   background-position: 0 0, 12px 12px;
   background-attachment: fixed;
@@ -503,8 +505,8 @@
 .theme-muharram .jiy-dashboard {
   background-color: #0a0304;
   background-image:
-    radial-gradient(#1c0a0c 0.75px, transparent 0.75px),
-    radial-gradient(#1c0a0c 0.75px, #0a0304 0.75px);
+    radial-gradient(#150709 0.75px, transparent 0.75px),
+    radial-gradient(#150709 0.75px, #0a0304 0.75px);
   color: #e5dada;
 }
 .theme-muharram .jiy-dashboard ::selection,
@@ -514,8 +516,8 @@
 }
 .theme-muharram .jiy-dashboard .studio-card,
 .theme-muharram .studio-card {
-  background: #130607;
-  border-color: #2b1013;
+  background: #1a1012;
+  border-color: #3a1f23;
   box-shadow:
     0 1px 3px 0 rgba(0, 0, 0, 0.4),
     0 4px 12px 0 rgba(0, 0, 0, 0.3),
@@ -524,26 +526,38 @@
 }
 .theme-muharram .jiy-dashboard .studio-card:hover,
 .theme-muharram .studio-card:hover {
-  border-color: #d91823;
+  border-color: #8a2a32;
   box-shadow:
-    0 10px 25px -5px rgba(217, 24, 35, 0.25),
+    0 10px 25px -5px rgba(138, 42, 50, 0.30),
     0 8px 16px -6px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.02);
 }
+/* Selection / active state — crimson glow as the explicit cue */
+.theme-muharram .studio-card.is-selected,
+.theme-muharram .studio-card[aria-current],
+.theme-muharram .studio-card[aria-selected="true"],
+.theme-muharram [data-state="active"].studio-card {
+  border-color: #d91823 !important;
+  box-shadow:
+    0 0 0 1px rgba(217, 24, 35, 0.5),
+    0 10px 25px -5px rgba(217, 24, 35, 0.35),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.02);
+}
 .theme-muharram .jiy-dashboard .interactive-btn::after {
+  border-color: #8a2a32;
+}
+.theme-muharram .jiy-dashboard .interactive-btn:hover::after {
   border-color: #d91823;
 }
 .theme-muharram .jiy-dashboard .value-tab:hover {
-  border-left-color: #d91823;
+  border-left-color: #8a2a32;
 }
 .theme-muharram .jiy-dashboard .value-tab.is-active {
   border-left-color: #d91823;
   color: #e5dada;
 }
-/* Tailwind utility-class overrides — the homepage / header hardcode many
- * brand classes that double as text AND background (e.g. text-persian-indigo
- * for headlines, bg-persian-indigo for buttons). A single CSS var can't serve
- * both roles, so we remap at the class level. */
+/* Tailwind utility-class overrides — split the two reds.
+ * deep-garnet → soft oxblood (default). damascus-gold → crimson (selection). */
 .theme-muharram .text-persian-indigo,
 .theme-muharram .text-primary-dark,
 .theme-muharram .text-midnight-sapphire,
@@ -556,21 +570,44 @@
 .theme-muharram .text-on-surface-variant {
   color: #917b7c !important;
 }
-.theme-muharram .text-deep-garnet,
+.theme-muharram .text-deep-garnet {
+  color: #c4555f !important;
+}
 .theme-muharram .text-damascus-gold {
   color: #d91823 !important;
 }
 .theme-muharram .bg-persian-indigo,
 .theme-muharram .bg-midnight-sapphire,
 .theme-muharram .bg-primary-dark {
-  background-color: #7a0810 !important;
+  background-color: #1a1012 !important;
 }
 .theme-muharram .border-persian-indigo,
 .theme-muharram .border-midnight-sapphire {
-  border-color: #7a0810 !important;
+  border-color: #3a1f23 !important;
+}
+/* Solid card surfaces — kill the translucent red film.
+ * Every bg-deep-garnet/* and bg-damascus-gold/* opacity variant resolves to
+ * the solid charcoal card color instead of tinted crimson. */
+.theme-muharram .bg-deep-garnet,
+.theme-muharram .bg-deep-garnet\/5,
+.theme-muharram .bg-deep-garnet\/10,
+.theme-muharram .bg-deep-garnet\/15,
+.theme-muharram .bg-deep-garnet\/20,
+.theme-muharram .bg-deep-garnet\/25,
+.theme-muharram .bg-deep-garnet\/30,
+.theme-muharram .bg-damascus-gold\/5,
+.theme-muharram .bg-damascus-gold\/10,
+.theme-muharram .bg-damascus-gold\/15,
+.theme-muharram .bg-damascus-gold\/20,
+.theme-muharram .bg-damascus-gold\/25,
+.theme-muharram .bg-damascus-gold\/30 {
+  background-color: #1a1012 !important;
 }
 .theme-muharram .bg-damascus-gold {
   background-color: #d91823 !important;
+}
+.theme-muharram .border-deep-garnet {
+  border-color: #8a2a32 !important;
 }
 .theme-muharram .border-damascus-gold {
   border-color: #d91823 !important;
@@ -580,7 +617,7 @@
   background-color: #0a0304 !important;
 }
 .theme-muharram .border-horizon-mist {
-  border-color: #2b1013 !important;
+  border-color: #3a1f23 !important;
 }
 
 /* Header / sticky surfaces — uploaded mock uses bg-muharram-card/95 backdrop-blur */
