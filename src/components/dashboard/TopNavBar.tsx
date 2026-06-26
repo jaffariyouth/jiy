@@ -285,16 +285,7 @@ function MobileDrawer({
           <ul className="flex flex-col gap-1">
             {NAV.map((item) =>
               isGroup(item) ? (
-                <li key={item.label} className="mt-2">
-                  <p className="px-4 pt-3 pb-1 font-body text-[9px] uppercase tracking-[0.25em] text-damascus-gold font-bold">
-                    {item.label}
-                  </p>
-                  <ul className="flex flex-col">
-                    {item.children.map((child) => (
-                      <DrawerLink key={child.to} to={child.to} label={child.label} onClose={onClose} />
-                    ))}
-                  </ul>
-                </li>
+                <DrawerGroup key={item.label} label={item.label} children={item.children} onClose={onClose} />
               ) : (
                 <DrawerLink key={item.to} to={item.to} label={item.label} onClose={onClose} />
               ),
