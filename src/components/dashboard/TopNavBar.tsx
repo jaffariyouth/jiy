@@ -286,7 +286,7 @@ function MobileDrawer({
             {NAV.map((item) =>
               isGroup(item) ? (
                 <li key={item.label} className="mt-2">
-                  <p className="px-4 pt-3 pb-1 font-body text-[9px] uppercase tracking-[0.25em] text-damascus-gold font-bold">
+                  <p className="px-4 pt-3 pb-1 font-body text-[9px] uppercase tracking-[0.25em] text-deep-garnet font-bold">
                     {item.label}
                   </p>
                   <ul className="flex flex-col">
