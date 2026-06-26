@@ -37,7 +37,6 @@ function ProfilePage() {
       updateProfile({
         data: {
           idempotencyKey: `acct-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-          displayName: displayName.trim() || undefined,
           country: country.trim() || undefined,
         },
       }),
@@ -65,11 +64,15 @@ function ProfilePage() {
         </label>
         <input
           value={displayName}
-          onChange={(e) => setDisplayName(e.target.value)}
-          className="bg-white border border-horizon-mist rounded-md p-3 font-body text-sm focus:outline-none focus:border-damascus-gold"
-          placeholder="How members see you"
+          readOnly
+          disabled
+          className="bg-horizon-mist/30 border border-horizon-mist rounded-md p-3 font-body text-sm text-ash-slate cursor-not-allowed"
         />
+        <p className="font-body text-xs text-ash-slate italic">
+          Your display name is set from your full name at registration and can't be changed here. Contact an admin if you need it updated.
+        </p>
       </div>
+
 
       <div className="flex flex-col gap-2">
         <label className="font-body text-[10px] uppercase tracking-[0.2em] text-ash-slate font-bold">
