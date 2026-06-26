@@ -11,9 +11,11 @@ function formatDate(iso: string) {
   return { day: String(d.getDate()).padStart(2, "0"), month: MONTHS[d.getMonth()] };
 }
 
-function formatTime(iso: string) {
+function formatDateTime(iso: string) {
   const d = new Date(iso);
-  return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  const date = d.toLocaleDateString([], { month: "short", day: "numeric" });
+  const time = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  return `${date} · ${time}`;
 }
 
 export function UpcomingEvents() {
@@ -51,7 +53,7 @@ export function UpcomingEvents() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {upcoming.map((event) => {
             const { day, month } = formatDate(event.starts_at);
-            const eyebrow = `${event.is_member_only ? "Member" : "Public"} • ${formatTime(event.starts_at)}`;
+            const eyebrow = `${event.is_member_only ? "Member" : "Public"} • ${formatDateTime(event.starts_at)}`;
             return (
               <EventCard
                 key={event.id}
