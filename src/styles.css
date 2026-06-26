@@ -509,7 +509,7 @@
 }
 .theme-muharram .jiy-dashboard ::selection,
 .theme-muharram ::selection {
-  background: rgba(217, 24, 35, 0.35);
+  background: rgba(168, 26, 33, 0.35);
   color: #e5dada;
 }
 .theme-muharram .jiy-dashboard .studio-card,
@@ -524,20 +524,20 @@
 }
 .theme-muharram .jiy-dashboard .studio-card:hover,
 .theme-muharram .studio-card:hover {
-  border-color: #d91823;
+  border-color: #a81a21;
   box-shadow:
-    0 10px 25px -5px rgba(217, 24, 35, 0.25),
+    0 10px 25px -5px rgba(168, 26, 33, 0.25),
     0 8px 16px -6px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.02);
 }
 .theme-muharram .jiy-dashboard .interactive-btn::after {
-  border-color: #d91823;
+  border-color: #a81a21;
 }
 .theme-muharram .jiy-dashboard .value-tab:hover {
-  border-left-color: #d91823;
+  border-left-color: #a81a21;
 }
 .theme-muharram .jiy-dashboard .value-tab.is-active {
-  border-left-color: #d91823;
+  border-left-color: #a81a21;
   color: #e5dada;
 }
 /* Tailwind utility-class overrides — the homepage / header hardcode many
