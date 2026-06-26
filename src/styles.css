@@ -636,12 +636,12 @@
 /* Muharram theme: deeper oxblood Tabarruk banner */
 .theme-muharram .sponsor-notice {
   background-color: #3d0508;
-  border-bottom-color: rgba(217, 24, 35, 0.45);
+  border-bottom-color: rgba(168, 26, 33, 0.45);
 }
 .theme-muharram .sponsor-notice::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at top right, rgba(217, 24, 35, 0.25), transparent 60%);
+  background: radial-gradient(ellipse at top right, rgba(168, 26, 33, 0.25), transparent 60%);
   pointer-events: none;
 }
