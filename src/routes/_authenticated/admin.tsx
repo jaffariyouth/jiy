@@ -31,7 +31,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
 });
 
-type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
+type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean; spacingAfter?: boolean };
 const NAV: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/homepage", label: "Homepage", icon: Home },
@@ -40,9 +40,9 @@ const NAV: NavItem[] = [
   { to: "/admin/forms", label: "Forms", icon: FormInput },
   { to: "/admin/press", label: "Press", icon: Newspaper },
   { to: "/admin/announcements", label: "Announcements", icon: Megaphone },
-  { to: "/admin/opportunities", label: "Opportunities", icon: Briefcase },
+  { to: "/admin/opportunities", label: "Opportunities", icon: Briefcase, spacingAfter: true },
   { to: "/admin/shop-waitlist", label: "Shop waitlist", icon: ShoppingBag },
-  { to: "/admin/recurring", label: "Recurring", icon: Repeat },
+  { to: "/admin/recurring", label: "Recurring", icon: Repeat, spacingAfter: true },
   { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/flags", label: "Feature Flags", icon: Flag },
   { to: "/admin/audit", label: "Audit Log", icon: ScrollText },
