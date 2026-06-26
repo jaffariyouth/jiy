@@ -633,15 +633,15 @@
   filter: brightness(0) invert(1);
 }
 
-/* Muharram theme: deeper oxblood Tabarruk banner */
+/* Muharram theme: black Tabarruk banner */
 .theme-muharram .sponsor-notice {
-  background-color: #4a1418;
-  border-bottom-color: rgba(150, 50, 55, 0.4);
+  background-color: #000000;
+  border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 .theme-muharram .sponsor-notice::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at top right, rgba(180, 70, 75, 0.18), transparent 65%);
+  background: none;
   pointer-events: none;
 }
