@@ -95,21 +95,30 @@ function AdminLayout() {
             const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
             const Icon = item.icon;
             return (
-              <Link
-                key={item.to}
-                to={item.to}
-                title={isCollapsed ? item.label : undefined}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-sm text-sm transition-all duration-200 shrink-0",
-                  isCollapsed ? "md:justify-center md:px-0 md:h-10 md:w-10 md:mx-auto" : "",
-                  active
-                    ? "bg-[#010b21] text-[#FAF8F5]"
-                    : "text-[#2b2a26] hover:bg-[#f3eedc]",
+              <div key={item.to} className="contents md:block">
+                <Link
+                  to={item.to}
+                  title={isCollapsed ? item.label : undefined}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-sm text-sm transition-all duration-200 shrink-0",
+                    isCollapsed ? "md:justify-center md:px-0 md:h-10 md:w-10 md:mx-auto" : "",
+                    active
+                      ? "bg-[#010b21] text-[#FAF8F5]"
+                      : "text-[#2b2a26] hover:bg-[#f3eedc]",
+                  )}
+                >
+                  <Icon className="h-4 w-4 shrink-0" />
+                  {!isCollapsed && <span className="whitespace-nowrap">{item.label}</span>}
+                </Link>
+                {item.spacingAfter && (
+                  <div 
+                    className={cn(
+                      "hidden md:block h-px bg-[#e5dec9]/60 my-2.5",
+                      isCollapsed ? "mx-auto w-8" : "mx-3"
+                    )} 
+                  />
                 )}
-              >
-                <Icon className="h-4 w-4 shrink-0" />
-                {!isCollapsed && <span className="whitespace-nowrap">{item.label}</span>}
-              </Link>
+              </div>
             );
           })}
         </nav>
