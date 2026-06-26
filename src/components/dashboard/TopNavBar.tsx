@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Menu, X, ChevronDown, LogOut, Shield } from "lucide-react";
+import { Menu, X, ChevronDown, ChevronRight, LogOut, Shield } from "lucide-react";
 import { getMyProfile } from "@/lib/jiy/profiles.functions";
 import { getMyRoles } from "@/lib/jiy/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -285,16 +285,7 @@ function MobileDrawer({
           <ul className="flex flex-col gap-1">
             {NAV.map((item) =>
               isGroup(item) ? (
-                <li key={item.label} className="mt-2">
-                  <p className="px-4 pt-3 pb-1 font-body text-[9px] uppercase tracking-[0.25em] text-damascus-gold font-bold">
-                    {item.label}
-                  </p>
-                  <ul className="flex flex-col">
-                    {item.children.map((child) => (
-                      <DrawerLink key={child.to} to={child.to} label={child.label} onClose={onClose} />
-                    ))}
-                  </ul>
-                </li>
+                <DrawerGroup key={item.label} label={item.label} children={item.children} onClose={onClose} />
               ) : (
                 <DrawerLink key={item.to} to={item.to} label={item.label} onClose={onClose} />
               ),
@@ -359,6 +350,42 @@ function DrawerLink({
       >
         {label}
       </Link>
+    </li>
+  );
+}
+
+function DrawerGroup({
+  label,
+  children,
+  onClose,
+}: {
+  label: string;
+  children: { label: string; to: string }[];
+  onClose: () => void;
+}) {
+  const [open, setOpen] = useState(true);
+  return (
+    <li className="mt-1">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 font-headline text-base text-primary-dark hover:bg-white rounded-sm transition-colors border-l-2 border-transparent hover:border-damascus-gold"
+        aria-expanded={open}
+      >
+        <span className="font-body text-[11px] uppercase tracking-[0.25em] text-damascus-gold font-bold">
+          {label}
+        </span>
+        <ChevronRight
+          className={`h-4 w-4 text-ash-slate transition-transform duration-200 ${open ? "rotate-90" : ""}`}
+          strokeWidth={2}
+        />
+      </button>
+      {open ? (
+        <ul className="flex flex-col pl-3 mt-1 mb-2 border-l border-horizon-mist ml-4">
+          {children.map((child) => (
+            <DrawerLink key={child.to} to={child.to} label={child.label} onClose={onClose} />
+          ))}
+        </ul>
+      ) : null}
     </li>
   );
 }
