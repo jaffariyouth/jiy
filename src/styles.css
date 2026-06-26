@@ -647,7 +647,7 @@
 
 /* Muharram theme: Tabarruk banner background color */
 .theme-muharram .sponsor-notice {
-  background-color: #260708 !important;
+  background-color: #000000 !important;
   border-bottom-color: rgba(255, 255, 255, 0.1) !important;
 }
 .theme-muharram .sponsor-notice > div:first-child {
