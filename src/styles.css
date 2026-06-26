@@ -635,8 +635,11 @@
 
 /* Muharram theme: black Tabarruk banner */
 .theme-muharram .sponsor-notice {
-  background-color: #000000;
-  border-bottom-color: rgba(255, 255, 255, 0.1);
+  background-color: #000000 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+.theme-muharram .sponsor-notice > div:first-child {
+  display: none !important;
 }
 .theme-muharram .sponsor-notice::before {
   content: "";
