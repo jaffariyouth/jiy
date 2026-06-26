@@ -18,17 +18,17 @@ const NAV: NavItem[] = [
     children: [
       { label: "All Events", to: "/dashboard/events" },
       { label: "Ongoing Events", to: "/dashboard/ongoing-events" },
+      { label: "Scholar Q&A", to: "/dashboard/scholar-qa" },
+      { label: "The Press", to: "/dashboard/press" },
     ],
   },
-  { label: "Scholar Q&A", to: "/dashboard/scholar-qa" },
-  { label: "The Press", to: "/dashboard/press" },
   {
     label: "RESOURCES",
     children: [
       { label: "Opportunity Board", to: "/dashboard/opportunities" },
+      { label: "Merch Shop", to: "/dashboard/shop" },
     ],
   },
-  { label: "Merch Shop", to: "/dashboard/shop" },
 ];
 
 function isGroup(item: NavItem): item is { label: string; children: NavLeaf[] } {
