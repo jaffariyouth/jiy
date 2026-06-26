@@ -18,17 +18,17 @@ const NAV: NavItem[] = [
     children: [
       { label: "All Events", to: "/dashboard/events" },
       { label: "Ongoing Events", to: "/dashboard/ongoing-events" },
-      { label: "Scholar Q&A", to: "/dashboard/scholar-qa" },
-      { label: "The Press", to: "/dashboard/press" },
     ],
   },
+  { label: "Scholar Q&A", to: "/dashboard/scholar-qa" },
+  { label: "The Press", to: "/dashboard/press" },
   {
     label: "RESOURCES",
     children: [
       { label: "Opportunity Board", to: "/dashboard/opportunities" },
-      { label: "Merch Shop", to: "/dashboard/shop" },
     ],
   },
+  { label: "Merch Shop", to: "/dashboard/shop" },
 ];
 
 function isGroup(item: NavItem): item is { label: string; children: NavLeaf[] } {
@@ -286,7 +286,7 @@ function MobileDrawer({
             {NAV.map((item) =>
               isGroup(item) ? (
                 <li key={item.label} className="mt-2">
-                  <p className="px-4 pt-3 pb-1 font-body text-[9px] uppercase tracking-[0.25em] text-deep-garnet font-bold">
+                  <p className="px-4 pt-3 pb-1 font-body text-[9px] uppercase tracking-[0.25em] text-damascus-gold font-bold">
                     {item.label}
                   </p>
                   <ul className="flex flex-col">
