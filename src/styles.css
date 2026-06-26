@@ -390,12 +390,12 @@
   --role-text-strong: #e5dada;
   --role-text-muted: #917b7c;
   --role-text-on-deep: #e5dada;
-  --role-accent: #d91823;
-  --role-accent-strong: #d91823;
+  --role-accent: #a81a21;
+  --role-accent-strong: #a81a21;
   --role-border-subtle: #2b1013;
   --role-border-deep: #2b1013;
   --role-gradient-warm: rgba(122, 8, 16, 0.30);   /* blood-ruby /30 */
-  --role-gradient-cool: rgba(217, 24, 35, 0.20);  /* crimson-glow /20 */
+  --role-gradient-cool: rgba(168, 26, 33, 0.20);  /* crimson-glow /20 */
 
   /* JIY brand tokens */
   --color-alabaster-parchment: #0a0304;
@@ -405,7 +405,7 @@
   --color-primary-dark: #e5dada;
   --color-persian-indigo: #130607;
   --color-deep-garnet: #7a0810;
-  --color-damascus-gold: #d91823;
+  --color-damascus-gold: #a81a21;
   --color-ash-slate: #917b7c;
   --color-muted-dusk: #917b7c;
 
