@@ -382,30 +382,32 @@
  *   crimson-glow #d91823, ash-rose #917b7c, parchment-white #e5dada
  * ========================================== */
 .theme-muharram {
-  /* Role tokens (Layer 2) — what new components should consume */
+  /* Role tokens (Layer 2) — what new components should consume.
+   * Default accent = soft oxblood. Crimson #d91823 is reserved for
+   * selected / active / hover indicators only. */
   --role-bg-page: #0a0304;
-  --role-bg-surface: #130607;
-  --role-bg-deep: #130607;
-  --role-bg-button: #7a0810;
+  --role-bg-surface: #1a1012;       /* solid charcoal card */
+  --role-bg-deep: #1a1012;
+  --role-bg-button: #8a2a32;        /* soft red default */
   --role-text-strong: #e5dada;
   --role-text-muted: #917b7c;
   --role-text-on-deep: #e5dada;
-  --role-accent: #d91823;
-  --role-accent-strong: #d91823;
-  --role-border-subtle: #2b1013;
-  --role-border-deep: #2b1013;
-  --role-gradient-warm: rgba(122, 8, 16, 0.30);   /* blood-ruby /30 */
-  --role-gradient-cool: rgba(217, 24, 35, 0.20);  /* crimson-glow /20 */
+  --role-accent: #8a2a32;           /* soft oxblood — default accent */
+  --role-accent-strong: #d91823;    /* crimson glow — selection only */
+  --role-border-subtle: #3a1f23;
+  --role-border-deep: #3a1f23;
+  --role-gradient-warm: rgba(122, 8, 16, 0.12);
+  --role-gradient-cool: rgba(217, 24, 35, 0.08);
 
-  /* JIY brand tokens */
+  /* JIY brand tokens — split the two reds */
   --color-alabaster-parchment: #0a0304;
-  --color-warm-silk-grey: #130607;
-  --color-horizon-mist: #2b1013;
+  --color-warm-silk-grey: #1a1012;
+  --color-horizon-mist: #3a1f23;
   --color-midnight-sapphire: #e5dada;
   --color-primary-dark: #e5dada;
-  --color-persian-indigo: #130607;
-  --color-deep-garnet: #7a0810;
-  --color-damascus-gold: #d91823;
+  --color-persian-indigo: #1a1012;
+  --color-deep-garnet: #8a2a32;     /* soft red — default */
+  --color-damascus-gold: #d91823;   /* crimson — selection indicator */
   --color-ash-slate: #917b7c;
   --color-muted-dusk: #917b7c;
 
