@@ -24,13 +24,6 @@ export function EventCard({ id, image, alt, day, month, eyebrow, title, descript
           alt={alt}
           className="w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-105"
         />
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "linear-gradient(to top, color-mix(in srgb, var(--role-bg-page) 90%, transparent), color-mix(in srgb, var(--role-bg-page) 20%, transparent) 50%, transparent)",
-          }}
-        />
         <div className="absolute top-3 left-3 bg-white border border-horizon-mist px-3 py-1.5 text-center rounded-md shadow-xs">
           <p className="font-headline text-sm font-bold text-primary-dark leading-none">{day}</p>
           <p className="font-body text-[9px] uppercase tracking-wider text-ash-slate font-bold mt-0.5">

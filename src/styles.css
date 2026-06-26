@@ -556,7 +556,9 @@
 .theme-muharram .text-on-surface-variant {
   color: #917b7c !important;
 }
-.theme-muharram .text-deep-garnet,
+.theme-muharram .text-deep-garnet {
+  color: #a8545c !important;
+}
 .theme-muharram .text-damascus-gold {
   color: #d91823 !important;
 }
@@ -578,6 +580,16 @@
 .theme-muharram .bg-alabaster-parchment,
 .theme-muharram .bg-warm-silk-grey {
   background-color: #0a0304 !important;
+}
+/* Studio cards: charcoal lift in Muharram so they pop off the near-black page */
+.theme-muharram .studio-card,
+.theme-muharram .jiy-dashboard .studio-card {
+  background-color: #1f1f22 !important;
+  border-color: #2f2f33 !important;
+}
+.theme-muharram .studio-card.bg-white,
+.theme-muharram .jiy-dashboard .studio-card.bg-white {
+  background-color: #1f1f22 !important;
 }
 .theme-muharram .border-horizon-mist {
   border-color: #2b1013 !important;
