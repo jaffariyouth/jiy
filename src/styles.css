@@ -386,7 +386,7 @@
    * Default accent = soft oxblood. Crimson #d91823 is reserved for
    * selected / active / hover indicators only. */
   --role-bg-page: #0a0304;
-  --role-bg-surface: #1a1012;       /* solid charcoal card */
+  --role-bg-surface: #2a2a2e;       /* solid charcoal card */
   --role-bg-deep: #1a1012;
   --role-bg-button: #8a2a32;        /* soft red default */
   --role-text-strong: #e5dada;
