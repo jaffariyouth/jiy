@@ -581,15 +581,15 @@
 .theme-muharram .bg-warm-silk-grey {
   background-color: #0a0304 !important;
 }
-/* Studio cards: true black in Muharram theme */
+/* Studio cards: oxblood in Muharram theme */
 .theme-muharram .studio-card,
 .theme-muharram .jiy-dashboard .studio-card {
-  background-color: #000000 !important;
-  border-color: #1f1f22 !important;
+  background-color: #260708 !important;
+  border-color: #3a0d10 !important;
 }
 .theme-muharram .studio-card.bg-white,
 .theme-muharram .jiy-dashboard .studio-card.bg-white {
-  background-color: #000000 !important;
+  background-color: #260708 !important;
 }
 .theme-muharram .border-horizon-mist {
   border-color: #2b1013 !important;
