@@ -387,7 +387,7 @@
    * selected / active / hover indicators only. */
   --role-bg-page: #0a0304;
   --role-bg-surface: #2a2a2e;       /* solid charcoal card */
-  --role-bg-deep: #1a1012;
+  --role-bg-deep: #2a2a2e;
   --role-bg-button: #8a2a32;        /* soft red default */
   --role-text-strong: #e5dada;
   --role-text-muted: #917b7c;
@@ -401,11 +401,11 @@
 
   /* JIY brand tokens — split the two reds */
   --color-alabaster-parchment: #0a0304;
-  --color-warm-silk-grey: #1a1012;
+  --color-warm-silk-grey: #2a2a2e;
   --color-horizon-mist: #3a1f23;
   --color-midnight-sapphire: #e5dada;
   --color-primary-dark: #e5dada;
-  --color-persian-indigo: #1a1012;
+  --color-persian-indigo: #2a2a2e;
   --color-deep-garnet: #8a2a32;     /* soft red — default */
   --color-damascus-gold: #d91823;   /* crimson — selection indicator */
   --color-ash-slate: #917b7c;
@@ -516,7 +516,7 @@
 }
 .theme-muharram .jiy-dashboard .studio-card,
 .theme-muharram .studio-card {
-  background: #1a1012;
+  background: #2a2a2e;
   border-color: #3a1f23;
   box-shadow:
     0 1px 3px 0 rgba(0, 0, 0, 0.4),
@@ -579,7 +579,7 @@
 .theme-muharram .bg-persian-indigo,
 .theme-muharram .bg-midnight-sapphire,
 .theme-muharram .bg-primary-dark {
-  background-color: #1a1012 !important;
+  background-color: #2a2a2e !important;
 }
 .theme-muharram .border-persian-indigo,
 .theme-muharram .border-midnight-sapphire {
@@ -601,7 +601,7 @@
 .theme-muharram .bg-damascus-gold\/20,
 .theme-muharram .bg-damascus-gold\/25,
 .theme-muharram .bg-damascus-gold\/30 {
-  background-color: #1a1012 !important;
+  background-color: #2a2a2e !important;
 }
 .theme-muharram .bg-damascus-gold {
   background-color: #d91823 !important;
