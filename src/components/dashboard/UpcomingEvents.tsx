@@ -53,7 +53,7 @@ export function UpcomingEvents() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {upcoming.map((event) => {
             const { day, month } = formatDate(event.starts_at);
-            const eyebrow = `${event.is_member_only ? "Member" : "Public"} • ${formatTime(event.starts_at)}`;
+            const eyebrow = `${event.is_member_only ? "Member" : "Public"} • ${formatDateTime(event.starts_at)}`;
             return (
               <EventCard
                 key={event.id}
