@@ -31,7 +31,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
 });
 
-type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
+type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean; spacingAfter?: boolean };
 const NAV: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/homepage", label: "Homepage", icon: Home },
@@ -40,9 +40,9 @@ const NAV: NavItem[] = [
   { to: "/admin/forms", label: "Forms", icon: FormInput },
   { to: "/admin/press", label: "Press", icon: Newspaper },
   { to: "/admin/announcements", label: "Announcements", icon: Megaphone },
-  { to: "/admin/opportunities", label: "Opportunities", icon: Briefcase },
+  { to: "/admin/opportunities", label: "Opportunities", icon: Briefcase, spacingAfter: true },
   { to: "/admin/shop-waitlist", label: "Shop waitlist", icon: ShoppingBag },
-  { to: "/admin/recurring", label: "Recurring", icon: Repeat },
+  { to: "/admin/recurring", label: "Recurring", icon: Repeat, spacingAfter: true },
   { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/flags", label: "Feature Flags", icon: Flag },
   { to: "/admin/audit", label: "Audit Log", icon: ScrollText },
@@ -95,21 +95,30 @@ function AdminLayout() {
             const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
             const Icon = item.icon;
             return (
-              <Link
-                key={item.to}
-                to={item.to}
-                title={isCollapsed ? item.label : undefined}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-sm text-sm transition-all duration-200 shrink-0",
-                  isCollapsed ? "md:justify-center md:px-0 md:h-10 md:w-10 md:mx-auto" : "",
-                  active
-                    ? "bg-[#010b21] text-[#FAF8F5]"
-                    : "text-[#2b2a26] hover:bg-[#f3eedc]",
+              <div key={item.to} className="contents md:block">
+                <Link
+                  to={item.to}
+                  title={isCollapsed ? item.label : undefined}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-sm text-sm transition-all duration-200 shrink-0",
+                    isCollapsed ? "md:justify-center md:px-0 md:h-10 md:w-10 md:mx-auto" : "",
+                    active
+                      ? "bg-[#010b21] text-[#FAF8F5]"
+                      : "text-[#2b2a26] hover:bg-[#f3eedc]",
+                  )}
+                >
+                  <Icon className="h-4 w-4 shrink-0" />
+                  {!isCollapsed && <span className="whitespace-nowrap">{item.label}</span>}
+                </Link>
+                {item.spacingAfter && (
+                  <div 
+                    className={cn(
+                      "hidden md:block h-px bg-[#e5dec9]/60 my-2.5",
+                      isCollapsed ? "mx-auto w-8" : "mx-3"
+                    )} 
+                  />
                 )}
-              >
-                <Icon className="h-4 w-4 shrink-0" />
-                {!isCollapsed && <span className="whitespace-nowrap">{item.label}</span>}
-              </Link>
+              </div>
             );
           })}
         </nav>
