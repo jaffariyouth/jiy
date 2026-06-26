@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Menu, X, ChevronDown, LogOut, Shield } from "lucide-react";
+import { Menu, X, ChevronDown, ChevronRight, LogOut, Shield } from "lucide-react";
 import { getMyProfile } from "@/lib/jiy/profiles.functions";
 import { getMyRoles } from "@/lib/jiy/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
