@@ -601,13 +601,13 @@
 
 /* Buttons that hover to gold → crimson-glow */
 .theme-muharram .hover\:bg-damascus-gold:hover {
-  background-color: #d91823 !important;
+  background-color: #a81a21 !important;
 }
 .theme-muharram .hover\:text-damascus-gold:hover {
-  color: #d91823 !important;
+  color: #a81a21 !important;
 }
 .theme-muharram .hover\:border-damascus-gold:hover {
-  border-color: #d91823 !important;
+  border-color: #a81a21 !important;
 }
 .theme-muharram .hover\:text-persian-indigo:hover {
   color: #0a0304 !important;
