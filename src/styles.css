@@ -390,12 +390,12 @@
   --role-text-strong: #e5dada;
   --role-text-muted: #917b7c;
   --role-text-on-deep: #e5dada;
-  --role-accent: #d91823;
-  --role-accent-strong: #d91823;
+  --role-accent: #a81a21;
+  --role-accent-strong: #a81a21;
   --role-border-subtle: #2b1013;
   --role-border-deep: #2b1013;
   --role-gradient-warm: rgba(122, 8, 16, 0.30);   /* blood-ruby /30 */
-  --role-gradient-cool: rgba(217, 24, 35, 0.20);  /* crimson-glow /20 */
+  --role-gradient-cool: rgba(168, 26, 33, 0.20);  /* crimson-glow /20 */
 
   /* JIY brand tokens */
   --color-alabaster-parchment: #0a0304;
@@ -405,7 +405,7 @@
   --color-primary-dark: #e5dada;
   --color-persian-indigo: #130607;
   --color-deep-garnet: #7a0810;
-  --color-damascus-gold: #d91823;
+  --color-damascus-gold: #a81a21;
   --color-ash-slate: #917b7c;
   --color-muted-dusk: #917b7c;
 
@@ -449,7 +449,7 @@
   --color-on-secondary-fixed: #e5dada;
   --color-on-secondary-fixed-variant: #917b7c;
 
-  --color-tertiary: #d91823;
+  --color-tertiary: #a81a21;
   --color-on-tertiary: #0a0304;
   --color-tertiary-container: #7a0810;
   --color-on-tertiary-container: #e5dada;
@@ -458,7 +458,7 @@
   --color-on-tertiary-fixed: #e5dada;
   --color-on-tertiary-fixed-variant: #917b7c;
 
-  --color-error: #d91823;
+  --color-error: #a81a21;
   --color-on-error: #0a0304;
   --color-error-container: #2b1013;
   --color-on-error-container: #e5dada;
@@ -509,7 +509,7 @@
 }
 .theme-muharram .jiy-dashboard ::selection,
 .theme-muharram ::selection {
-  background: rgba(217, 24, 35, 0.35);
+  background: rgba(168, 26, 33, 0.35);
   color: #e5dada;
 }
 .theme-muharram .jiy-dashboard .studio-card,
@@ -524,20 +524,20 @@
 }
 .theme-muharram .jiy-dashboard .studio-card:hover,
 .theme-muharram .studio-card:hover {
-  border-color: #d91823;
+  border-color: #a81a21;
   box-shadow:
-    0 10px 25px -5px rgba(217, 24, 35, 0.25),
+    0 10px 25px -5px rgba(168, 26, 33, 0.25),
     0 8px 16px -6px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.02);
 }
 .theme-muharram .jiy-dashboard .interactive-btn::after {
-  border-color: #d91823;
+  border-color: #a81a21;
 }
 .theme-muharram .jiy-dashboard .value-tab:hover {
-  border-left-color: #d91823;
+  border-left-color: #a81a21;
 }
 .theme-muharram .jiy-dashboard .value-tab.is-active {
-  border-left-color: #d91823;
+  border-left-color: #a81a21;
   color: #e5dada;
 }
 /* Tailwind utility-class overrides — the homepage / header hardcode many
@@ -558,7 +558,7 @@
 }
 .theme-muharram .text-deep-garnet,
 .theme-muharram .text-damascus-gold {
-  color: #d91823 !important;
+  color: #a81a21 !important;
 }
 .theme-muharram .bg-persian-indigo,
 .theme-muharram .bg-midnight-sapphire,
@@ -570,10 +570,10 @@
   border-color: #7a0810 !important;
 }
 .theme-muharram .bg-damascus-gold {
-  background-color: #d91823 !important;
+  background-color: #a81a21 !important;
 }
 .theme-muharram .border-damascus-gold {
-  border-color: #d91823 !important;
+  border-color: #a81a21 !important;
 }
 .theme-muharram .bg-alabaster-parchment,
 .theme-muharram .bg-warm-silk-grey {
@@ -601,13 +601,13 @@
 
 /* Buttons that hover to gold → crimson-glow */
 .theme-muharram .hover\:bg-damascus-gold:hover {
-  background-color: #d91823 !important;
+  background-color: #a81a21 !important;
 }
 .theme-muharram .hover\:text-damascus-gold:hover {
-  color: #d91823 !important;
+  color: #a81a21 !important;
 }
 .theme-muharram .hover\:border-damascus-gold:hover {
-  border-color: #d91823 !important;
+  border-color: #a81a21 !important;
 }
 .theme-muharram .hover\:text-persian-indigo:hover {
   color: #0a0304 !important;
@@ -636,12 +636,12 @@
 /* Muharram theme: deeper oxblood Tabarruk banner */
 .theme-muharram .sponsor-notice {
   background-color: #3d0508;
-  border-bottom-color: rgba(217, 24, 35, 0.45);
+  border-bottom-color: rgba(168, 26, 33, 0.45);
 }
 .theme-muharram .sponsor-notice::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at top right, rgba(217, 24, 35, 0.25), transparent 60%);
+  background: radial-gradient(ellipse at top right, rgba(168, 26, 33, 0.25), transparent 60%);
   pointer-events: none;
 }
