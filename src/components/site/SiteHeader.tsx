@@ -1,99 +1,10 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-type EventsAction =
-  | { kind: "link"; to: string; label: string }
-  | { kind: "hash"; hash: string; label: string };
 
-const EVENTS_ITEMS: EventsAction[] = [
-  { kind: "link", to: "/events", label: "All Events" },
-  { kind: "hash", hash: "#upcoming-events", label: "Upcoming Events" },
-  { kind: "hash", hash: "#ongoing-events", label: "Ongoing Events" },
-];
-
-function useEventsHashNav() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const onHome = pathname === "/";
-  return (hash: string) => {
-    if (onHome) {
-      const el = document.querySelector(hash);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-      else window.location.hash = hash;
-    } else {
-      window.location.href = `/${hash}`;
-    }
-  };
-}
-
-function EventsDropdown() {
-  const [open, setOpen] = useState(false);
-  const goHash = useEventsHashNav();
-
-  useEffect(() => {
-    if (!open) return;
-    const close = (e: MouseEvent) => {
-      if (!(e.target as HTMLElement).closest("[data-events-dropdown]")) setOpen(false);
-    };
-    document.addEventListener("click", close);
-    return () => document.removeEventListener("click", close);
-  }, [open]);
-
-  return (
-    <div className="relative py-1" data-events-dropdown>
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="hover:text-damascus-gold transition-colors duration-200 flex items-center gap-1 uppercase outline-none"
-        aria-expanded={open}
-        aria-haspopup="menu"
-      >
-        Events
-        <ChevronDown
-          className={`h-3 w-3 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-          strokeWidth={2.5}
-        />
-      </button>
-      <div
-        className={`absolute top-full left-1/2 -translate-x-1/2 w-56 bg-white border border-horizon-mist shadow-xl flex flex-col z-50 rounded-sm overflow-hidden transition-all duration-200 ${
-          open ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-1 pointer-events-none"
-        }`}
-        role="menu"
-      >
-        <div className="h-[3px] bg-damascus-gold" />
-        {EVENTS_ITEMS.map((item, i) =>
-          item.kind === "link" ? (
-            <Link
-              key={item.label}
-              to={item.to}
-              onClick={() => setOpen(false)}
-              className={`text-left px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold transition-colors whitespace-nowrap ${
-                i < EVENTS_ITEMS.length - 1 ? "border-b border-horizon-mist/50" : ""
-              }`}
-            >
-              {item.label}
-            </Link>
-          ) : (
-            <button
-              key={item.label}
-              type="button"
-              onClick={() => {
-                setOpen(false);
-                goHash(item.hash);
-              }}
-              className={`text-left px-5 py-3.5 hover:bg-alabaster-parchment hover:text-damascus-gold transition-colors whitespace-nowrap ${
-                i < EVENTS_ITEMS.length - 1 ? "border-b border-horizon-mist/50" : ""
-              }`}
-            >
-              {item.label}
-            </button>
-          ),
-        )}
-      </div>
-    </div>
-  );
-}
 
 export function SiteHeader() {
   const [signedIn, setSignedIn] = useState(false);
