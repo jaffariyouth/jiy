@@ -54,7 +54,13 @@ export function SiteHeader() {
             Our Team
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-damascus-gold transition-all duration-300 group-hover:w-full" />
           </Link>
-          <EventsDropdown />
+          <Link
+            to="/events"
+            className="hover:text-damascus-gold transition-colors duration-200 relative py-1 group"
+          >
+            Events
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-damascus-gold transition-all duration-300 group-hover:w-full" />
+          </Link>
           <a
             className="hover:text-damascus-gold transition-colors duration-200 relative py-1 group"
             href="/press"
