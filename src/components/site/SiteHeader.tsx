@@ -124,7 +124,6 @@ function SiteMobileDrawer({
   onClose: () => void;
   signedIn: boolean;
 }) {
-  const goHash = useEventsHashNav();
   if (typeof document === "undefined") return null;
 
   return createPortal(
