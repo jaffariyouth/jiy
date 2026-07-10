@@ -167,28 +167,7 @@ function SiteMobileDrawer({
             <DrawerAnchor href="/#about-us" label="About Us" onClose={onClose} />
             <DrawerLink to="/team" label="Our Team" onClose={onClose} />
 
-            <li className="mt-2">
-              <p className="px-4 pt-3 pb-1 font-body text-[9px] uppercase tracking-[0.25em] text-damascus-gold font-bold">
-                Events
-              </p>
-              <ul className="flex flex-col">
-                <DrawerLink to="/events" label="All Events" onClose={onClose} />
-                <DrawerButton
-                  label="Upcoming Events"
-                  onClick={() => {
-                    onClose();
-                    goHash("#upcoming-events");
-                  }}
-                />
-                <DrawerButton
-                  label="Ongoing Events"
-                  onClick={() => {
-                    onClose();
-                    goHash("#ongoing-events");
-                  }}
-                />
-              </ul>
-            </li>
+            <DrawerLink to="/events" label="Events" onClose={onClose} />
 
             <DrawerAnchor href="/press" label="The Press" onClose={onClose} />
           </ul>
