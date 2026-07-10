@@ -33,7 +33,7 @@ export const listMemberEvents = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("events")
-      .select("id, title, description, location, starts_at, ends_at, capacity, is_member_only, status, cover_image_url")
+      .select("id, title, description, location, starts_at, ends_at, capacity, is_member_only, status, cover_image_url, category_label, audience_min_age, audience_max_age")
       .eq("status", "published")
       .order("starts_at", { ascending: true })
       .limit(200);
